@@ -1,58 +1,68 @@
 {
   "source": "Anthropic Claude Documentation",
   "tier": 1,
-  "scraped_at": "2026-04-06T01:01:46.302462",
+  "processed_at": "2026-04-06T01:12:25.259454",
   "total_docs": 10,
   "docs": [
     {
-      "id": "claude_docs_intro",
+      "id": "claude_docs_cowork_claude_code_power_for_knowledge_work_claude_by_anthropic",
+      "title": "Cowork Claude Code power for knowledge work Claude by Anthropic",
+      "url": "https://docs.anthropic.com/en/docs/cowork_claude_code_power_for_knowledge_work_claude_by_anthropic",
+      "content_length": 10445
+    },
+    {
+      "id": "claude_docs_data_residency___claude_api_docs",
+      "title": "Data residency",
+      "url": "https://docs.anthropic.com/en/docs/data_residency___claude_api_docs",
+      "content_length": 2177
+    },
+    {
+      "id": "claude_docs_features_overview___claude_api_docs",
+      "title": "Features overview",
+      "url": "https://docs.anthropic.com/en/docs/features_overview___claude_api_docs",
+      "content_length": 11403
+    },
+    {
+      "id": "claude_docs_get_started_with_claude___claude_api_docs",
+      "title": "Get started with Claude",
+      "url": "https://docs.anthropic.com/en/docs/get_started_with_claude___claude_api_docs",
+      "content_length": 2388
+    },
+    {
+      "id": "claude_docs_get_started_with_cowork_claude_help_center",
+      "title": "Get started with Cowork Claude Help Center",
+      "url": "https://docs.anthropic.com/en/docs/get_started_with_cowork_claude_help_center",
+      "content_length": 12752
+    },
+    {
+      "id": "claude_docs_intro_to_claude___claude_api_docs",
       "title": "Intro to Claude",
-      "url": "https://docs.anthropic.com/en/docs/intro"
+      "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+      "content_length": 2789
     },
     {
-      "id": "claude_docs_api",
-      "title": "API Overview",
-      "url": "https://docs.anthropic.com/en/docs/api"
+      "id": "claude_docs_let_claude_use_your_computer_in_cowork_claude_help_center",
+      "title": "Let Claude use your computer in Cowork Claude Help Center",
+      "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+      "content_length": 8262
     },
     {
-      "id": "claude_docs_models",
-      "title": "Untitled",
-      "url": "https://docs.anthropic.com/en/docs/models"
+      "id": "claude_docs_models_overview___claude_api_docs",
+      "title": "Models overview",
+      "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+      "content_length": 5406
     },
     {
-      "id": "claude_docs_messages",
-      "title": "Untitled",
-      "url": "https://docs.anthropic.com/en/docs/messages"
+      "id": "claude_docs_use_cowork_safely_claude_help_center",
+      "title": "Use Cowork safely Claude Help Center",
+      "url": "https://docs.anthropic.com/en/docs/use_cowork_safely_claude_help_center",
+      "content_length": 9364
     },
     {
-      "id": "claude_docs_streaming",
-      "title": "Untitled",
-      "url": "https://docs.anthropic.com/en/docs/streaming"
-    },
-    {
-      "id": "claude_docs_tool-use",
-      "title": "Tool use with Claude",
-      "url": "https://docs.anthropic.com/en/docs/tool-use"
-    },
-    {
-      "id": "claude_docs_prompt-engineering",
-      "title": "Prompt engineering overview",
-      "url": "https://docs.anthropic.com/en/docs/prompt-engineering"
-    },
-    {
-      "id": "claude_docs_rate-limits",
-      "title": "Untitled",
-      "url": "https://docs.anthropic.com/en/docs/rate-limits"
-    },
-    {
-      "id": "claude_docs_errors",
-      "title": "Untitled",
-      "url": "https://docs.anthropic.com/en/docs/errors"
-    },
-    {
-      "id": "claude_docs_authentication",
-      "title": "Untitled",
-      "url": "https://docs.anthropic.com/en/docs/authentication"
+      "id": "claude_docs_use_plugins_in_cowork_claude_help_center",
+      "title": "Use plugins in Cowork Claude Help Center",
+      "url": "https://docs.anthropic.com/en/docs/use_plugins_in_cowork_claude_help_center",
+      "content_length": 4438
     }
   ]
 }

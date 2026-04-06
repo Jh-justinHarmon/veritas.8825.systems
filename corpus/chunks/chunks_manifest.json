@@ -1,0 +1,11 @@
+{
+  "source": "Anthropic Claude Documentation (Tier 1)",
+  "tier": 1,
+  "chunked_at": "2026-04-06T01:13:32.223723",
+  "total_documents": 20,
+  "total_chunks": 56,
+  "chunk_size_chars": 2048,
+  "chunk_overlap_chars": 256,
+  "chunks_file": "tier1_chunks.json",
+  "tier_metadata_preserved": true
+}
