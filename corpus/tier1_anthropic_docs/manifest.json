@@ -1,0 +1,58 @@
+{
+  "source": "Anthropic Claude Documentation",
+  "tier": 1,
+  "scraped_at": "2026-04-06T01:01:46.302462",
+  "total_docs": 10,
+  "docs": [
+    {
+      "id": "claude_docs_intro",
+      "title": "Intro to Claude",
+      "url": "https://docs.anthropic.com/en/docs/intro"
+    },
+    {
+      "id": "claude_docs_api",
+      "title": "API Overview",
+      "url": "https://docs.anthropic.com/en/docs/api"
+    },
+    {
+      "id": "claude_docs_models",
+      "title": "Untitled",
+      "url": "https://docs.anthropic.com/en/docs/models"
+    },
+    {
+      "id": "claude_docs_messages",
+      "title": "Untitled",
+      "url": "https://docs.anthropic.com/en/docs/messages"
+    },
+    {
+      "id": "claude_docs_streaming",
+      "title": "Untitled",
+      "url": "https://docs.anthropic.com/en/docs/streaming"
+    },
+    {
+      "id": "claude_docs_tool-use",
+      "title": "Tool use with Claude",
+      "url": "https://docs.anthropic.com/en/docs/tool-use"
+    },
+    {
+      "id": "claude_docs_prompt-engineering",
+      "title": "Prompt engineering overview",
+      "url": "https://docs.anthropic.com/en/docs/prompt-engineering"
+    },
+    {
+      "id": "claude_docs_rate-limits",
+      "title": "Untitled",
+      "url": "https://docs.anthropic.com/en/docs/rate-limits"
+    },
+    {
+      "id": "claude_docs_errors",
+      "title": "Untitled",
+      "url": "https://docs.anthropic.com/en/docs/errors"
+    },
+    {
+      "id": "claude_docs_authentication",
+      "title": "Untitled",
+      "url": "https://docs.anthropic.com/en/docs/authentication"
+    }
+  ]
+}
