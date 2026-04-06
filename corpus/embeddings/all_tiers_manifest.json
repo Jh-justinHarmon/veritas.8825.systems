@@ -1,0 +1,12 @@
+{
+  "source": "Claude Cowork Documentation - All Tiers",
+  "processed_at": "2026-04-06T01:38:07.375783",
+  "total_chunks": 53,
+  "tier_breakdown": {
+    "tier_1": 46,
+    "tier_2": 3,
+    "tier_3": 4
+  },
+  "embedding_model": "text-embedding-3-small",
+  "chunks_file": "all_tiers_embedded_chunks.json"
+}

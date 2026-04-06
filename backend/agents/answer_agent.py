@@ -173,8 +173,8 @@ def test_answer_generation():
     """Test the answer generation agent with sample data."""
     print("Testing Answer Generation Agent...")
     
-    # Load embedded chunks
-    chunks_file = Path(__file__).parent.parent.parent / "corpus" / "embeddings" / "tier1_embedded_chunks.json"
+    # Load embedded chunks (all tiers)
+    chunks_file = Path(__file__).parent.parent.parent / "corpus" / "embeddings" / "all_tiers_embedded_chunks.json"
     
     if not chunks_file.exists():
         print(f"❌ Chunks file not found: {chunks_file}")
@@ -185,6 +185,16 @@ def test_answer_generation():
     
     print(f"✓ Loaded {len(all_chunks)} chunks")
     
+    # Show tier distribution
+    tier_counts = {}
+    for chunk in all_chunks:
+        tier = chunk.get('source_tier')
+        tier_counts[tier] = tier_counts.get(tier, 0) + 1
+    
+    print(f"✓ Tier distribution:")
+    for tier in sorted(tier_counts.keys()):
+        print(f"  Tier {tier}: {tier_counts[tier]} chunks")
+    
     # Test questions (focused on Claude Cowork)
     test_questions = [
         "What is Claude Cowork?",
@@ -193,10 +203,6 @@ def test_answer_generation():
         "How do I use plugins in Cowork?",
         "How do I use Cowork safely?"
     ]
-    
-    # Filter out chunks with "Loading..." text (from failed scraping)
-    real_chunks = [c for c in all_chunks if "Loading..." not in c.get('text', '')]
-    print(f"✓ Filtered to {len(real_chunks)} chunks with real content")
     
     for question in test_questions:
         print(f"\n{'='*60}")
@@ -209,8 +215,8 @@ def test_answer_generation():
             print("❌ Failed to generate query embedding")
             continue
         
-        # Retrieve relevant chunks using semantic search
-        retrieved_chunks = retrieve_chunks(query_embedding, real_chunks, top_k=6)
+        # Retrieve relevant chunks using semantic search (with authority weighting)
+        retrieved_chunks = retrieve_chunks(query_embedding, all_chunks, top_k=6)
         
         print(f"✓ Retrieved {len(retrieved_chunks)} chunks")
         for i, chunk in enumerate(retrieved_chunks[:3], 1):
