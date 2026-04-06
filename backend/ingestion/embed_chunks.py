@@ -18,10 +18,19 @@ from openai import OpenAI
 from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv(Path(__file__).parent.parent / ".env")
+env_path = Path(__file__).parent.parent / ".env"
+load_dotenv(env_path, override=True)
+
+# Get API key
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    print(f"\n⚠️  ERROR: OPENAI_API_KEY not found in {env_path}")
+    sys.exit(1)
+
+print(f"Using API key: {api_key[:20]}...{api_key[-4:]}")
 
 # OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key=api_key)
 
 # Embedding model
 EMBEDDING_MODEL = "text-embedding-3-small"  # Cost-effective for V1

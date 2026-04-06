@@ -1,0 +1,9 @@
+{
+  "source": "Anthropic Claude Documentation (Tier 1)",
+  "tier": 1,
+  "embedded_at": "2026-04-06T01:24:34.432903",
+  "total_chunks": 56,
+  "embedding_model": "text-embedding-3-small",
+  "embeddings_file": "tier1_embedded_chunks.json",
+  "tier_metadata_preserved": true
+}
