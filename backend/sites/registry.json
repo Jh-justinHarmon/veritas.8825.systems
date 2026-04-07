@@ -1,0 +1,102 @@
+{
+  "sites": {
+    "anthropic": {
+      "id": "anthropic",
+      "name": "Anthropic Claude",
+      "description": "Claude AI API and platform documentation",
+      "logo_url": "https://www.anthropic.com/images/icons/safari-pinned-tab.svg",
+      "docs_url": "https://docs.anthropic.com",
+      "scraping_strategy": "sitemap",
+      "sitemap_url": "https://docs.anthropic.com/sitemap.xml",
+      "tier_1_patterns": [
+        "docs.anthropic.com/en/*",
+        "docs.anthropic.com/claude/*"
+      ],
+      "tier_2_search_query": "site:anthropic.com/news OR site:anthropic.com/research OR site:anthropic.com/blog",
+      "tier_3_search_query": "site:stackoverflow.com anthropic OR site:reddit.com/r/ClaudeAI OR site:github.com/anthropics",
+      "content_selectors": {
+        "main": "article, main, .content, .documentation",
+        "exclude": "nav, footer, .sidebar, .advertisement"
+      }
+    },
+    "openai": {
+      "id": "openai",
+      "name": "OpenAI",
+      "description": "OpenAI API and GPT documentation",
+      "logo_url": "https://openai.com/favicon.ico",
+      "docs_url": "https://platform.openai.com/docs",
+      "scraping_strategy": "crawl",
+      "max_crawl_depth": 3,
+      "tier_1_patterns": [
+        "platform.openai.com/docs/*"
+      ],
+      "tier_2_search_query": "site:openai.com/blog OR site:openai.com/research",
+      "tier_3_search_query": "site:stackoverflow.com openai OR site:reddit.com/r/OpenAI OR site:github.com/openai",
+      "content_selectors": {
+        "main": "article, main, .docs-content",
+        "exclude": "nav, footer, .sidebar, .advertisement"
+      }
+    },
+    "stripe": {
+      "id": "stripe",
+      "name": "Stripe",
+      "description": "Stripe payment API documentation",
+      "logo_url": "https://stripe.com/favicon.ico",
+      "docs_url": "https://stripe.com/docs",
+      "scraping_strategy": "sitemap",
+      "sitemap_url": "https://stripe.com/sitemap.xml",
+      "tier_1_patterns": [
+        "stripe.com/docs/*",
+        "docs.stripe.com/*"
+      ],
+      "tier_2_search_query": "site:stripe.com/blog",
+      "tier_3_search_query": "site:stackoverflow.com stripe OR site:reddit.com/r/stripe",
+      "content_selectors": {
+        "main": "article, main, .DocSearch-content",
+        "exclude": "nav, footer, .sidebar, .advertisement"
+      }
+    },
+    "supabase": {
+      "id": "supabase",
+      "name": "Supabase",
+      "description": "Supabase backend-as-a-service documentation",
+      "logo_url": "https://supabase.com/favicon.ico",
+      "docs_url": "https://supabase.com/docs",
+      "scraping_strategy": "sitemap",
+      "sitemap_url": "https://supabase.com/sitemap.xml",
+      "tier_1_patterns": [
+        "supabase.com/docs/*"
+      ],
+      "tier_2_search_query": "site:supabase.com/blog",
+      "tier_3_search_query": "site:stackoverflow.com supabase OR site:reddit.com/r/Supabase OR site:github.com/supabase",
+      "content_selectors": {
+        "main": "article, main, .prose",
+        "exclude": "nav, footer, .sidebar, .advertisement"
+      }
+    },
+    "vercel": {
+      "id": "vercel",
+      "name": "Vercel",
+      "description": "Vercel deployment platform documentation",
+      "logo_url": "https://vercel.com/favicon.ico",
+      "docs_url": "https://vercel.com/docs",
+      "scraping_strategy": "crawl",
+      "max_crawl_depth": 3,
+      "tier_1_patterns": [
+        "vercel.com/docs/*"
+      ],
+      "tier_2_search_query": "site:vercel.com/blog",
+      "tier_3_search_query": "site:stackoverflow.com vercel OR site:reddit.com/r/vercel OR site:github.com/vercel",
+      "content_selectors": {
+        "main": "article, main, .docs-content",
+        "exclude": "nav, footer, .sidebar, .advertisement"
+      }
+    }
+  },
+  "metadata": {
+    "version": "2.0",
+    "last_updated": "2026-04-06",
+    "total_sites": 5,
+    "notes": "Initial site registry for Veritas V2 dynamic scraping. Each site config includes scraping strategy, tier patterns, and search queries for automatic tier 2/3 discovery."
+  }
+}
