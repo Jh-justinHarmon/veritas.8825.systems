@@ -260,10 +260,11 @@ interface SourceModalProps {
 ## Key UI Decisions
 
 ### Pitfalls Section Visual Distinction
-- Background: `bg-gray-50` (slightly darker)
-- Border: `border-l-4 border-gray-400` (left accent)
+- Background: `bg-gray-900/50` (slightly different dark surface, not light)
+- Border: `border-l-4 border-gray-700` (muted left accent)
 - Padding: `p-6` (tighter than other sections)
-- Bold anchors: Already in content with `**text**`
+- Typography: Stronger weight for anchor lines (font-semibold or font-bold)
+- Note: Distinct without looking like a pasted light card in dark UI
 
 ### Citation Click Behavior
 - Inline citations `[1]` are `<button>` elements
