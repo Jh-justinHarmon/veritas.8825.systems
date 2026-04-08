@@ -159,15 +159,22 @@ const data = await fetch('/ask', {
 
 ## The One Topic to Start With
 
-**Anthropic Extended Thinking**
+**Tool Use & Function Calling** ✅
 
-**Why this one:**
-- Strong tier 2 coverage (official Anthropic blog)
-- Clear 3-layer structure:
-  - Core: What it is (docs)
-  - Implementation: How to use it (blog)
-  - Pitfalls: Latency/cost issues (community)
-- Good citation diversity
+**Why this one (confirmed via external research):**
+- **Strongest tier separation**: Docs explain mechanics, blogs explain design, troubleshooting guides explain failures
+- **Real implementation gap**: Developers struggle with tool design even after reading docs
+- **Systematic failure modes**: Wrong tool selection, parameter hallucination, context bloat
+- **Compelling demo story**: "Veritas shows you why your tools aren't working, not just how to define them"
+- **High-quality Tier 3**: Official troubleshooting docs + real developer experiences
+- **Practical learning value**: Answers "I read the docs, why isn't this working?"
+
+**Demo question**: "I defined tools for Claude but it keeps calling the wrong one or hallucinating parameters. What am I doing wrong?"
+
+**Expected 3-layer answer**:
+- **Core Answer**: Tool use requires clear schemas with descriptions, parameter types, required fields (Tier 1)
+- **Implementation Insight**: Use specific tool names, add examples to descriptions, leverage `enum` for fixed values (Tier 2)
+- **Common Pitfalls**: Vague descriptions cause wrong tool selection, missing parameter descriptions cause hallucination, too many tools cause context bloat (Tier 3)
 
 ---
 
