@@ -35,7 +35,7 @@ export function AnswerDisplay({ sections }: AnswerDisplayProps) {
               {section.title}
             </h3>
 
-          <div className="space-y-4 text-zinc-300 leading-8 text-[17px]">
+            <div className="space-y-4 text-zinc-300 leading-8 text-[17px]">
             {section.content.split("\n\n").map((block, idx) => {
               const trimmed = block.trim();
 
@@ -71,8 +71,8 @@ export function AnswerDisplay({ sections }: AnswerDisplayProps) {
                 </p>
               );
             })}
-          </div>
-        </section>
+            </div>
+          </section>
         );
       })}
     </div>
