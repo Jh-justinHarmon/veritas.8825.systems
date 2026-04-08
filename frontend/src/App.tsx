@@ -1,9 +1,11 @@
 import { HARDCODED_RESPONSE } from './hardcoded-data'
 import { AnswerDisplay } from './components/AnswerDisplay'
+import BackgroundLayer from './components/BackgroundLayer'
 
 function App() {
   return (
-    <main className="min-h-screen bg-[#0b1020] text-white">
+    <main className="min-h-screen bg-[#0b1020] text-white relative">
+      <BackgroundLayer site="claude" />
       <div className="w-full max-w-5xl mx-auto px-6 pt-8 pb-4">
         <p className="text-sm uppercase tracking-[0.18em] text-zinc-500 mb-2">
           Veritas Demo
