@@ -4,8 +4,8 @@ import { AnswerDisplay } from './components/AnswerDisplay'
 function App() {
   return (
     <main className="min-h-screen bg-[#0b1020] text-white">
-      <div className="w-full max-w-5xl mx-auto px-6 pt-10 pb-6">
-        <p className="text-sm uppercase tracking-[0.18em] text-zinc-500 mb-3">
+      <div className="w-full max-w-5xl mx-auto px-6 pt-8 pb-4">
+        <p className="text-sm uppercase tracking-[0.18em] text-zinc-500 mb-2">
           Veritas Demo
         </p>
         <h1 className="text-3xl md:text-4xl font-semibold text-zinc-100 leading-tight">

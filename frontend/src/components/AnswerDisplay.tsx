@@ -12,20 +12,28 @@ interface AnswerDisplayProps {
 const sectionStyles: Record<string, string> = {
   "Core Answer": "bg-zinc-900/70 border border-zinc-800",
   "Implementation Insight": "bg-blue-950/20 border border-blue-900/40",
-  "Common Pitfalls": "bg-zinc-900 border-l-4 border-amber-400 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]",
+  "Common Pitfalls": "bg-zinc-950/90 border-l-[6px] border-amber-500/80 shadow-lg shadow-amber-900/20",
 };
 
 export function AnswerDisplay({ sections }: AnswerDisplayProps) {
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 py-10 space-y-6 text-left">
-      {sections.map((section) => (
-        <section
-          key={section.title}
-          className={`rounded-2xl p-6 md:p-7 ${sectionStyles[section.title] ?? "bg-zinc-900/70 border border-zinc-800"}`}
-        >
-          <h3 className="text-lg md:text-xl font-semibold text-zinc-100 mb-4">
-            {section.title}
-          </h3>
+    <div className="w-full max-w-4xl mx-auto px-6 pt-4 pb-10 space-y-6 text-left">
+      {sections.map((section) => {
+        const isPitfalls = section.title === "Common Pitfalls";
+        
+        return (
+          <section
+            key={section.title}
+            className={`rounded-2xl p-6 md:p-7 ${sectionStyles[section.title] ?? "bg-zinc-900/70 border border-zinc-800"}`}
+          >
+            {isPitfalls && (
+              <div className="text-xs uppercase tracking-wider text-amber-400/70 mb-2 font-medium">
+                Where it breaks in practice
+              </div>
+            )}
+            <h3 className="text-lg md:text-xl font-semibold text-zinc-100 mb-4">
+              {section.title}
+            </h3>
 
           <div className="space-y-4 text-zinc-300 leading-8 text-[17px]">
             {section.content.split("\n\n").map((block, idx) => {
@@ -39,7 +47,7 @@ export function AnswerDisplay({ sections }: AnswerDisplayProps) {
 
               if (isAnchorLine) {
                 return (
-                  <p key={idx} className="font-semibold text-zinc-100">
+                  <p key={idx} className="font-bold text-zinc-50 text-[18px] leading-relaxed">
                     {trimmed.replace(/\*\*/g, "")}
                   </p>
                 );
@@ -65,7 +73,8 @@ export function AnswerDisplay({ sections }: AnswerDisplayProps) {
             })}
           </div>
         </section>
-      ))}
+        );
+      })}
     </div>
   );
 }
