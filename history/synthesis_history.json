@@ -1,0 +1,1247 @@
+[
+  {
+    "id": "a28f308c-88d9-4f55-94b5-69076fb68ccb",
+    "timestamp": "2026-04-09T23:20:03.962311",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Tool selection depends on clarity and specificity",
+          "paragraphs": [
+            "One common reason Claude calls the wrong tool is due to vague or similar tool descriptions. If multiple tools have overlapping descriptions, Claude may not distinguish between them accurately, leading to incorrect tool selection. For instance, tools with descriptions like 'Gets user information' versus 'Gets user data' can confuse the model [6]. The solution is to provide extremely specific descriptions that clearly state each tool's use case and data it returns [6][7]. This specificity reduces ambiguity and helps Claude choose the correct tool for the task."
+          ],
+          "sourceIds": [
+            "6",
+            "7"
+          ]
+        },
+        {
+          "title": "Parameter errors arise from naming inconsistency and schema complexity",
+          "paragraphs": [
+            "Claude sometimes uses incorrect parameters due to inconsistent naming conventions or overly complex tool schemas. For example, if a tool schema uses 'user_id' but Claude generates 'userId' or 'id', the call fails because the parameters don't match [6][9]. Consistent naming conventions such as choosing between snake_case and camelCase help mitigate these issues [6]. Additionally, simplifying schemas to avoid unnecessary nesting and providing explicit examples can prevent parameter generation errors [10]."
+          ],
+          "sourceIds": [
+            "6",
+            "9",
+            "10"
+          ]
+        },
+        {
+          "title": "Effective error handling enhances tool use reliability",
+          "paragraphs": [
+            "Handling errors gracefully is crucial for maintaining effective tool use in Claude. Common issues include Claude not handling permission errors well, failing to guide users on how to resolve them. For instance, when a tool requires permissions that haven't been granted, Claude might respond with 'I can't access that file' without providing guidance on resolving the issue [10]. Including actionable error messages that explain both the problem and the solution can help users correct these situations [10]. Additionally, implementing error recovery patterns by returning structured error messages can prompt Claude to adjust its approach or ask for clarification [5]."
+          ],
+          "sourceIds": [
+            "5",
+            "10"
+          ]
+        },
+        {
+          "title": "Optimizing tool use involves managing context and avoiding redundancy",
+          "paragraphs": [
+            "Maintaining a clear context and avoiding redundant tool calls are important for efficient tool use. Claude can enter loops where it repeatedly calls the same tool if previous results are not clearly signaled as complete or if conversation history is truncated too aggressively [9]. Implementing loop detection and maintaining comprehensive conversation histories can prevent repeated tool calls and ensure that Claude retains necessary context [5][9]. Moreover, lazy loading of tool schemas based on conversation relevance can help manage context window usage efficiently [5]."
+          ],
+          "sourceIds": [
+            "5",
+            "9"
+          ]
+        }
+      ],
+      "sources": {
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:20:03.962111"
+    }
+  },
+  {
+    "id": "a95b413f-a754-4256-a8c5-4fd1df78b3b4",
+    "timestamp": "2026-04-09T23:19:00.226555",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous Tool Descriptions Lead to Incorrect Tool Selection",
+          "paragraphs": [
+            "Claude often calls the wrong tool when faced with multiple tools that have similar or vague descriptions. This occurs because the model relies heavily on tool descriptions to determine which tool to use, and if these descriptions are not specific enough, Claude may choose incorrectly. For example, tools like 'get_user_profile' and 'get_user_settings' with broad descriptions such as 'Gets user information' can cause Claude to randomly select between them [6]. The solution is to rewrite tool descriptions to be extremely specific, detailing the exact use case and expected output for each tool [6]."
+          ],
+          "sourceIds": [
+            "6",
+            "7"
+          ]
+        },
+        {
+          "title": "Parameter Naming Consistency is Crucial for Accurate Tool Use",
+          "paragraphs": [
+            "Claude can generate incorrect parameters if the naming conventions are inconsistent across your API. This problem is exacerbated when using complex nested objects or ambiguous parameter names, leading Claude to 'hallucinate' parameters like 'userId' instead of the correct 'user_id' [6]. To prevent such issues, it's important to use consistent naming conventions, such as choosing between snake_case or camelCase, and to provide clear examples in parameter descriptions to guide the model [9][10]."
+          ],
+          "sourceIds": [
+            "6",
+            "9",
+            "10"
+          ]
+        },
+        {
+          "title": "Error Handling Must Guide Claude to Resolve Permissions Issues",
+          "paragraphs": [
+            "When Claude encounters permissions errors, such as those when trying to use a tool without proper access, the feedback often fails to help the model or the user rectify the situation. If Claude receives a permission error, such as being unable to read a file, it might simply relay an unhelpful message like 'I can't access that file' without further instructions [10]. Effective error handling should include actionable guidance, explaining how to resolve the permission issue, such as directing users to enable necessary permissions in settings [10]."
+          ],
+          "sourceIds": [
+            "10",
+            "4"
+          ]
+        },
+        {
+          "title": "Effective Context Management Prevents Tool Use Confusion",
+          "paragraphs": [
+            "Maintaining context in multi-turn conversations is critical for preventing Claude from repeatedly calling the same tool or misunderstanding the state of the interaction. Developers often truncate conversation history too aggressively, which can lead to Claude 'forgetting' previous tool calls and repeating actions unnecessarily [5]. A robust implementation should preserve the conversation history accurately, including all tool_use and tool_result pairs, to maintain continuity and clarity in the interaction [5]."
+          ],
+          "sourceIds": [
+            "5",
+            "7"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:19:00.226465"
+    }
+  },
+  {
+    "id": "4f0d9d59-8e63-4e20-909c-091ccf172e17",
+    "timestamp": "2026-04-09T23:19:00.124648",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous Tool Descriptions Lead to Incorrect Tool Calls",
+          "paragraphs": [
+            "Claude often calls the wrong tool when multiple similar tools are available due to vague or overlapping descriptions. For instance, tools with descriptions like 'Gets user information' can confuse Claude, causing it to randomly select between them. This issue arises because the tool descriptions don't clearly specify the use case or the data returned [6][9]. The solution is to write extremely specific descriptions that detail when each tool should be used and what data it will return, thereby reducing ambiguity and helping Claude make the correct choice [7][9]."
+          ],
+          "sourceIds": [
+            "6",
+            "7",
+            "9"
+          ]
+        },
+        {
+          "title": "Inconsistent Parameter Naming Causes Execution Errors",
+          "paragraphs": [
+            "Parameter naming inconsistencies across tool schemas lead to Claude using incorrect parameters, such as generating 'userId' instead of 'user_id', causing tool execution failures. This problem is exacerbated by complex nested objects and unclear parameter descriptions [6][9]. To address this, consistent naming conventions should be applied across all tools, and explicit examples should be provided in the parameter descriptions to show the exact format expected [6][10]."
+          ],
+          "sourceIds": [
+            "6",
+            "9",
+            "10"
+          ]
+        },
+        {
+          "title": "Permission and Error Handling Are Often Inadequate",
+          "paragraphs": [
+            "Claude sometimes attempts to use tools for which it lacks permissions, resulting in failures that are not well-handled. For example, if a tool call fails due to missing permissions, Claude might simply report 'I can't access that file' without providing guidance on how to resolve the issue. Error handling should include actionable guidance that explains the problem and suggests a solution, such as instructing users to modify permissions settings [4][10].",
+            "Moreover, when encountering permission errors, returning a tool_result block with `is_error: true` and a descriptive message can help Claude adjust its approach or ask for clarification [5][10]."
+          ],
+          "sourceIds": [
+            "4",
+            "5",
+            "10"
+          ]
+        },
+        {
+          "title": "Tool Schema Complexity and Token Limits Can Impede Performance",
+          "paragraphs": [
+            "Complex tool schemas with nested structures can lead to parameter generation errors, as Claude might misinterpret the required format. Simplifying schemas and providing clear examples can mitigate this issue [9][10]. Additionally, large tool results can exceed token limits, truncating responses mid-way. To manage this, developers should implement result pagination or summarization, allowing Claude to handle large datasets effectively without hitting token constraints [10]."
+          ],
+          "sourceIds": [
+            "9",
+            "10"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:19:00.124477"
+    }
+  },
+  {
+    "id": "bf9ae658-9a95-4782-8586-de8edac73fe5",
+    "timestamp": "2026-04-09T23:18:54.853422",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous Tool Descriptions Cause Incorrect Tool Selection",
+          "paragraphs": [
+            "Claude often calls the wrong tool when descriptions are vague or too similar. This issue arises when multiple tools are available with overlapping functionalities, and Claude cannot distinguish between them due to insufficient detail in their descriptions. For example, tools with descriptions like 'Gets user information' and 'Gets user data' can lead to random selection by the model [6]. To address this, developers should provide highly specific descriptions that clearly differentiate the tools' purposes, such as detailing exact data returned and the context for use [9]."
+          ],
+          "sourceIds": [
+            "6",
+            "9"
+          ]
+        },
+        {
+          "title": "Inconsistent Parameter Naming Leads to Errors",
+          "paragraphs": [
+            "Claude may generate incorrect parameters due to inconsistencies in naming conventions across the API. This often results in parameter hallucination, where Claude uses incorrect formats or names that do not match the tool's schema, such as using 'userId' instead of 'user_id' [6]. This inconsistency can cause tool execution failures. Implementing a consistent naming convention and including explicit examples in the parameter descriptions can significantly reduce these errors [9]."
+          ],
+          "sourceIds": [
+            "6",
+            "9"
+          ]
+        },
+        {
+          "title": "Improper Error Handling Affects Tool Usage",
+          "paragraphs": [
+            "Error handling is crucial for managing Claude's interactions with tools, especially when permissions are lacking or parameters are invalid. When Claude encounters permission errors, it might fail to provide guidance on resolving the issue, such as how to grant necessary permissions [10]. Furthermore, returning structured error messages that include both the problem and potential solutions can help Claude adjust its approach or request further clarification [5][10]."
+          ],
+          "sourceIds": [
+            "5",
+            "10"
+          ]
+        },
+        {
+          "title": "Complex Schemas and Context Management Impact Performance",
+          "paragraphs": [
+            "Complex tool schemas and the management of context windows can lead to performance issues. Tools with intricate nested structures can confuse Claude, leading to invalid parameter generation and schema validation failures [10]. Additionally, large tool definitions can consume significant context window space, causing truncation or incomplete responses due to token limits [5]. Simplifying schemas and implementing strategies like lazy loading and result pagination can mitigate these issues by optimizing the use of context and simplifying parameter structures [5][10]."
+          ],
+          "sourceIds": [
+            "5",
+            "10"
+          ]
+        }
+      ],
+      "sources": {
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:18:54.853354"
+    }
+  },
+  {
+    "id": "93dfced7-3d2c-40b0-81e3-ae4d1aef3980",
+    "timestamp": "2026-04-09T23:18:53.280948",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous Tool Descriptions Lead to Incorrect Tool Selection",
+          "paragraphs": [
+            "Claude often calls the wrong tool when the descriptions of available tools are too similar or vague. This problem arises when tool descriptions do not clearly differentiate the purpose or expected input/output of each tool, leading to confusion [6]. For example, if you have tools like `get_user_profile` and `get_user_settings` with similar descriptions, Claude might randomly choose between them due to the lack of specificity in their descriptions [6]. The solution is to rewrite tool descriptions to be extremely specific about the use case and data returned, which helps Claude to select the correct tool more reliably [6]."
+          ],
+          "sourceIds": [
+            "6",
+            "7"
+          ]
+        },
+        {
+          "title": "Parameter Naming Inconsistencies Cause Errors",
+          "paragraphs": [
+            "Claude can generate incorrect or non-existent parameters due to naming inconsistencies across tool schemas. This problem is particularly common with complex nested objects or when there is ambiguity in parameter names [6]. For instance, a tool schema might define a parameter as `user_id`, but Claude could generate variations like `userId` or `id`, leading to execution errors [6]. The best practice to mitigate this issue is to enforce consistent naming conventions (e.g., always using snake_case or camelCase) and providing explicit examples in parameter descriptions to clarify the expected format [6]."
+          ],
+          "sourceIds": [
+            "6",
+            "9"
+          ]
+        },
+        {
+          "title": "Tool Result Handling and Error Feedback Are Critical",
+          "paragraphs": [
+            "Errors in tool execution, such as permission denials, need to be handled effectively to guide Claude towards a solution. Often, error messages are too technical or lack actionable guidance, which fails to help Claude recover from the error [10]. For example, when encountering a permission error, it's important to return messages that include both the problem and a clear solution, such as providing steps to grant the necessary permissions [10]. Additionally, ensuring that tool results are returned in a structured, concise format can prevent issues where Claude ignores the results due to mismatched expectations or verbosity [9]."
+          ],
+          "sourceIds": [
+            "9",
+            "10"
+          ]
+        },
+        {
+          "title": "Complex Schemas and Context Management Impact Performance",
+          "paragraphs": [
+            "Using complex tool schemas with nested objects can lead Claude to generate parameters that fail validation due to their complexity or unintuitive naming [10]. Simplifying schemas to use flat structures or providing clear examples can alleviate these issues [10]. Additionally, managing the context window is crucial as tool definitions and results can consume significant token space, potentially leading to truncation or incomplete responses [5]. Implementing lazy loading of tool schemas and summarizing large results can help manage token limits effectively, ensuring Claude operates within the available context window [5]."
+          ],
+          "sourceIds": [
+            "5",
+            "10"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:18:53.280818"
+    }
+  },
+  {
+    "id": "73739ee6-b3ad-4ee6-b408-402e3fb1e2e3",
+    "timestamp": "2026-04-09T23:17:38.682364",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous Tool Descriptions Lead to Incorrect Tool Selection",
+          "paragraphs": [
+            "Claude often calls the wrong tool when multiple tools have similar or vague descriptions. This can occur if tools like `get_user_profile` and `get_user_settings` are both described as retrieving 'user information', leading Claude to randomly select between them [6][9]. The solution is to provide highly specific descriptions that clearly delineate when each tool should be used, such as specifying the data type and use case in the description [6]."
+          ],
+          "sourceIds": [
+            "6",
+            "9"
+          ]
+        },
+        {
+          "title": "Inconsistent Parameter Naming Causes Execution Failures",
+          "paragraphs": [
+            "Claude may use incorrect parameters due to inconsistencies in parameter naming conventions across tool schemas. For instance, if a tool schema uses `user_id` but Claude generates `userId`, this mismatch can cause execution failures [6][9]. Ensuring consistent naming conventions and providing explicit examples in parameter descriptions can mitigate this issue [9]. Additionally, production systems often implement parameter validation to catch these errors before execution [7]."
+          ],
+          "sourceIds": [
+            "6",
+            "7",
+            "9"
+          ]
+        },
+        {
+          "title": "Failure to Handle Permissions Leads to Tool Use Errors",
+          "paragraphs": [
+            "Claude may encounter permission errors if it attempts to access tools or applications without the necessary permissions, leading to failed tool calls. Such errors occur when the error handling is insufficiently informative, for instance, when Claude simply reports a lack of access without offering guidance on granting permissions [2][10]. To address this, error messages should include both the problem and a clear solution, such as instructions on how to adjust settings to grant access [10]."
+          ],
+          "sourceIds": [
+            "2",
+            "10"
+          ]
+        },
+        {
+          "title": "Complex Tool Schemas and Token Limits Cause Parameter and Response Errors",
+          "paragraphs": [
+            "Claude can generate invalid parameters if tool schemas are overly complex, particularly when nested objects are involved. Simplifying schemas or providing clear examples can help avoid these errors [10]. Furthermore, large tool results can exceed token limits, resulting in truncated responses. Implementing strategies like result summarization or pagination can prevent such issues by managing the context window effectively [10]."
+          ],
+          "sourceIds": [
+            "10"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:17:38.682281"
+    }
+  },
+  {
+    "id": "51f9e469-b29c-4c5d-95b3-82e99b9419bb",
+    "timestamp": "2026-04-09T23:17:38.551453",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous tool descriptions lead to incorrect tool selection",
+          "paragraphs": [
+            "Claude may call the wrong tool when tool descriptions are too similar or vague. This often occurs when multiple tools have overlapping functions but their descriptions do not clearly differentiate their purposes. For example, tools like `get_user_profile` and `get_user_settings` might be used interchangeably if their descriptions are not explicit about their distinct uses. To resolve this, developers should write highly specific descriptions that indicate the exact context and data each tool is intended to handle [6][9]."
+          ],
+          "sourceIds": [
+            "6",
+            "9"
+          ]
+        },
+        {
+          "title": "Inconsistent parameter naming causes incorrect parameter usage",
+          "paragraphs": [
+            "Claude might use incorrect parameters due to naming inconsistencies or unclear parameter descriptions. This can result in parameter hallucination, where Claude generates parameters that don't exist or uses incorrect types. For instance, a parameter defined as `user_id` might be misinterpreted as `userId` or `id`. Developers should enforce consistent naming conventions and include explicit examples in the parameter descriptions to prevent such issues [6][7]."
+          ],
+          "sourceIds": [
+            "6",
+            "7"
+          ]
+        },
+        {
+          "title": "Complex tool schemas contribute to validation and execution failures",
+          "paragraphs": [
+            "Complex tool schemas with nested objects or strict validation rules can lead to schema validation failures. Claude might generate invalid parameters if the schema is too intricate or if parameter names are not intuitive. Simplifying schemas by using flat parameter structures and providing explicit examples can help mitigate these issues. Additionally, implementing robust parameter validation in two stages—checking for presence and type, followed by business logic constraints—can prevent runtime errors [5][10]."
+          ],
+          "sourceIds": [
+            "5",
+            "10"
+          ]
+        },
+        {
+          "title": "Error handling and permissions affect tool execution success",
+          "paragraphs": [
+            "When Claude encounters permission errors, it may fail to guide users on how to resolve them, resulting in incomplete or incorrect tool usage. Providing clear, actionable error messages that explain both the problem and how to grant the necessary permissions can help guide Claude's behavior effectively. Moreover, handling errors by returning structured tool_result blocks with explicit error information can enable Claude to adjust its approach or ask for clarification, enhancing its ability to recover from errors [2][10]."
+          ],
+          "sourceIds": [
+            "2",
+            "10"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation: Introduction and Capabilities",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Anthropic Claude Documentation: Permissions and Access",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Anthropic Claude Documentation: Performance and Prompting",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Anthropic Claude Documentation: Safety and Recommendations",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice (Additional)",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis (Additional)",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis (Further)",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:17:38.551251"
+    }
+  }
+]

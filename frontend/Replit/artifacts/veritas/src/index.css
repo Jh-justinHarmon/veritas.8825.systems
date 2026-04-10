@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --font-sans: var(--app-font-sans);
+  --font-mono: var(--app-font-mono);
+}
+
+:root {
+  --background: 225 22% 5%;
+  --foreground: 215 20% 75%;
+  --border: 220 15% 18%;
+  --app-font-sans: 'Inter', system-ui, sans-serif;
+  --app-font-mono: 'Menlo', 'Monaco', 'Courier New', monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}

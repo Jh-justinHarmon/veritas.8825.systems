@@ -1,0 +1,195 @@
+{
+  "spine_id": "veritas_v1_spine",
+  "version": "1.1.0",
+  "initiative": "veritas_v1",
+  "current_state": {
+    "phase_name": "phase_4_backend_integration",
+    "status": "in_progress"
+  },
+  "spine_type": "project_spine",
+  "purpose": "Ship Veritas V1 — curated understanding system demonstrating concept-driven synthesis with tier-aware sources",
+  "status": "active",
+  "last_updated": "2026-04-09",
+  
+  "core_principle": "Veritas is a career project, not an architecture project. Its job is to make you legible as an Applied AI Systems Engineer.",
+  
+  "validated_subjects": {
+    "anthropic": ["Tool Use & Function Calling", "Vision Capabilities", "Extended Thinking"],
+    "langchain": ["LangGraph Agents", "LangSmith Observability", "RAG"],
+    "stripe": ["Webhooks Integration", "Subscription & Usage-Based Billing", "Connect (Marketplaces)"],
+    "tier_coverage": "All 9 subjects validated with strong tier 2/3 support (3-5+ sources each)",
+    "validation_date": "2026-04-07",
+    "first_topic": "Tool Use & Function Calling",
+    "first_topic_rationale": "Strongest 3-layer separation (spec → interpretation → friction), real implementation gap, systematic failure modes"
+  },
+  
+  "architectural_boundaries": {
+    "backend_role": "Retrieval engine - provides evidence, not synthesis",
+    "backend_provides": [
+      "Semantic search with authority-weighted scoring",
+      "Tier-tagged source chunks",
+      "Citation metadata preservation",
+      "Evidence gathering"
+    ],
+    "adapter_role": "Format bridge - transforms retrieval results to UI contract",
+    "adapter_provides": [
+      "Data transformation (backend format → Replit UI format)",
+      "Concept segmentation (placeholder in mock mode)",
+      "Type classification (tier → docs/practice/failure)",
+      "Mock data provision for demo"
+    ],
+    "ui_role": "Canonical interface - defines answer contract",
+    "ui_contract": {
+      "format": "ideas[] + sources{}",
+      "idea_structure": "concept-driven synthesis (not 3-layer sections)",
+      "citation_format": "[source-id] inline citations",
+      "source_types": "docs | practice | failure"
+    }
+  },
+  
+  "replit_integration": {
+    "status": "Phase A+B complete",
+    "approach": "Staged integration with clean boundaries",
+    "what_was_integrated": [
+      "Replit UI components (Home.tsx, 55 shadcn/ui components)",
+      "Adapter layer (veritasAdapter.ts)",
+      "Mock mode (hardcoded data → Replit format)",
+      "QueryClient wiring (React Query setup)"
+    ],
+    "what_was_preserved": [
+      "Existing backend (no changes)",
+      "Config files (vite, tsconfig, index.html)",
+      "Tailwind v3 (no upgrade)",
+      "Old components (not deleted yet)"
+    ],
+    "verification_results": {
+      "phase_a": "UI renders without crash ✓",
+      "phase_b": "All interactions functional ✓",
+      "concepts_render": "3 concepts display correctly ✓",
+      "citations_work": "Inline citations clickable ✓",
+      "sidebar_functional": "Source panel with type badges ✓",
+      "scroll_tracking": "Active concept tracking works ✓"
+    }
+  },
+  
+  "phases": [
+    {
+      "id": "phase_0_planning",
+      "name": "Planning & Setup",
+      "status": "COMPLETE",
+      "completion_date": "2026-04-07"
+    },
+    {
+      "id": "phase_1_corpus_retrieval",
+      "name": "Corpus & Retrieval",
+      "status": "COMPLETE",
+      "completion_date": "2026-04-08",
+      "actual_implementation": {
+        "files": [
+          "backend/ingestion/process_pdf_docs.py",
+          "backend/ingestion/chunk_docs.py",
+          "backend/ingestion/embed_chunks.py",
+          "backend/retrieval/simple_retriever.py"
+        ],
+        "approach": "Authority-weighted scoring (70% similarity + 30% tier authority)"
+      }
+    },
+    {
+      "id": "phase_2_answer_generation",
+      "name": "Answer Generation",
+      "status": "COMPLETE",
+      "completion_date": "2026-04-08",
+      "actual_implementation": {
+        "files": ["backend/agents/answer_agent.py"],
+        "output_format": "Single answer text with [1][2] citations + citation metadata",
+        "note": "Outputs single-answer format, not concept-driven ideas[] format"
+      }
+    },
+    {
+      "id": "phase_3_eval_scoring",
+      "name": "Eval Scoring",
+      "status": "PARTIAL",
+      "actual_implementation": {
+        "files": ["backend/evals/scoring.py"],
+        "status": "Scoring logic exists but not integrated into UI",
+        "remaining_work": "Wire scoring into UI display"
+      }
+    },
+    {
+      "id": "phase_4_ui_core",
+      "name": "Core UI (Mock Mode)",
+      "status": "COMPLETE",
+      "completion_date": "2026-04-09",
+      "actual_implementation": {
+        "approach": "Staged Replit UI integration",
+        "files": [
+          "frontend/src/pages/Home.tsx",
+          "frontend/src/components/ui/* (55 shadcn components)",
+          "frontend/src/adapters/veritasAdapter.ts",
+          "frontend/src/App.tsx (QueryClient wiring)"
+        ],
+        "verification": "Phase A+B complete - all interactions functional",
+        "mode": "Mock mode (hardcoded data via adapter)"
+      }
+    },
+    {
+      "id": "phase_4_backend_integration",
+      "name": "Backend Integration",
+      "status": "IN_PROGRESS",
+      "remaining_work": [
+        "Create Flask API wrapper",
+        "Enhance adapter with backend response transformation",
+        "Replace mock mode with API calls",
+        "Wire eval scoring into UI",
+        "Test end-to-end flow"
+      ]
+    },
+    {
+      "id": "phase_5_trace_history",
+      "name": "Trace & History",
+      "status": "PENDING"
+    },
+    {
+      "id": "phase_6_demo_launch",
+      "name": "Demo & Launch",
+      "status": "PENDING"
+    }
+  ],
+  
+  "execution_invariants": [
+    {
+      "id": "backend_is_retrieval_not_synthesis",
+      "rule": "Backend provides retrieval/evidence, not concept synthesis",
+      "enforcement": "architectural_boundary"
+    },
+    {
+      "id": "ui_contract_is_canonical",
+      "rule": "Replit UI format (ideas[] + sources{}) is canonical for demo",
+      "enforcement": "architectural_boundary"
+    },
+    {
+      "id": "working_demo_before_polish",
+      "rule": "Working demo is required before any UI polish",
+      "enforcement": "hard_fail"
+    }
+  ],
+  
+  "next_steps": {
+    "immediate": [
+      "Create Flask API wrapper (POST /api/synthesize)",
+      "Enhance adapter to transform backend response → ideas[] format",
+      "Replace mock mode with API calls",
+      "Wire eval scoring into UI"
+    ],
+    "short_term": [
+      "Add trace/history features",
+      "Test end-to-end flow",
+      "Deploy to Fly.io"
+    ],
+    "final": [
+      "Record demo video",
+      "Write README",
+      "Make repo public"
+    ]
+  }
+}

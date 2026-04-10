@@ -1,0 +1,384 @@
+{
+  "spine_id": "veritas_project_spine_v1.1",
+  "spine_type": "project_spine",
+  "purpose": "Ship Veritas V1 — curated understanding system demonstrating concept-driven synthesis with tier-aware sources",
+  "status": "active",
+  "current_phase": "phase_4_backend_integration",
+  "last_updated": "2026-04-09",
+  
+  "core_principle": "Veritas is a career project, not an architecture project. Its job is to make you legible as an Applied AI Systems Engineer.",
+  
+  "validated_subjects": {
+    "anthropic": ["Tool Use & Function Calling", "Vision Capabilities", "Extended Thinking"],
+    "langchain": ["LangGraph Agents", "LangSmith Observability", "RAG"],
+    "stripe": ["Webhooks Integration", "Subscription & Usage-Based Billing", "Connect (Marketplaces)"],
+    "tier_coverage": "All 9 subjects validated with strong tier 2/3 support (3-5+ sources each)",
+    "validation_date": "2026-04-07",
+    "first_topic": "Tool Use & Function Calling",
+    "first_topic_rationale": "Strongest 3-layer separation (spec → interpretation → friction), real implementation gap, systematic failure modes"
+  },
+  
+  "architectural_boundaries": {
+    "backend_role": "Retrieval engine - provides evidence, not synthesis",
+    "backend_provides": [
+      "Semantic search with authority-weighted scoring",
+      "Tier-tagged source chunks",
+      "Citation metadata preservation",
+      "Evidence gathering"
+    ],
+    "adapter_role": "Format bridge - transforms retrieval results to UI contract",
+    "adapter_provides": [
+      "Data transformation (backend format → Replit UI format)",
+      "Concept segmentation (placeholder in mock mode)",
+      "Type classification (tier → docs/practice/failure)",
+      "Mock data provision for demo"
+    ],
+    "ui_role": "Canonical interface - defines answer contract",
+    "ui_contract": {
+      "format": "ideas[] + sources{}",
+      "idea_structure": "concept-driven synthesis (not 3-layer sections)",
+      "citation_format": "[source-id] inline citations",
+      "source_types": "docs | practice | failure"
+    }
+  },
+  
+  "replit_integration": {
+    "status": "Phase A+B complete",
+    "approach": "Staged integration with clean boundaries",
+    "what_was_integrated": [
+      "Replit UI components (Home.tsx, 55 shadcn/ui components)",
+      "Adapter layer (veritasAdapter.ts)",
+      "Mock mode (hardcoded data → Replit format)",
+      "QueryClient wiring (React Query setup)"
+    ],
+    "what_was_preserved": [
+      "Existing backend (no changes)",
+      "Config files (vite, tsconfig, index.html)",
+      "Tailwind v3 (no upgrade)",
+      "Old components (not deleted yet)"
+    ],
+    "verification_results": {
+      "phase_a": "UI renders without crash ✓",
+      "phase_b": "All interactions functional ✓",
+      "concepts_render": "3 concepts display correctly ✓",
+      "citations_work": "Inline citations clickable ✓",
+      "sidebar_functional": "Source panel with type badges ✓",
+      "scroll_tracking": "Active concept tracking works ✓"
+    }
+  },
+  
+  "v1_definition_of_done": {
+    "description": "V1 is DONE when you can record a 2-3 minute demo video showing:",
+    "requirements": [
+      "Open the app at a public URL",
+      "Ask a question about developer docs",
+      "System shows answer with inline citations",
+      "System shows sources grouped by tier (Docs / Practice / Failure)",
+      "System shows trust signal: Docs sufficient / Docs partial / Docs insufficient",
+      "Open trace/details panel",
+      "Explain how system works in 30 seconds",
+      "Repo is public with README"
+    ],
+    "not_required_for_v1": [
+      "Perfect UI polish",
+      "Multiple domains",
+      "Multi-user auth",
+      "Agents",
+      "Live web search",
+      "Autonomous workflows"
+    ]
+  },
+  
+  "execution_invariants": [
+    {
+      "id": "v1_ships_before_new_infrastructure",
+      "rule": "V1 must ship before any new infrastructure work",
+      "enforcement": "hard_fail"
+    },
+    {
+      "id": "single_user_single_domain_single_page",
+      "rule": "V1 is single-user, single-domain, single-page",
+      "enforcement": "hard_fail"
+    },
+    {
+      "id": "no_agents_in_v1",
+      "rule": "No multi-agent orchestration in V1",
+      "enforcement": "hard_fail"
+    },
+    {
+      "id": "no_autonomous_workflows_in_v1",
+      "rule": "No autonomous workflows in V1",
+      "enforcement": "hard_fail"
+    },
+    {
+      "id": "no_live_web_search_in_v1",
+      "rule": "No live web search in V1 — manual corpus only",
+      "enforcement": "hard_fail"
+    },
+    {
+      "id": "hardcoded_scoring_allowed",
+      "rule": "Hardcoded scoring logic is allowed in V1",
+      "enforcement": "permissive"
+    },
+    {
+      "id": "working_demo_before_polish",
+      "rule": "Working demo is required before any UI polish",
+      "enforcement": "hard_fail"
+    },
+    {
+      "id": "demo_video_is_part_of_v1",
+      "rule": "Demo video is part of V1 definition of done",
+      "enforcement": "hard_fail"
+    },
+    {
+      "id": "metadata_preservation_required",
+      "rule": "Source tier metadata must survive entire pipeline",
+      "enforcement": "hard_fail"
+    },
+    {
+      "id": "backend_is_retrieval_not_synthesis",
+      "rule": "Backend provides retrieval/evidence, not concept synthesis",
+      "enforcement": "architectural_boundary"
+    },
+    {
+      "id": "ui_contract_is_canonical",
+      "rule": "Replit UI format (ideas[] + sources{}) is canonical for demo",
+      "enforcement": "architectural_boundary"
+    }
+  ],
+  
+  "phases": [
+    {
+      "id": "phase_0_planning",
+      "name": "Planning & Setup",
+      "status": "COMPLETE",
+      "completion_date": "2026-04-07",
+      "time_estimate": "1 day",
+      "prerequisites": [],
+      "deliverables": [
+        "Project directory created",
+        "Repo initialized",
+        "Tech stack confirmed",
+        "V1 scope locked (this spine)"
+      ],
+      "completion_criteria": "Directory exists, repo initialized, spine committed"
+    },
+    {
+      "id": "phase_1_corpus_retrieval",
+      "name": "Corpus & Retrieval",
+      "status": "COMPLETE",
+      "completion_date": "2026-04-08",
+      "time_estimate": "2-3 days",
+      "prerequisites": ["phase_0_planning"],
+      "deliverables": [
+        "Ingestion pipeline (PDF processing, chunking, embedding)",
+        "Retrieval system (cosine similarity + authority weighting)",
+        "Tier metadata preservation",
+        "Claude docs ingested with tier tags"
+      ],
+      "completion_criteria": "Can query and get back docs with tier tags",
+      "actual_implementation": {
+        "files": [
+          "backend/ingestion/process_pdf_docs.py",
+          "backend/ingestion/chunk_docs.py",
+          "backend/ingestion/embed_chunks.py",
+          "backend/retrieval/simple_retriever.py"
+        ],
+        "approach": "Authority-weighted scoring (70% similarity + 30% tier authority)"
+      }
+    },
+    {
+      "id": "phase_2_answer_generation",
+      "name": "Answer Generation",
+      "status": "COMPLETE",
+      "completion_date": "2026-04-08",
+      "time_estimate": "2-3 days",
+      "prerequisites": ["phase_1_corpus_retrieval"],
+      "deliverables": [
+        "Answer generation agent created",
+        "Inline citations working ([1], [2], etc.)",
+        "Citations map to source documents",
+        "Tier metadata preserved in citations"
+      ],
+      "completion_criteria": "Can ask question and get answer with working citation links",
+      "actual_implementation": {
+        "files": ["backend/agents/answer_agent.py"],
+        "output_format": "Single answer text with [1][2] citations + citation metadata",
+        "note": "Outputs single-answer format, not concept-driven ideas[] format"
+      }
+    },
+    {
+      "id": "phase_3_eval_scoring",
+      "name": "Eval Scoring",
+      "status": "PARTIAL",
+      "time_estimate": "2 days",
+      "prerequisites": ["phase_2_answer_generation"],
+      "deliverables": [
+        "Coverage score: cited_sentences / total_sentences",
+        "Authority score: tier-weighted average",
+        "Docs sufficiency: Sufficient / Partial / Insufficient",
+        "Review flag: coverage < 0.7 OR authority < 0.6"
+      ],
+      "completion_criteria": "Answer shows 4 scores and trust signal",
+      "actual_implementation": {
+        "files": ["backend/evals/scoring.py"],
+        "status": "Scoring logic exists but not integrated into UI",
+        "remaining_work": "Wire scoring into UI display"
+      }
+    },
+    {
+      "id": "phase_4_ui_core",
+      "name": "Core UI (Mock Mode)",
+      "status": "COMPLETE",
+      "completion_date": "2026-04-09",
+      "time_estimate": "3-4 days",
+      "prerequisites": ["phase_3_eval_scoring"],
+      "deliverables": [
+        "Replit UI integrated (concept-driven reading interface)",
+        "Answer display with inline citations",
+        "Sources panel with tier badges (SPEC/PRACTICE/FAILURE)",
+        "Scroll-based active concept tracking",
+        "Mock mode functional with adapter layer"
+      ],
+      "completion_criteria": "Can use the app end-to-end in browser with mock data",
+      "actual_implementation": {
+        "approach": "Staged Replit UI integration",
+        "files": [
+          "frontend/src/pages/Home.tsx",
+          "frontend/src/components/ui/* (55 shadcn components)",
+          "frontend/src/adapters/veritasAdapter.ts",
+          "frontend/src/App.tsx (QueryClient wiring)"
+        ],
+        "verification": "Phase A+B complete - all interactions functional",
+        "mode": "Mock mode (hardcoded data via adapter)"
+      }
+    },
+    {
+      "id": "phase_4_backend_integration",
+      "name": "Backend Integration",
+      "status": "IN_PROGRESS",
+      "time_estimate": "2-3 days",
+      "prerequisites": ["phase_4_ui_core"],
+      "deliverables": [
+        "Flask/FastAPI wrapper for backend",
+        "API endpoint: POST /api/synthesize",
+        "Adapter enhancement (backend response → Replit format)",
+        "Frontend API client (replace mock mode)",
+        "Eval scoring integrated into UI"
+      ],
+      "completion_criteria": "Can ask question, backend retrieves, adapter transforms, UI displays",
+      "remaining_work": [
+        "Create Flask API wrapper",
+        "Enhance adapter with backend response transformation",
+        "Replace mock mode with API calls",
+        "Wire eval scoring into UI",
+        "Test end-to-end flow"
+      ]
+    },
+    {
+      "id": "phase_5_trace_history",
+      "name": "Trace & History",
+      "status": "PENDING",
+      "time_estimate": "2 days",
+      "prerequisites": ["phase_4_backend_integration"],
+      "deliverables": [
+        "Trace view (expandable panel)",
+        "Run history (simple list)",
+        "Replay functionality (optional if time-constrained)"
+      ],
+      "completion_criteria": "Can view trace and see past runs",
+      "allowed_shortcuts": [
+        "In-memory history is fine for V1",
+        "Simple JSON storage is fine",
+        "Replay can be deferred to V2 if needed"
+      ]
+    },
+    {
+      "id": "phase_6_demo_launch",
+      "name": "Demo & Launch",
+      "status": "PENDING",
+      "time_estimate": "2 days",
+      "prerequisites": ["phase_5_trace_history"],
+      "deliverables": [
+        "Demo video recorded (2-3 minutes)",
+        "README written (clear, concise)",
+        "Deployed to public URL (Fly.io)",
+        "Repo made public"
+      ],
+      "completion_criteria": "Demo video exists, app is live, repo is public",
+      "allowed_shortcuts": [
+        "Screen recording with voiceover is fine",
+        "Simple deployment is fine",
+        "No custom domain needed"
+      ]
+    }
+  ],
+  
+  "v1_features_locked": [
+    "Document ingestion with tier tagging",
+    "Authority-weighted retrieval",
+    "Answer generation with citations",
+    "Concept-driven UI (ideas[] format)",
+    "Source panel with type badges (docs/practice/failure)",
+    "Scroll-based concept navigation",
+    "4-score eval system (coverage, authority, sufficiency, review)",
+    "Trace & history",
+    "Demo video"
+  ],
+  
+  "forbidden_in_v1": [
+    "Multi-agent orchestration",
+    "Autonomous task execution",
+    "Multi-user authentication",
+    "Live web search",
+    "Workflow builders",
+    "Fancy memory features",
+    "Multiple domains",
+    "Custom embedding models",
+    "Advanced reranking",
+    "Human review UI (defer to V2)"
+  ],
+  
+  "success_criteria": {
+    "timeline": "10-14 days from phase 0 start",
+    "scope_adherence": "No features added beyond v1_features_locked",
+    "demo_quality": "2-3 minute video clearly showing concept-driven synthesis with tier-aware sources",
+    "public_visibility": "Live URL + public repo + README",
+    "career_impact": "Can say 'I built Veritas' in interviews with demo link"
+  },
+  
+  "what_this_project_proves": {
+    "for_anthropic": "Eval design, epistemic honesty, transparency, concept synthesis",
+    "for_perplexity": "Retrieval + citations, answer quality, product UI",
+    "for_startups": "Can ship working systems, not just architecture",
+    "for_you": "You are an Applied AI Systems Engineer who builds and ships"
+  },
+  
+  "one_sentence_pitch": "I built a concept-driven AI answer engine for developer documentation that synthesizes official docs, observed practice, and documented failures into unified concepts with inline citations, tier-aware source classification, and eval scoring",
+  
+  "reality_check": {
+    "this_is_not": "An architecture project, a research project, a perfect system",
+    "this_is": "A career project that makes you legible as an Applied AI Systems Engineer",
+    "job_is_not": "To be perfect",
+    "job_is": "To ship and demonstrate capabilities"
+  },
+  
+  "next_steps": {
+    "immediate": [
+      "Create Flask API wrapper (POST /api/synthesize)",
+      "Enhance adapter to transform backend response → ideas[] format",
+      "Replace mock mode with API calls",
+      "Wire eval scoring into UI"
+    ],
+    "short_term": [
+      "Add trace/history features",
+      "Test end-to-end flow",
+      "Deploy to Fly.io"
+    ],
+    "final": [
+      "Record demo video",
+      "Write README",
+      "Make repo public"
+    ]
+  }
+}

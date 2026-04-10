@@ -1,0 +1,62 @@
+Refine the current Veritas interface. Do not redesign it from scratch.
+
+What already works:
+
+* The answer is now organized by concept, not by knowledge type
+* Each concept weaves together specification, practical usage, and failure cases in one reading flow
+* The right rail updates based on the concept currently being read
+* Inline citations can focus the source panel on a specific source
+
+Keep all of that.
+
+Your job now is to improve **interaction clarity and reading confidence** without changing the core structure.
+
+Goals:
+
+* Make it more obvious that the interface is interactive
+* Strengthen the relationship between the main reading column and the right-side source panel
+* Improve readability, pacing, and scanability for experienced developers
+* Preserve the feeling of a precise technical document, not a dashboard or marketing page
+
+Focus on these refinements:
+
+1. **Interaction clarity**
+
+* Make it subtly obvious that inline citations are interactive
+* Make it clear that the source rail responds to reading position and citation focus
+* Add light affordances, not heavy UI chrome
+
+2. **Reading flow**
+
+* Tighten spacing and vertical rhythm where needed
+* Improve concept boundaries just enough to help scanning
+* Keep the answer feeling continuous and concept-driven
+
+3. **Right rail behavior**
+
+* Keep it contextual to the currently read concept
+* Make transitions between concept states feel intentional and easier to notice
+* Preserve the idea that the sidebar is a live footnote / source lens, not a static index
+
+4. **Polish**
+
+* Subtle motion is allowed only if it reinforces comprehension
+* Keep the interface calm, dense, and technically credible
+* Do not add decorative elements that do not improve understanding
+
+Do not:
+
+* redesign the layout
+* reintroduce cards or dashboard panels
+* separate content back into docs / practice / failure sections
+* make it more like chat
+* make it more like a SaaS landing page
+
+This is a refinement pass, not a new concept.
+
+The desired outcome:
+A developer should immediately understand that:
+
+* the answer is constructed concept by concept
+* sources are inspectable and contextual
+* the interface is helping them reason, not just read

@@ -30,33 +30,27 @@ def retrieve_chunks(
     query_embedding: List[float],
     all_chunks: List[Dict],
     top_k: int = 6,
-    authority_weight: float = 0.3
+    authority_weight: float = 0.3,
+    ensure_tier_diversity: bool = True
 ) -> List[Dict]:
     """
-    Retrieve top-k most relevant chunks using authority-weighted scoring.
-    
-    Scoring formula (from architecture doc):
-    score = (0.7 * cosine_similarity) + (0.3 * authority_score)
-    
-    Authority scores by tier:
-    - Tier 1: 1.0 (Official docs)
-    - Tier 2: 0.7 (Vendor content)
-    - Tier 3: 0.4 (Community)
+    Retrieve most relevant chunks using cosine similarity + authority weighting.
     
     Args:
         query_embedding: Query embedding vector
-        all_chunks: List of all chunks with embeddings
+        all_chunks: List of all available chunks with embeddings
         top_k: Number of chunks to return
-        authority_weight: Weight for authority score (default 0.3)
-    
+        authority_weight: Weight for authority score (0-1)
+        ensure_tier_diversity: If True, ensure at least one chunk from each tier
+        
     Returns:
-        List of top-k chunks sorted by score
+        List of top-k most relevant chunks
     """
-    # Authority scores by tier
+    # Authority scores by tier (higher tier = higher authority)
     tier_authority = {
-        1: 1.0,
-        2: 0.7,
-        3: 0.4
+        1: 1.0,   # Tier 1: Official docs (highest authority)
+        2: 0.7,   # Tier 2: Practice/implementation
+        3: 0.4    # Tier 3: Failure cases
     }
     
     scored_chunks = []
@@ -80,14 +74,46 @@ def retrieve_chunks(
             'chunk': chunk,
             'score': score,
             'similarity': similarity,
-            'authority': authority
+            'authority': authority,
+            'tier': tier
         })
     
     # Sort by score (descending)
     scored_chunks.sort(key=lambda x: x['score'], reverse=True)
     
-    # Return top-k chunks
-    return [item['chunk'] for item in scored_chunks[:top_k]]
+    if ensure_tier_diversity:
+        # Ensure tier diversity: get top chunks from each tier
+        tier_chunks = {1: [], 2: [], 3: []}
+        for item in scored_chunks:
+            tier = item['tier']
+            if tier in tier_chunks:
+                tier_chunks[tier].append(item)
+        
+        # Get top 2 from tier 1, top 2 from tier 2, top 2 from tier 3
+        # Adjust if tiers don't have enough chunks
+        selected = []
+        chunks_per_tier = max(1, top_k // 3)
+        
+        for tier in [1, 2, 3]:
+            tier_top = tier_chunks[tier][:chunks_per_tier]
+            selected.extend(tier_top)
+        
+        # Fill remaining slots with highest scored chunks not yet selected
+        remaining_slots = top_k - len(selected)
+        if remaining_slots > 0:
+            selected_chunk_ids = {id(item['chunk']) for item in selected}
+            for item in scored_chunks:
+                if id(item['chunk']) not in selected_chunk_ids:
+                    selected.append(item)
+                    if len(selected) >= top_k:
+                        break
+        
+        # Sort selected by score
+        selected.sort(key=lambda x: x['score'], reverse=True)
+        return [item['chunk'] for item in selected[:top_k]]
+    else:
+        # Return top-k chunks by score
+        return [item['chunk'] for item in scored_chunks[:top_k]]
 
 
 def load_chunks(chunks_file: Path = None) -> List[Dict]:
