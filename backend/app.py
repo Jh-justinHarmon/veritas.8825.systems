@@ -19,6 +19,7 @@ from agents.synthesis_agent import synthesize_answer
 from retrieval.simple_retriever import retrieve_chunks, load_chunks
 from ingestion.embed_chunks import generate_embedding
 from history.history_store import HistoryStore
+from abstraction.chunk_abstractor import abstract_chunks
 
 app = Flask(__name__)
 
@@ -60,8 +61,9 @@ def health():
     })
 
 
-@app.route('/api/synthesize', methods=['POST'])
-def synthesize():
+@app.route('/api/synthesize', methods=['POST', 'OPTIONS'])
+@app.route('/api/synthesize/<mode>', methods=['POST', 'OPTIONS'])
+def synthesize(mode=None):
     """
     Synthesize concept-driven answer from question.
     
@@ -115,8 +117,14 @@ def synthesize():
         )
         print(f"Retrieved {len(retrieved_chunks)} chunks")
         
+        # Step 2.5: Apply abstraction if mode is 'abstracted'
+        if mode == 'abstracted':
+            print(f"Applying abstraction to chunks...")
+            retrieved_chunks = abstract_chunks(retrieved_chunks)
+            print(f"Abstraction complete")
+        
         # Step 3: Synthesize answer
-        print(f"Synthesizing answer...")
+        print(f"Synthesizing answer (mode: {mode or 'raw'})...")
         answer = synthesize_answer(
             question=question,
             retrieved_chunks=retrieved_chunks,

@@ -1,0 +1,224 @@
+{
+  "demo_metadata": {
+    "subject": "Claude Vision Capabilities",
+    "demo_question": "I'm using Claude Vision but getting poor quality results and hallucinations. What am I doing wrong?",
+    "site": "Claude API",
+    "created": "2026-04-09",
+    "total_sources": 7,
+    "tier_distribution": {
+      "tier_1": 3,
+      "tier_2": 2,
+      "tier_3": 2
+    }
+  },
+  "sources": [
+    {
+      "id": "claude_vision_tier1_001",
+      "tier": 1,
+      "tier_label": "Official Documentation",
+      "authority": 1.0,
+      "title": "Vision - Claude API Docs",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/vision",
+      "source_type": "official_docs",
+      "role": "Core answer foundation - vision capabilities and API usage",
+      "key_concepts": [
+        "Multimodal capabilities",
+        "Image input methods",
+        "Supported formats",
+        "API usage",
+        "Limitations"
+      ],
+      "extracted_content": {
+        "what_is_vision": "Claude's vision capabilities allow it to understand and analyze images, opening up exciting possibilities for multimodal interaction.",
+        "supported_formats": "JPEG, PNG, GIF (first frame only), WebP",
+        "input_methods": [
+          "Base64-encoded images",
+          "Image URLs",
+          "Files API"
+        ],
+        "limitations": {
+          "people_identification": "Claude cannot be used to identify (i.e., name) people in images and will refuse to do so.",
+          "accuracy": "Claude may hallucinate or make mistakes when interpreting low-quality, rotated, or very small images under 200 pixels.",
+          "spatial_reasoning": "Claude's spatial reasoning abilities are limited. It may struggle with tasks requiring precise localization or layouts, like reading an analog clock face or describing exact positions of chess pieces.",
+          "counting": "Claude can give approximate counts of objects in an image but may not always be precisely accurate, especially with large numbers of small objects.",
+          "ai_generated": "Claude does not know if an image is AI-generated and may be incorrect if asked. Do not rely on it to detect fake or synthetic images."
+        },
+        "critical_warning": "Ensure the image is clear, high-quality, and correctly oriented for best results. Very small images under 200 pixels on any given edge may degrade performance."
+      }
+    },
+    {
+      "id": "claude_vision_tier1_002",
+      "tier": 1,
+      "tier_label": "Official Documentation",
+      "authority": 1.0,
+      "title": "Best practices for using vision with Claude",
+      "url": "https://platform.claude.com/cookbook/multimodal-best-practices-for-vision",
+      "source_type": "official_docs",
+      "role": "Official best practices and prompt engineering for vision",
+      "key_concepts": [
+        "Prompt engineering for vision",
+        "Hallucination mitigation",
+        "Role assignment",
+        "Multi-image analysis"
+      ],
+      "extracted_content": {
+        "hallucination_fix": "You can fix hallucination issues with traditional prompt engineering techniques like role assignment. For example: 'You have perfect vision and pay great attention to detail which makes you an expert at counting objects in images.'",
+        "prompt_engineering_example": "Before providing the answer in <answer> tags, think step by step in <thinking> tags and analyze every part of the image.",
+        "best_practice": "Request interpretation, not description. Claude's strength lies in understanding what visual content means, not just cataloging what it contains."
+      }
+    },
+    {
+      "id": "claude_vision_tier1_003",
+      "tier": 1,
+      "tier_label": "Official Documentation",
+      "authority": 1.0,
+      "title": "Claude Vision for Document Analysis - Developer's Guide",
+      "url": "https://getstream.io/blog/anthropic-claude-visual-reasoning/",
+      "source_type": "official_tutorial",
+      "role": "Comprehensive implementation guide with real-world examples",
+      "key_concepts": [
+        "Document analysis",
+        "Prompt engineering for visual tasks",
+        "Output structure",
+        "Uncertainty handling"
+      ],
+      "extracted_content": {
+        "request_interpretation": "Request interpretation, not description. Compare: Weak: 'List all the figures in this paper.' Strong: 'For each figure, explain what it demonstrates and how it supports the paper's central argument.'",
+        "provide_structure": "Giving Claude a clear output template produces more consistent results. Visual content is inherently less structured than text.",
+        "handle_uncertainty": "Tell Claude how to handle unclear content: 'If any labels or components are unclear: Note what you can partially see, Explain what typically appears in that position, Indicate your confidence level. Do not guess at illegible text.'",
+        "balance_scope": "Decide whether you need comprehensive coverage or focused extraction. Comprehensive prompts produce longer, more expensive responses."
+      }
+    },
+    {
+      "id": "claude_vision_tier2_001",
+      "tier": 2,
+      "tier_label": "Implementation Guide",
+      "authority": 0.7,
+      "title": "Claude Vision (Image Recognition) Guide | Claude Lab",
+      "url": "https://claudelab.net/en/articles/claude-ai/vision-guide",
+      "source_type": "third_party_tutorial",
+      "role": "Comprehensive implementation guide with best practices",
+      "key_concepts": [
+        "Image placement strategy",
+        "Token optimization",
+        "Cost calculation",
+        "Troubleshooting"
+      ],
+      "extracted_content": {
+        "strategic_placement": "Always place images before text prompts. This ordering allows Claude to properly contextualize the image content before interpreting your questions, resulting in more accurate and thoughtful responses.",
+        "image_resizing": "Resize images to optimal dimensions (up to 1568px recommended). A 1000×1000 image is sufficient for most analyses.",
+        "token_calculation": "Images consume tokens based on size. Larger images = more tokens = higher cost.",
+        "troubleshooting": {
+          "low_quality": "Solutions: (1) Increase image resolution (up to 1568px recommended), (2) Provide more specific, detailed prompts, (3) Add context and background information, (4) Ensure sufficient contrast and clarity, (5) Try repositioning image before text",
+          "not_processing": "Solutions: (1) Verify file format is JPEG, PNG, GIF, or WebP, (2) Ensure image is not corrupted, (3) For Base64: Verify proper encoding, (4) For URLs: Test accessibility in browser, (5) Check file size isn't excessively large"
+        }
+      }
+    },
+    {
+      "id": "claude_vision_tier2_002",
+      "tier": 2,
+      "tier_label": "Implementation Guide",
+      "authority": 0.7,
+      "title": "Claude Vision: Analyzing Images, Charts & Visual Documents",
+      "url": "https://learn-prompting.fr/blog/claude-vision-guide",
+      "source_type": "third_party_tutorial",
+      "role": "Best practices for quality and cost optimization",
+      "key_concepts": [
+        "Quality optimization",
+        "Cost optimization",
+        "Format selection",
+        "Resolution guidelines"
+      ],
+      "extracted_content": {
+        "quality_optimization": [
+          "Use high-quality images — Sufficient resolution so text is readable",
+          "Frame the subject well — Avoid overly wide images with important content in small print",
+          "Prefer PNG for screenshots — No lossy compression",
+          "Orient the image correctly — Claude handles rotation, but correct orientation is better"
+        ],
+        "cost_optimization": [
+          "Resize before sending — A 1000×1000 image is sufficient for most analyses",
+          "Compress JPEGs — 80% quality is sufficient for OCR",
+          "Limit the number of images — Only send necessary images",
+          "Use appropriate resolutions per use case"
+        ]
+      }
+    },
+    {
+      "id": "claude_vision_tier3_001",
+      "tier": 3,
+      "tier_label": "Common Pitfalls",
+      "authority": 0.4,
+      "title": "Claude Vision Black Pixels Edge Case and Fix",
+      "url": "https://medium.com/cyberark-engineering/beware-of-llm-vision-hallucinations-a657fa15d340",
+      "source_type": "developer_experience",
+      "role": "Real production failure - black pixel hallucination edge case",
+      "key_concepts": [
+        "Black pixel edge case",
+        "Image preprocessing",
+        "Hallucination troubleshooting",
+        "Production debugging"
+      ],
+      "extracted_content": {
+        "problem_statement": "I was sending video frames to Claude's vision API and for some images, Claude was hallucinating spectacularly. Examples: 'This image appears to be a black and white photograph of a large crowd gathered in an outdoor setting...' 'This image appears to be a black and white photograph of a boxing match...' The actual image was 1920x1080 pixels and looked completely black, with only a 10x10 green pixel area in the top left corner.",
+        "root_cause": "Claude doesn't 'see' black (0,0,0) pixels as part of the entire image, and therefore considers this to be a small 10x10 image. Very small images under 200 pixels on any given edge may degrade performance.",
+        "troubleshooting_steps": [
+          "Verified with Python that the image indeed contains mostly black (0,0,0) pixels (99.99997% of the image)",
+          "Duplicated the small pixel region to make it larger - when it got to around 50x50 pixels Claude started making sense again",
+          "Changing the black pixels to any other color allowed Claude to make sense again (keeping the original 10x10 top left pixel region)"
+        ],
+        "solution": "Filter these types of images in a preprocessing step. If the black pixels make up the vast majority of the image, detect this and drop the image from analysis. This also has the benefit of saving money for calls to Claude.",
+        "code_example": "# Count black pixels\nfrom collections import Counter\nfrom PIL import Image\n\nwith Image.open(image_path) as img:\n    pixels = list(img.getdata())\n    black_pixels_count = Counter(pixels).get((0, 0, 0), 0)\n\n# Compare with total: len(pixels)",
+        "key_insight": "Trying to apply prompt engineering methods or tweaking Claude's parameters like temperature did not help at all. Claude kept hallucinating no matter what. This was a preprocessing issue, not a prompting issue."
+      }
+    },
+    {
+      "id": "claude_vision_tier3_002",
+      "tier": 3,
+      "tier_label": "Common Pitfalls",
+      "authority": 0.4,
+      "title": "Best practices for using vision with Claude - Hallucination Example",
+      "url": "https://platform.claude.com/cookbook/multimodal-best-practices-for-vision",
+      "source_type": "official_cookbook",
+      "role": "Real hallucination example and prompt engineering fix",
+      "key_concepts": [
+        "Counting hallucinations",
+        "Prompt engineering fixes",
+        "Role assignment",
+        "Step-by-step reasoning"
+      ],
+      "extracted_content": {
+        "problem_example": "Counting 9 dogs in an image. Claude initially responds: 'The image shows a group of 10 dogs...' There's only 9 dogs but Claude thinks there is 10!",
+        "failed_prompt": "How many dogs are in this picture?",
+        "successful_prompt": "You have perfect vision and pay great attention to detail which makes you an expert at counting objects in images. How many dogs are in this picture? Before providing the answer in <answer> tags, think step by step in <thinking> tags and analyze every part of the image.",
+        "result": "After applying some prompt engineering to the prompt, we see that Claude now counts correctly that there is 9 dogs.",
+        "key_technique": "Role assignment + step-by-step reasoning + structured output tags",
+        "lesson": "Traditional prompt engineering techniques (role assignment, chain of thought) can fix hallucination issues with vision tasks."
+      }
+    }
+  ],
+  "three_layer_answer_structure": {
+    "core_answer": {
+      "tier": 1,
+      "sources": ["claude_vision_tier1_001", "claude_vision_tier1_002", "claude_vision_tier1_003"],
+      "content": "Claude Vision allows multimodal interaction with images via Base64, URLs, or Files API. Supported formats: JPEG, PNG, GIF, WebP. Key limitations: (1) May hallucinate with low-quality or very small images (<200px), (2) Limited spatial reasoning and counting accuracy, (3) Cannot identify people. Best practice: Use high-quality, well-oriented images and request interpretation (not just description). Prompt engineering techniques like role assignment and step-by-step reasoning can reduce hallucinations."
+    },
+    "implementation_insight": {
+      "tier": 2,
+      "sources": ["claude_vision_tier2_001", "claude_vision_tier2_002"],
+      "content": "Strategic implementation: (1) Always place images BEFORE text prompts for better contextualization, (2) Resize to optimal dimensions (1000x1000 sufficient for most tasks, up to 1568px max), (3) Use PNG for screenshots (lossless), JPEG at 80% quality for photos, (4) Provide structured output templates for consistent results, (5) Add context and specific instructions. Cost optimization: Resize before sending, compress appropriately, limit image count. Quality optimization: High resolution, proper framing, correct orientation, sufficient contrast."
+    },
+    "common_pitfalls": {
+      "tier": 3,
+      "sources": ["claude_vision_tier3_001", "claude_vision_tier3_002"],
+      "content": "PITFALL #1: Black Pixel Edge Case. Symptom: Claude hallucinates elaborate scenes from nearly-black images. Root cause: Claude doesn't 'see' black (0,0,0) pixels as part of the image - a 1920x1080 image that's 99.99997% black pixels with a 10x10 colored region is treated as a 10x10 image (<200px threshold). Fix: Preprocess images to detect and filter mostly-black frames. Count black pixels: if they dominate (>99%), drop the image. Prompt engineering does NOT fix this - it's a preprocessing issue. PITFALL #2: Counting Hallucinations. Symptom: Claude miscounts objects (e.g., says 10 dogs when there are 9). Root cause: Default prompts don't enforce careful analysis. Fix: Use role assignment + step-by-step reasoning: 'You have perfect vision and pay great attention to detail which makes you an expert at counting objects in images. Before providing the answer in <answer> tags, think step by step in <thinking> tags and analyze every part of the image.' Traditional prompt engineering (role assignment, chain of thought, structured output) fixes vision hallucinations."
+    }
+  },
+  "demo_validation": {
+    "tier_separation_quality": 4,
+    "tier_separation_notes": "Tier 1 explains capabilities and limitations, Tier 2 explains implementation best practices, Tier 3 exposes specific failure modes (black pixels, counting). Slightly weaker than Stripe Webhooks because Tier 3 pitfalls are more about data quality than conceptual misunderstandings.",
+    "implementation_gap": "Moderate - black pixel edge case not documented in official guides, counting hallucinations require prompt engineering knowledge",
+    "demo_strength": "Medium-High - black pixel hallucination is a great story, but most pitfalls are preprocessing/prompting rather than API misunderstandings",
+    "coverage_completeness": "Complete - covers what vision is, how to implement well, and why it fails (data quality + prompting)"
+  }
+}

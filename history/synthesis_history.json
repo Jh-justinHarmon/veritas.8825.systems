@@ -1,5 +1,2362 @@
 [
   {
+    "id": "a817210d-47f2-44d5-a94f-a01e9f34254b",
+    "timestamp": "2026-04-10T00:01:32.050173",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous and Inconsistent Tool Schemas Lead to Errors",
+          "paragraphs": [
+            "The incorrect selection of tools or use of parameters by Claude often stems from ambiguous tool descriptions and inconsistent parameter naming conventions. These issues result in failures in tool selection and parameter generation, as Claude may misinterpret which tool to use based on vague descriptions or mismatched parameter names [6][9]. To mitigate these problems, it is crucial to provide clear, specific descriptions for tools and maintain consistent naming conventions, ensuring that the AI can accurately understand and apply the correct tool schemas [6][7]."
+          ],
+          "sourceIds": [
+            "6",
+            "9",
+            "7"
+          ]
+        },
+        {
+          "title": "Effective Prompting and Error Handling Enhance Tool Use",
+          "paragraphs": [
+            "Effective prompting and precise error handling are essential to prevent Claude from calling the wrong tool or using incorrect parameters. Users can optimize Claude's performance by carefully crafting prompts that guide the AI towards the correct tool choice and parameter usage [3][6]. Additionally, implementing robust error handling mechanisms, such as returning tool_result blocks with error information, can help Claude adjust its approach when errors occur [5][10]. These practices ensure that Claude is better equipped to handle complex tasks without deviating from intended actions."
+          ],
+          "sourceIds": [
+            "3",
+            "5",
+            "10"
+          ]
+        },
+        {
+          "title": "Managing Tool Outputs and Context is Critical",
+          "paragraphs": [
+            "Managing tool outputs and maintaining context are critical for preventing errors in tool use by Claude. Large tool outputs can result in truncation, which can be addressed through result pagination or summarization to ensure complete data handling [10]. Additionally, preserving conversation history and managing context during interactions helps Claude maintain a coherent state, reducing the likelihood of errors from repeated tool calls or misunderstandings in conversation flow [5][8]. Employing strategies like lazy loading for tool definitions also helps manage context window space efficiently [5]."
+          ],
+          "sourceIds": [
+            "10",
+            "5",
+            "8"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Claude is an advanced AI platform designed for language, reasoning, analysis, and coding tasks. It o"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "Claude interacts with applications on your computer, requiring user permission for access and mainta"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "Claude 4.6 offers advanced performance in reasoning, coding, and multilingual tasks, making it suita"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "Claude is designed with guardrails to prevent access to sensitive applications and data, but these m"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "Buffer events until a complete `content_block_stop` is received to avoid JSON parsing errors and ens"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "Ambiguous tool descriptions and inconsistent parameter naming lead to failures in tool selection and"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "Successful implementations of Claude tool use require designing specific tool schemas for distinct a"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "Repeated tool calls can lead to confusion regarding the conversation state. This indicates a need fo"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "Inconsistent naming conventions and unclear parameter descriptions hinder API usability. Tool result"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "Error handling in tools must provide actionable guidance to users when permission issues arise. Comp"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-10T00:01:32.049959"
+    }
+  },
+  {
+    "id": "110b23cf-f4c2-43e0-8d38-77f922adc769",
+    "timestamp": "2026-04-10T00:01:16.154744",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous Tool Descriptions Cause Wrong Tool Calls",
+          "paragraphs": [
+            "One of the primary reasons Claude calls the wrong tool is due to ambiguous tool descriptions. When multiple tools have vague or similar descriptions, Claude may not differentiate correctly between them, leading to incorrect tool usage. For example, descriptions like 'Gets user information' for both `get_user_profile` and `get_user_settings` can cause confusion [6]. To prevent this, tool descriptions should be highly specific about their use cases and the data they handle, clearly indicating when each tool should be used [6][7]."
+          ],
+          "sourceIds": [
+            "6",
+            "7"
+          ]
+        },
+        {
+          "title": "Inconsistent Parameter Naming Leads to Errors",
+          "paragraphs": [
+            "Parameter naming inconsistencies can lead Claude to generate incorrect parameters, causing tool execution failures. This often happens when parameter names are ambiguous or when different naming conventions (like camelCase or snake_case) are mixed. For instance, a tool expecting a `user_id` parameter might receive `userId` or `id` instead, resulting in execution errors [6][9]. Ensuring consistent naming conventions and providing explicit examples in parameter descriptions can mitigate these issues [6][9]."
+          ],
+          "sourceIds": [
+            "6",
+            "9"
+          ]
+        },
+        {
+          "title": "Failure to Handle Tool Results and Permissions Adequately",
+          "paragraphs": [
+            "Claude sometimes fails to use tool results effectively because the returned data does not match expected formats or is too verbose, causing it to ignore useful information [9]. Structured and concise result formats with clear labels can improve comprehension and usage of tool results [9]. Additionally, permission errors are often not handled well, with Claude failing to provide clear guidance on resolving access issues. Providing actionable error messages that explain both the problem and the steps to grant necessary permissions can guide users to resolve these issues effectively [10]."
+          ],
+          "sourceIds": [
+            "9",
+            "10"
+          ]
+        },
+        {
+          "title": "Complex Tool Schemas and Context Management Affect Tool Execution",
+          "paragraphs": [
+            "Complex tool schemas, especially those involving nested objects, can lead to schema validation failures if Claude generates parameters that don't match expected formats. Simplifying schemas to use flat structures where possible and providing clear examples can help avoid these issues [10]. Furthermore, managing the context window is crucial, as large tool definitions and results can consume significant token space, leading to truncation or incomplete responses. Implementing strategies like lazy loading of tool schemas and result pagination can help manage these limitations [5][10]."
+          ],
+          "sourceIds": [
+            "5",
+            "10"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-10T00:01:16.154634"
+    }
+  },
+  {
+    "id": "c2f15fc0-8fb7-4246-b632-9b31285eb991",
+    "timestamp": "2026-04-09T23:58:55.084633",
+    "question": "I set up Stripe webhooks but signature verification keeps failing. What am I doing wrong?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Correct configuration and environment matching are essential for signature verification",
+          "paragraphs": [
+            "A common cause of Stripe webhook signature verification failures is the use of incorrect webhook secrets or misconfigured environments. It is crucial to ensure that the webhook secret used matches the appropriate environment—test or live—as discrepancies can cause verification errors [1][7][9]. Debugging these issues often requires verifying that the endpoint secret corresponds to the environment in which the webhook is deployed. This is a frequent pitfall that can lead to significant troubleshooting time if not properly managed [9]."
+          ],
+          "sourceIds": [
+            "1",
+            "7",
+            "9"
+          ]
+        },
+        {
+          "title": "Raw body integrity must be maintained for successful signature verification",
+          "paragraphs": [
+            "Stripe's `constructEvent()` function requires the raw, unaltered request body to validate signatures correctly. If the body is modified, for instance, through middleware like `bodyParser.json()` in Express, it can lead to `SignatureVerificationError` [1][10]. To avoid this, a custom verify function should be used to capture the raw body while still allowing JSON parsing. This ensures the integrity of the body content, which is vital for successful verification [10]."
+          ],
+          "sourceIds": [
+            "1",
+            "10"
+          ]
+        },
+        {
+          "title": "Efficient webhook processing prevents timeout and overload issues",
+          "paragraphs": [
+            "Webhooks must be designed to respond quickly to avoid timeout issues. The endpoints should return a 200 status code promptly before executing any complex processing, which should be handled asynchronously. This not only ensures stability by avoiding overloads but also helps manage duplicate events efficiently [2][5][6]. By processing webhook data asynchronously, applications can prevent retry storms and backlogs, maintaining smooth operations [6]."
+          ],
+          "sourceIds": [
+            "2",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "title": "Testing with tools like Stripe CLI and ngrok ensures deployment readiness",
+          "paragraphs": [
+            "Before deploying webhooks to production, thorough testing using tools like Stripe CLI and ngrok is crucial. These tools allow developers to simulate real-world scenarios, test event handling, and verify signature correctness in a controlled environment. By doing so, potential issues can be identified and resolved early, ensuring a seamless production rollout [4][8]. The Stripe CLI, in particular, provides a signing secret for local testing, enabling real-time event simulation and debugging [4]."
+          ],
+          "sourceIds": [
+            "4",
+            "8"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Stripe Webhooks Documentation",
+          "url": "https://example.com/docs/tier1_stripe_webhooks_signature_verification",
+          "source_name": "Stripe Webhooks Documentation",
+          "tier": 1,
+          "document_title": "Signature Verification Troubleshooting"
+        },
+        "2": {
+          "title": "Stripe Webhooks Documentation",
+          "url": "https://example.com/docs/tier1_stripe_webhooks_overview",
+          "source_name": "Stripe Webhooks Documentation",
+          "tier": 1,
+          "document_title": "Stripe Webhooks"
+        },
+        "4": {
+          "title": "Stripe Webhooks Documentation",
+          "url": "https://example.com/docs/tier1_stripe_webhooks_quickstart",
+          "source_name": "Stripe Webhooks Documentation",
+          "tier": 1,
+          "document_title": "Webhook Quickstart Guide"
+        },
+        "5": {
+          "title": "Stripe Webhooks: Implementation Guide",
+          "url": "https://example.com/docs/tier2_stripe_webhooks_implementation_guide",
+          "source_name": "Stripe Webhooks: Implementation Guide",
+          "tier": 2,
+          "document_title": "Stripe Webhooks Implementation Guide"
+        },
+        "6": {
+          "title": "Stripe Webhooks: Implementation Guide",
+          "url": "https://example.com/docs/tier2_stripe_webhooks_implementation_guide",
+          "source_name": "Stripe Webhooks: Implementation Guide",
+          "tier": 2,
+          "document_title": "Stripe Webhooks Implementation Guide"
+        },
+        "7": {
+          "title": "Stripe Webhooks: Common Pitfalls",
+          "url": "https://example.com/docs/tier3_stripe_webhooks_test_live_mismatch",
+          "source_name": "Stripe Webhooks: Common Pitfalls",
+          "tier": 3,
+          "document_title": "Production Failure: Test vs Live Mode Secret Mismatch"
+        },
+        "8": {
+          "title": "Stripe Webhooks: Implementation Guide",
+          "url": "https://example.com/docs/tier2_stripe_webhooks_ngrok_testing",
+          "source_name": "Stripe Webhooks: Implementation Guide",
+          "tier": 2,
+          "document_title": "Local Webhook Testing with ngrok"
+        },
+        "9": {
+          "title": "Stripe Webhooks: Common Pitfalls",
+          "url": "https://example.com/docs/tier3_stripe_webhooks_test_live_mismatch",
+          "source_name": "Stripe Webhooks: Common Pitfalls",
+          "tier": 3,
+          "document_title": "Production Failure: Test vs Live Mode Secret Mismatch"
+        },
+        "10": {
+          "title": "Stripe Webhooks: Common Pitfalls",
+          "url": "https://example.com/docs/tier3_stripe_webhooks_bodyparser_conflict",
+          "source_name": "Stripe Webhooks: Common Pitfalls",
+          "tier": 3,
+          "document_title": "Framework Pitfall: Express bodyParser Middleware Conflict"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Stripe Webhooks Documentation",
+          "title": "Signature Verification Troubleshooting",
+          "tier": 1,
+          "text_preview": "To verify webhook signatures, the `constructEvent()` function requires the correct request body, sig"
+        },
+        {
+          "source_name": "Stripe Webhooks Documentation",
+          "title": "Stripe Webhooks",
+          "tier": 1,
+          "text_preview": "Stripe webhooks enable real-time event data transmission to an application's endpoint via HTTPS as J"
+        },
+        {
+          "source_name": "Stripe Webhooks Documentation",
+          "title": "Stripe Webhooks",
+          "tier": 1,
+          "text_preview": "Webhook events must be verified to ensure they originate from the intended source before taking any "
+        },
+        {
+          "source_name": "Stripe Webhooks Documentation",
+          "title": "Webhook Quickstart Guide",
+          "tier": 1,
+          "text_preview": "To set up a webhook, create a handler function, test it using the Stripe CLI, register the endpoint,"
+        },
+        {
+          "source_name": "Stripe Webhooks: Implementation Guide",
+          "title": "Stripe Webhooks Implementation Guide",
+          "tier": 2,
+          "text_preview": "Stripe webhooks include a signature for security, which must be verified to ensure authenticity. Web"
+        },
+        {
+          "source_name": "Stripe Webhooks: Implementation Guide",
+          "title": "Stripe Webhooks Implementation Guide",
+          "tier": 2,
+          "text_preview": "Webhooks should return a quick 200 response and process data asynchronously to avoid timeout issues."
+        },
+        {
+          "source_name": "Stripe Webhooks: Common Pitfalls",
+          "title": "Production Failure: Test vs Live Mode Secret Mismatch",
+          "tier": 3,
+          "text_preview": "Using the correct webhook secret and ensuring the environment configuration matches the mode (test/l"
+        },
+        {
+          "source_name": "Stripe Webhooks: Implementation Guide",
+          "title": "Local Webhook Testing with ngrok",
+          "tier": 2,
+          "text_preview": "Ngrok creates a publicly accessible tunnel to a local development server, allowing for secure testin"
+        },
+        {
+          "source_name": "Stripe Webhooks: Common Pitfalls",
+          "title": "Production Failure: Test vs Live Mode Secret Mismatch",
+          "tier": 3,
+          "text_preview": "Using different webhook signing secrets for test and live modes in Stripe can lead to signature veri"
+        },
+        {
+          "source_name": "Stripe Webhooks: Common Pitfalls",
+          "title": "Framework Pitfall: Express bodyParser Middleware Conflict",
+          "tier": 3,
+          "text_preview": "The conflict between `bodyParser.raw()` and `bodyParser.json()` in Express middleware prevents both "
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:58:55.084485"
+    }
+  },
+  {
+    "id": "37debe8c-2edd-488c-b38f-2135bc4dcc7c",
+    "timestamp": "2026-04-09T23:57:41.190240",
+    "question": "I set up Stripe webhooks but signature verification keeps failing. What am I doing wrong?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Signature verification requires correct endpoint secret",
+          "paragraphs": [
+            "One of the most common causes for Stripe webhook signature verification failure is using the incorrect endpoint secret. Each endpoint registered on the Stripe Dashboard or used with the Stripe CLI has its own unique secret, prefixed by 'whsec_'. It's critical to use the correct secret corresponding to your environment (test or live) as they differ between modes [1][7]. Developers often mistakenly use the test mode secret in production, which leads to signature verification failure [9]. Always ensure that your environment variables are set to use the appropriate secret based on the current mode [9]."
+          ],
+          "sourceIds": [
+            "1",
+            "2",
+            "7",
+            "9"
+          ]
+        },
+        {
+          "title": "Raw request body must remain unaltered for verification",
+          "paragraphs": [
+            "Stripe requires the raw request body for signature verification, meaning any alteration by middleware could result in failure. This is particularly problematic in frameworks like Express.js, where middleware such as `bodyParser.json()` can modify the body, leading to verification errors [2][10]. To avoid this conflict, ensure that you capture the raw body using middleware configurations that do not interfere with Stripe's requirements. For example, use a verify function to store the raw body separately, allowing Stripe's `constructEvent()` to validate the payload correctly [10]."
+          ],
+          "sourceIds": [
+            "2",
+            "10"
+          ]
+        },
+        {
+          "title": "Local and production environments require different testing strategies",
+          "paragraphs": [
+            "Testing webhook endpoints locally is facilitated by tools like the Stripe CLI, which provides a signing secret for local development. This setup allows you to simulate Stripe events and verify signature handling before deploying to production [4][5]. However, in production, it is crucial to transition to using live mode secrets and ensure the environment configuration reflects this change [9]. The mismatch between test and live secrets is a frequent oversight that can cause local successes to fail in production [9]. Ensuring that your deployment strategy includes environment-specific configurations can prevent these errors."
+          ],
+          "sourceIds": [
+            "4",
+            "5",
+            "9"
+          ]
+        },
+        {
+          "title": "Ensure quick responses to avoid timeouts and retries",
+          "paragraphs": [
+            "Stripe requires webhook endpoints to quickly return a 200 status code to prevent retries due to timeouts. Complex processing should be handled asynchronously to avoid blocking the webhook response, as long delays can lead to Stripe retrying the event delivery, potentially causing a backlog [2][5][6]. This practice not only aligns with Stripe's performance expectations but also safeguards against high-load scenarios that could overwhelm your application [5][6]."
+          ],
+          "sourceIds": [
+            "2",
+            "5",
+            "6"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Stripe Webhooks Documentation",
+          "url": "https://example.com/docs/tier1_stripe_webhooks_signature_verification",
+          "source_name": "Stripe Webhooks Documentation",
+          "tier": 1,
+          "document_title": "Signature Verification Troubleshooting"
+        },
+        "2": {
+          "title": "Stripe Webhooks Documentation",
+          "url": "https://example.com/docs/tier1_stripe_webhooks_overview",
+          "source_name": "Stripe Webhooks Documentation",
+          "tier": 1,
+          "document_title": "Stripe Webhooks"
+        },
+        "4": {
+          "title": "Stripe Webhooks Documentation",
+          "url": "https://example.com/docs/tier1_stripe_webhooks_quickstart",
+          "source_name": "Stripe Webhooks Documentation",
+          "tier": 1,
+          "document_title": "Webhook Quickstart Guide"
+        },
+        "5": {
+          "title": "Stripe Webhooks Implementation Guide",
+          "url": "https://example.com/docs/tier2_stripe_webhooks_implementation_guide",
+          "source_name": "Stripe Webhooks: Implementation Guide",
+          "tier": 2,
+          "document_title": "Stripe Webhooks Implementation Guide"
+        },
+        "6": {
+          "title": "Stripe Webhooks Implementation Guide",
+          "url": "https://example.com/docs/tier2_stripe_webhooks_implementation_guide",
+          "source_name": "Stripe Webhooks: Implementation Guide",
+          "tier": 2,
+          "document_title": "Stripe Webhooks Implementation Guide"
+        },
+        "7": {
+          "title": "Stripe Webhooks: Common Pitfalls",
+          "url": "https://example.com/docs/tier3_stripe_webhooks_test_live_mismatch",
+          "source_name": "Stripe Webhooks: Common Pitfalls",
+          "tier": 3,
+          "document_title": "Production Failure: Test vs Live Mode Secret Mismatch"
+        },
+        "9": {
+          "title": "Stripe Webhooks: Common Pitfalls",
+          "url": "https://example.com/docs/tier3_stripe_webhooks_test_live_mismatch",
+          "source_name": "Stripe Webhooks: Common Pitfalls",
+          "tier": 3,
+          "document_title": "Production Failure: Test vs Live Mode Secret Mismatch"
+        },
+        "10": {
+          "title": "Stripe Webhooks: Express bodyParser Conflict",
+          "url": "https://example.com/docs/tier3_stripe_webhooks_bodyparser_conflict",
+          "source_name": "Stripe Webhooks: Common Pitfalls",
+          "tier": 3,
+          "document_title": "Framework Pitfall: Express bodyParser Middleware Conflict"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Stripe Webhooks Documentation",
+          "title": "Signature Verification Troubleshooting",
+          "tier": 1,
+          "text_preview": "---\nsource_name: Stripe Webhooks Documentation\nurl: https://docs.stripe.com/webhooks/signature\nsourc"
+        },
+        {
+          "source_name": "Stripe Webhooks Documentation",
+          "title": "Stripe Webhooks",
+          "tier": 1,
+          "text_preview": "---\nsource_name: Stripe Webhooks Documentation\nurl: https://docs.stripe.com/webhooks\nsource_tier: 1\n"
+        },
+        {
+          "source_name": "Stripe Webhooks Documentation",
+          "title": "Stripe Webhooks",
+          "tier": 1,
+          "text_preview": "ripe\n\nWithout verification, an attacker could send fake webhook events to your endpoint to trigger a"
+        },
+        {
+          "source_name": "Stripe Webhooks Documentation",
+          "title": "Webhook Quickstart Guide",
+          "tier": 1,
+          "text_preview": "---\nsource_name: Stripe Webhooks Documentation\nurl: https://docs.stripe.com/webhooks/quickstart\nsour"
+        },
+        {
+          "source_name": "Stripe Webhooks: Implementation Guide",
+          "title": "Stripe Webhooks Implementation Guide",
+          "tier": 2,
+          "text_preview": "---\nsource_name: Stripe Webhooks Implementation Guide\nurl: https://www.hooklistener.com/learn/stripe"
+        },
+        {
+          "source_name": "Stripe Webhooks: Implementation Guide",
+          "title": "Stripe Webhooks Implementation Guide",
+          "tier": 2,
+          "text_preview": "ior\n\n## Common Challenges\n\n### Timeout Issues\nLong processing causes Stripe to retry. Always return "
+        },
+        {
+          "source_name": "Stripe Webhooks: Common Pitfalls",
+          "title": "Production Failure: Test vs Live Mode Secret Mismatch",
+          "tier": 3,
+          "text_preview": "ebhook/stripe`\n3. `stripe trigger checkout.session.completed`\n\nMake sure your local environment uses"
+        },
+        {
+          "source_name": "Stripe Webhooks: Implementation Guide",
+          "title": "Local Webhook Testing with ngrok",
+          "tier": 2,
+          "text_preview": "---\nsource_name: Stripe Webhooks - ngrok Testing\nurl: https://ngrok.com/docs/integrations/webhooks/s"
+        },
+        {
+          "source_name": "Stripe Webhooks: Common Pitfalls",
+          "title": "Production Failure: Test vs Live Mode Secret Mismatch",
+          "tier": 3,
+          "text_preview": "---\nsource_name: Stripe Webhooks - Test/Live Mode Mismatch\nurl: https://dev.to/nerdincode/debugging-"
+        },
+        {
+          "source_name": "Stripe Webhooks: Common Pitfalls",
+          "title": "Framework Pitfall: Express bodyParser Middleware Conflict",
+          "tier": 3,
+          "text_preview": "---\nsource_name: Stripe Webhooks - Express bodyParser Conflict\nurl: https://github.com/stripe/stripe"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:57:41.190165"
+    }
+  },
+  {
+    "id": "686ad3ba-9917-47f4-ba33-e52ed8c4b64c",
+    "timestamp": "2026-04-09T23:50:45.757266",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous tool descriptions cause incorrect tool selection",
+          "paragraphs": [
+            "Claude may call the wrong tool when multiple tools have similar or vague descriptions. This occurs because the model relies on these descriptions to differentiate between tools, and if they are not specific, Claude may randomly choose between them. For example, tools with descriptions like 'Gets user information' versus 'Gets user data' can cause confusion if not clearly distinguished [6]. To avoid this, developers should write tool descriptions that are highly specific, outlining the exact use case and data each tool returns [6]."
+          ],
+          "sourceIds": [
+            "6"
+          ]
+        },
+        {
+          "title": "Inconsistent parameter naming leads to parameter errors",
+          "paragraphs": [
+            "Claude might use incorrect parameters due to inconsistencies in naming conventions or vague parameter descriptions. For example, if a tool schema uses `user_id` but Claude generates `userId` or `id`, it can lead to execution failures because the names do not match the expected schema [6]. To mitigate this, developers should enforce consistent naming conventions across all tools and provide explicit examples of the parameter formats expected in the schema descriptions [6][9]."
+          ],
+          "sourceIds": [
+            "6",
+            "9"
+          ]
+        },
+        {
+          "title": "Improper error handling causes repeated tool calls and permission issues",
+          "paragraphs": [
+            "Errors such as network timeouts, invalid parameters, or permission denials can lead to repeated tool calls or incomplete tasks. If a tool call fails due to permissions, Claude might inform the user it cannot proceed without offering clear guidance on how to fix the issue [10]. Developers should handle errors by returning detailed error messages that include both the problem and how to resolve it, such as directing users to adjust permissions [10]. Additionally, implementing loop detection can prevent Claude from repeatedly calling the same tool unnecessarily [9]."
+          ],
+          "sourceIds": [
+            "9",
+            "10"
+          ]
+        },
+        {
+          "title": "Complex tool schemas and large results can exceed token limits",
+          "paragraphs": [
+            "Tool schemas with complex nested objects or large tool results can lead to errors such as exceeding token limits, causing responses to be cut off or incomplete. This is especially problematic when tool results are large compared to the available context window, such as when returning extensive code snippets [10]. Simplifying tool schemas and implementing result pagination or summarization can prevent these issues by keeping response sizes manageable and ensuring that Claude can process the information effectively [10]."
+          ],
+          "sourceIds": [
+            "10"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:50:45.757177"
+    }
+  },
+  {
+    "id": "85cb795e-2c17-4223-bcf9-d34d332831f6",
+    "timestamp": "2026-04-09T23:50:45.674551",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous tool descriptions lead to incorrect tool selection",
+          "paragraphs": [
+            "Claude can incorrectly call tools when their descriptions are vague or too similar. When multiple tools serve related purposes but are not distinctly described, Claude may randomly select between them [6]. For example, tools like `get_user_profile` and `get_user_settings` might be confused if described only as 'Gets user information' [6]. The solution is to provide extremely specific descriptions that clarify the context and use cases for each tool, which helps Claude make accurate selections [6][7]."
+          ],
+          "sourceIds": [
+            "6",
+            "7"
+          ]
+        },
+        {
+          "title": "Inconsistent parameter naming causes invocation errors",
+          "paragraphs": [
+            "Errors often arise when Claude generates parameters that do not match the expected schema due to inconsistencies in naming conventions. For instance, a parameter defined as `user_id` might be generated as `userId` or `id`, resulting in tool execution failures [6]. To mitigate this, it's crucial to use consistent naming conventions across all tools, such as choosing between snake_case or camelCase, and providing explicit examples in the parameter descriptions [6][9]."
+          ],
+          "sourceIds": [
+            "6",
+            "9"
+          ]
+        },
+        {
+          "title": "Tool result handling and feedback loop issues affect performance",
+          "paragraphs": [
+            "Claude may ignore tool results if they do not meet its expectations or are presented in a format that is too verbose or unstructured [9]. This can lead to repeated tool calls or failure to utilize information effectively. Developers should return tool results in a structured and concise format, summarizing key points if necessary to ensure comprehension [9]. Additionally, failure to detect and break infinite loops, where Claude repeatedly calls the same tool without progress, can degrade performance. Implementing loop detection and providing cached results can prevent this issue [10]."
+          ],
+          "sourceIds": [
+            "9",
+            "10"
+          ]
+        },
+        {
+          "title": "Effective error handling is crucial for tool use success",
+          "paragraphs": [
+            "When Claude encounters permission errors or invalid parameters, inadequate error handling can leave these issues unresolved. For instance, if a tool requires permissions that haven't been granted, Claude might respond with a generic error message without guiding the user on how to resolve it [10]. Providing clear, actionable error messages that include both the problem and potential solutions can help Claude recover and adapt its approach more effectively [5][10]."
+          ],
+          "sourceIds": [
+            "5",
+            "10"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:50:45.674266"
+    }
+  },
+  {
+    "id": "9da3ab99-a595-4166-8efc-86d7fc272100",
+    "timestamp": "2026-04-09T23:50:36.890644",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous Tool Descriptions Cause Incorrect Tool Calls",
+          "paragraphs": [
+            "Claude may call the wrong tool when multiple tools have similar or vague descriptions. This issue arises when the model cannot distinguish between tools based on their descriptions, leading it to make random selections. For instance, tools with descriptions like 'Gets user information' can cause Claude to confuse between user profile and settings retrieval tasks [6]. To prevent this, developers should write extremely specific tool descriptions that clearly outline the use case and data returned, ensuring that each tool's purpose is unambiguously defined [6][7]."
+          ],
+          "sourceIds": [
+            "6",
+            "7"
+          ]
+        },
+        {
+          "title": "Inconsistent Parameter Naming Leads to Errors",
+          "paragraphs": [
+            "Claude sometimes uses incorrect parameters due to inconsistent naming conventions across APIs or ambiguous parameter names. This can result in Claude generating parameters that do not exist in the schema, such as using 'userId' instead of 'user_id' [6]. To mitigate this, developers should enforce consistent naming conventions throughout their tool schemas, using either snake_case or camelCase uniformly, and provide explicit examples in parameter descriptions to guide correct usage [6][9]."
+          ],
+          "sourceIds": [
+            "6",
+            "9"
+          ]
+        },
+        {
+          "title": "Tool Result Mismanagement Affects Output Quality",
+          "paragraphs": [
+            "Claude may ignore tool results if they are not in a format it expects, leading to poor user experiences. This can happen when results are too verbose or unstructured, causing Claude to overlook the data it retrieved [9]. Developers should return results in a concise, structured format with clear labels to ensure they are effectively integrated into Claude's responses. Summarizing key points at the top of large results can also help manage this issue [9][10]."
+          ],
+          "sourceIds": [
+            "9",
+            "10"
+          ]
+        },
+        {
+          "title": "Improper Error Handling Leads to Repeated Tool Calls",
+          "paragraphs": [
+            "Claude can enter a loop where it repeatedly calls the same tool due to improper error handling or misinterpretation of tool results. For example, if a tool call doesn't clearly indicate completion, Claude might retry unnecessarily [9]. Implementing loop detection and providing clear, actionable error messages can prevent this behavior. Additionally, caching results and intervening with system messages after multiple identical tool calls can help break such loops [9][10]."
+          ],
+          "sourceIds": [
+            "9",
+            "10"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:50:36.890519"
+    }
+  },
+  {
+    "id": "962ef08d-ec69-4f68-af97-3ac3440c3013",
+    "timestamp": "2026-04-09T23:50:36.838098",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Tool Selection Depends on Clear Descriptions",
+          "paragraphs": [
+            "Claude may call the wrong tool when descriptions are ambiguous or similar, leading to confusion in tool selection. For example, tools like `get_user_profile` and `get_user_settings` might be mistaken for one another if their descriptions are vague, such as 'Gets user information' [6]. To mitigate this, tool descriptions should be extremely specific, detailing the exact data and use case each tool addresses, which helps ensure Claude selects the appropriate tool [6][5]."
+          ],
+          "sourceIds": [
+            "6",
+            "5"
+          ]
+        },
+        {
+          "title": "Parameter Consistency Prevents Errors",
+          "paragraphs": [
+            "Parameter inconsistency, such as using varying naming conventions (snake_case vs camelCase), can lead to errors when Claude generates parameters that don't match the tool schema [6]. This issue is exacerbated by complex or nested parameter structures, which can cause schema validation failures [10]. Developers should adopt consistent naming conventions and provide explicit schema examples to guide Claude in generating correct parameters [6][10]."
+          ],
+          "sourceIds": [
+            "6",
+            "10"
+          ]
+        },
+        {
+          "title": "Handling Tool Result and Error Feedback Improves Interaction",
+          "paragraphs": [
+            "Claude may ignore tool results if they do not meet its expectations or are too verbose, leading to a poor user experience [9]. Structured and concise result formatting can help Claude utilize the data effectively [9]. Additionally, when encountering permission errors, Claude needs actionable error messages. These should guide users on how to grant necessary permissions, rather than simply stating the lack of access [10]. This approach helps Claude adjust and continue operating effectively [9][10]."
+          ],
+          "sourceIds": [
+            "9",
+            "10"
+          ]
+        },
+        {
+          "title": "Effective Error Handling Enhances Tool Use Reliability",
+          "paragraphs": [
+            "Claude's tool use can fail due to network timeouts or invalid parameters. A robust error recovery pattern involves catching these errors and returning them as tool_result blocks, allowing Claude to adjust its approach [5]. Implementing defensive validation, such as checking both parameter presence and business logic constraints, ensures that only valid requests are processed. This practice reduces runtime errors caused by syntactically correct but semantically invalid parameters [7]."
+          ],
+          "sourceIds": [
+            "5",
+            "7"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:50:36.837997"
+    }
+  },
+  {
+    "id": "06e1dc24-f94b-4122-b565-5a5cdbb7e818",
+    "timestamp": "2026-04-09T23:45:47.863872",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous Tool Descriptions Lead to Incorrect Tool Selection",
+          "paragraphs": [
+            "Claude often calls the wrong tool when the descriptions of available tools are too similar or vague, making it difficult for the model to distinguish between them. This issue is exacerbated when developers use generic descriptions like \"Gets user information\" for tools with distinct purposes. To avoid this, descriptions should be extremely specific, clearly outlining the tool's unique function and when it should be used [6]. Additionally, separating distinct actions into different tools rather than using a multifunction tool with optional parameters can prevent ambiguity and improve tool selection accuracy [7]."
+          ],
+          "sourceIds": [
+            "6",
+            "7"
+          ]
+        },
+        {
+          "title": "Inconsistent Parameter Naming Causes Tool Execution Failures",
+          "paragraphs": [
+            "Claude can generate incorrect parameters, such as using 'userId' instead of 'user_id', due to inconsistent naming conventions or unclear parameter descriptions. These discrepancies lead to tool execution failures as the parameters do not align with the expected schema. To mitigate this, developers should maintain consistent naming conventions across all tools and provide explicit examples of expected parameter formats [6][9]. Implementing strict parameter validation in production, which includes checking both syntactic correctness and business logic constraints, can catch these errors before they cause runtime issues [7]."
+          ],
+          "sourceIds": [
+            "6",
+            "7",
+            "9"
+          ]
+        },
+        {
+          "title": "Tool Results Need Structured and Concise Formatting",
+          "paragraphs": [
+            "Claude sometimes ignores tool results because they are returned in a format that is too verbose or unstructured. This can cause the model to fail to incorporate the retrieved data into its response, leading to user frustration. To address this, tool results should be formatted concisely and structured with clear labels. Large results should be summarized, with key points highlighted to ensure Claude can parse and utilize the information effectively [9][10]. This approach helps prevent issues where Claude seems to disregard the tool output entirely."
+          ],
+          "sourceIds": [
+            "9",
+            "10"
+          ]
+        },
+        {
+          "title": "Effective Error Handling and Permissions Management Are Crucial",
+          "paragraphs": [
+            "Errors in tool use often arise from permissions issues or schema validation failures. For instance, if a tool requires permissions that have not been granted, Claude may not handle the error effectively, leaving users without guidance on how to resolve it. Providing clear, actionable error messages that explain both the problem and the steps to resolve it can help Claude recover more gracefully from such errors [10]. Additionally, developers should design schemas to be as simple as possible, avoiding complex nested structures that increase the likelihood of validation failures [9]."
+          ],
+          "sourceIds": [
+            "9",
+            "10"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:45:47.863780"
+    }
+  },
+  {
+    "id": "24a7258e-5781-488d-910a-d16fe32ef41d",
+    "timestamp": "2026-04-09T23:45:47.520237",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous Tool Descriptions Cause Wrong Tool Calls",
+          "paragraphs": [
+            "Claude often calls the wrong tool when multiple tools have similar or vague descriptions. This confusion arises because the model can't clearly distinguish between tools that are intended for different tasks. For instance, tools like `get_user_profile` and `get_user_settings` with descriptions such as 'Gets user information' can lead to incorrect tool selection by Claude [6][9]. The solution is to provide highly specific descriptions that clearly delineate the tool's purpose and usage context, thereby reducing ambiguity and improving tool selection accuracy [6]."
+          ],
+          "sourceIds": [
+            "6",
+            "9"
+          ]
+        },
+        {
+          "title": "Inconsistent Naming Conventions Lead to Parameter Errors",
+          "paragraphs": [
+            "Claude occasionally uses incorrect parameters due to inconsistent naming conventions across tool schemas. This can result in parameter hallucination, where Claude generates parameters that don't exist or uses incorrect types. For example, a schema might require a `user_id` parameter, but Claude might mistakenly generate `userId` or `id`, leading to execution failures [6][9]. To mitigate this, developers should enforce consistent naming conventions and provide explicit examples in parameter descriptions to guide the model [6]."
+          ],
+          "sourceIds": [
+            "6",
+            "9"
+          ]
+        },
+        {
+          "title": "Insufficient Error Handling Causes Tool Use Failures",
+          "paragraphs": [
+            "Error handling in Claude's tool use can be inadequate, particularly for permission-related errors. When lacking necessary permissions, Claude might report an error without offering guidance on how to resolve it. For instance, if a `read_file` tool call is denied due to permissions, Claude might simply state the inability to access the file without instructing the user on granting the necessary permissions [10]. Effective solutions involve returning descriptive error messages that not only identify the issue but also provide actionable steps to resolve it, enhancing user experience and model performance [10]."
+          ],
+          "sourceIds": [
+            "9",
+            "10"
+          ]
+        },
+        {
+          "title": "Complex Tool Schemas Complicate Parameter Generation",
+          "paragraphs": [
+            "Complex schemas with nested objects can challenge Claude's parameter generation, leading to validation failures. When schemas are too intricate or parameter names are non-intuitive, Claude might produce invalid parameters, as seen with mismatches like `{\"action\": \"create\", \"data\": {...}}` versus `{\"action\": \"create\", \"payload\": {...}}` [10]. Simplifying schemas by using flat parameter structures where possible, and including explicit examples, can help Claude generate valid parameters consistently [10]."
+          ],
+          "sourceIds": [
+            "10"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:45:47.520031"
+    }
+  },
+  {
+    "id": "6aa7a6d3-6406-4059-ad80-ebf07cea7d7e",
+    "timestamp": "2026-04-09T23:45:40.816195",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguous Tool Descriptions Lead to Incorrect Tool Selection",
+          "paragraphs": [
+            "Claude often calls the wrong tool when multiple tools have similar or vague descriptions. This happens because the model struggles to differentiate between tools like `get_user_profile` and `get_user_settings` if their descriptions are too generic, such as 'Gets user information' versus 'Gets user data'. To prevent this, descriptions should be highly specific, detailing exactly what data the tool retrieves and for what purpose it should be used [6]. This specificity helps Claude accurately match the task at hand with the correct tool [9]."
+          ],
+          "sourceIds": [
+            "6",
+            "9"
+          ]
+        },
+        {
+          "title": "Inconsistent Parameter Naming Causes Schema Errors",
+          "paragraphs": [
+            "Claude sometimes generates incorrect parameters due to inconsistent naming conventions across tools. For instance, if a tool expects a `user_id` parameter but Claude generates `userId` or `id`, the tool call will fail. This is often a result of unclear or inconsistent parameter descriptions in the tool schema. To mitigate this, maintain a consistent naming convention throughout all tool schemas and provide explicit examples of the expected parameter format [6][7]. Additionally, validate parameters in stages to catch syntactically correct but semantically invalid inputs [7]."
+          ],
+          "sourceIds": [
+            "6",
+            "7"
+          ]
+        },
+        {
+          "title": "Improper Handling of Tool Results Leads to Ignored Outputs",
+          "paragraphs": [
+            "Claude may ignore tool results if they are not returned in a structured and concise format. For example, if a `search_documentation` tool returns verbose JSON, Claude might not utilize the data effectively, resulting in a response like 'I don't have information about that.' Developers can prevent this by summarizing key points at the top of the result and avoiding raw JSON dumps [9]. Ensuring tool results meet Claude's expectations in format and clarity is crucial for effective integration [10]."
+          ],
+          "sourceIds": [
+            "9",
+            "10"
+          ]
+        },
+        {
+          "title": "Failure to Handle Permission Errors Properly",
+          "paragraphs": [
+            "When Claude encounters permission errors, such as when trying to access a tool without necessary permissions, it often fails to provide actionable guidance on resolving the issue. This can occur because error messages are too technical or lack clarity. To improve this, error messages should not only describe the problem but also offer a clear solution, such as directing users to enable specific permissions in settings [10]. This approach helps users understand and rectify permission issues, facilitating smoother tool operation [5]."
+          ],
+          "sourceIds": [
+            "10",
+            "5"
+          ]
+        }
+      ],
+      "sources": {
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:45:40.816130"
+    }
+  },
+  {
+    "id": "043809d4-0d30-46cb-a621-36d592b07c7e",
+    "timestamp": "2026-04-09T23:45:40.661188",
+    "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Ambiguity in Tool Descriptions Leads to Incorrect Tool Selection",
+          "paragraphs": [
+            "Claude may call the wrong tool when tool descriptions are vague or similar, causing confusion in tool selection. For instance, if tools like `get_user_profile` and `get_user_settings` have indistinct descriptions, Claude might randomly choose between them [6]. To mitigate this, developers should ensure that tool descriptions are highly specific, detailing the exact scenarios and data each tool handles [6][7]. This precision helps Claude differentiate tools effectively, reducing the likelihood of incorrect tool calls."
+          ],
+          "sourceIds": [
+            "6",
+            "7"
+          ]
+        },
+        {
+          "title": "Inconsistent Parameter Naming Can Cause Execution Failures",
+          "paragraphs": [
+            "Claude sometimes generates incorrect parameters due to inconsistencies in naming conventions. For example, a tool expecting a `user_id` parameter might receive `userId` or `id`, leading to execution errors [6]. To prevent this, consistent naming conventions across all tools should be enforced, such as using snake_case or camelCase consistently. Additionally, providing explicit examples in parameter descriptions can guide Claude in generating correct parameters [6][9]."
+          ],
+          "sourceIds": [
+            "6",
+            "9"
+          ]
+        },
+        {
+          "title": "Effective Error Handling and Feedback Are Crucial for Correct Tool Use",
+          "paragraphs": [
+            "Claude's tool use can fail due to permission errors or other execution issues, but robust error handling can facilitate recovery. If a tool call fails due to permissions, returning a tool_result block with a clear error message enables Claude to adjust its approach [5][10]. Error messages should also include actionable guidance, such as instructions to grant permissions, thereby helping users resolve the issue and allowing Claude to proceed effectively [10]."
+          ],
+          "sourceIds": [
+            "5",
+            "10"
+          ]
+        },
+        {
+          "title": "Proper Schema Design and Context Management Prevent Tool Use Errors",
+          "paragraphs": [
+            "Complex schemas or excessive tool definitions can lead to errors or context window issues, causing Claude to call tools incorrectly or truncate responses [5][10]. To avoid this, schemas should be simplified where possible, using flat structures and providing clear examples of expected formats [10]. Additionally, context window management techniques like lazy loading of tool definitions can help maintain efficiency, ensuring that only relevant tools are loaded based on the conversation context [5]."
+          ],
+          "sourceIds": [
+            "5",
+            "10"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Intro to Claude"
+        },
+        "2": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "3": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Models overview"
+        },
+        "4": {
+          "title": "Anthropic Claude Documentation",
+          "url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+          "source_name": "Anthropic Claude Documentation",
+          "tier": 1,
+          "document_title": "Let Claude use your computer in Cowork Claude Help Center"
+        },
+        "5": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "6": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "7": {
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "8": {
+          "title": "Claude Tool Use: Community Practice",
+          "url": "https://example.com/docs/tier2_claude_tool_use_practice",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Claude Tool Use: Real-World Implementation Patterns"
+        },
+        "9": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        },
+        "10": {
+          "title": "Claude Tool Use: Failure Analysis",
+          "url": "https://example.com/docs/tier3_claude_tool_use_failures",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Claude Tool Use: Common Failure Cases and Debugging"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Intro to Claude\nClaude is a highly performant, trustworthy, and intelligent AI platform built by\nAnt"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "t method. F or example, pulling messages through your Slack connection takes seconds,\nbut navigating"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Models overview",
+          "tier": 1,
+          "text_preview": "to Claude 4.6.\nIf you're ready to start exploring what Claude can do for you, dive in! Whether you'r"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Let Claude use your computer in Cowork Claude Help Center",
+          "tier": 1,
+          "text_preview": "e using computer use.\nClaude is trained to avoid\nEngaging in stock trading or investment transaction"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "mpting to parse when a complete tool_use block is received. Premature parsing of incomplete JSON is "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "# Claude Tool Use: Common Failure Cases and Debugging\n\n## Source Information\n- **Type:** Failure Ana"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "# Claude Tool Use: Real-World Implementation Patterns\n\n## Source Information\n- **Type:** Practice / "
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Claude Tool Use: Real-World Implementation Patterns",
+          "tier": 2,
+          "text_preview": "y called and may result in repeated tool calls or confusion about the conversation state."
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "istency across the API or unclear parameter descriptions.\n\n**Solution:** Use consistent naming conve"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Claude Tool Use: Common Failure Cases and Debugging",
+          "tier": 3,
+          "text_preview": "that the tool has already been called and provide the cached result.\n\n## Permission Errors Not Handl"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:45:40.661065"
+    }
+  },
+  {
+    "id": "5b449c8c-1be7-4f37-8948-200e09d002a9",
+    "timestamp": "2026-04-09T23:45:15.164790",
+    "question": "I set up Stripe webhooks but signature verification keeps failing. What am I doing wrong?",
+    "answer": {
+      "ideas": [
+        {
+          "title": "Mismatch between Test and Live Mode Secrets is a Common Cause of Verification Failures",
+          "paragraphs": [
+            "A prevalent issue in Stripe webhook signature verification failures is the mismatch between test and live mode secrets. Stripe uses different signing secrets for test and live environments; thus, using a test mode secret in a production environment will lead to verification errors even if the code is correct [3][5]. This mistake often occurs when developers hardcode secrets or fail to configure environments properly, contributing to approximately 90% of 'works locally, fails in production' cases [5]. To prevent this, it is essential to configure your environment variables to dynamically select the correct secret based on the environment mode [5]."
+          ],
+          "sourceIds": [
+            "3",
+            "5"
+          ]
+        },
+        {
+          "title": "Correct Handling of Payloads and Raw Body is Crucial for Verification",
+          "paragraphs": [
+            "Proper handling of the raw request body is critical for successful webhook signature verification, especially when using frameworks like Express.js. Stripe requires the raw body to compute the HMAC signature; however, using `bodyParser.json()` can interfere with this, as it alters the payload before the signature verification step [6]. To address this, developers should use a middleware that captures the raw body separately and attaches it to the request object, enabling accurate verification against the `Stripe-Signature` header [6]. This method ensures that the payload remains unaltered for signature checking while still allowing JSON parsing for other operations."
+          ],
+          "sourceIds": [
+            "1",
+            "6"
+          ]
+        },
+        {
+          "title": "Testing Tools and Methods are Essential for Reliable Webhook Verification",
+          "paragraphs": [
+            "Utilizing the Stripe CLI and ngrok are essential practices for testing and debugging webhook implementations effectively. The Stripe CLI aids in simulating test events and verifying signature validation in a controlled environment, ensuring that webhook logic works correctly before deploying to production [1][4]. Additionally, tools like ngrok allow developers to expose local servers to the internet, facilitating real-time testing with live events and enabling debugging with local IDEs [4]. These tools help identify and resolve potential issues, such as signature verification failures or timeout problems, before they impact production environments."
+          ],
+          "sourceIds": [
+            "1",
+            "4"
+          ]
+        },
+        {
+          "title": "Asynchronous Processing and Quick Responses Prevent Webhook Retries",
+          "paragraphs": [
+            "Stripe requires webhook endpoints to respond quickly, ideally within ten seconds, to prevent automatic retries. If processing the webhook request takes longer, it should be handled asynchronously to ensure the endpoint returns a 200 status code promptly [1][2]. This quick response prevents Stripe from interpreting the request as failed, which could lead to a 'retry storm' where multiple redundant requests are sent, potentially overwhelming the server and creating a backlog of events to process [2]. Implementing asynchronous handling is a best practice to maintain efficient and reliable webhook processing."
+          ],
+          "sourceIds": [
+            "1",
+            "2"
+          ]
+        }
+      ],
+      "sources": {
+        "1": {
+          "title": "Stripe Webhooks Implementation Guide - Setup, Events & Security",
+          "url": "https://example.com/docs/tier2_stripe_webhooks_implementation_guide",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Stripe Webhooks Implementation Guide"
+        },
+        "2": {
+          "title": "Common Challenges in Webhook Implementation",
+          "url": "https://example.com/docs/tier2_stripe_webhooks_implementation_guide",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Stripe Webhooks Implementation Guide"
+        },
+        "3": {
+          "title": "Stripe Webhooks - Test/Live Mode Mismatch",
+          "url": "https://example.com/docs/tier3_stripe_webhooks_test_live_mismatch",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Production Failure: Test vs Live Mode Secret Mismatch"
+        },
+        "4": {
+          "title": "Stripe Webhooks - ngrok documentation",
+          "url": "https://example.com/docs/tier2_stripe_webhooks_ngrok_testing",
+          "source_name": "Claude Tool Use: Community Practice",
+          "tier": 2,
+          "document_title": "Local Webhook Testing with ngrok"
+        },
+        "5": {
+          "title": "Debugging Stripe Webhook Signature Verification Errors in Production",
+          "url": "https://example.com/docs/tier3_stripe_webhooks_test_live_mismatch",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Production Failure: Test vs Live Mode Secret Mismatch"
+        },
+        "6": {
+          "title": "Express bodyParser Middleware Conflict with Stripe webhook verification",
+          "url": "https://example.com/docs/tier3_stripe_webhooks_bodyparser_conflict",
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "tier": 3,
+          "document_title": "Framework Pitfall: Express bodyParser Middleware Conflict"
+        }
+      }
+    },
+    "trace": {
+      "retrieved_chunks": [
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Stripe Webhooks Implementation Guide",
+          "tier": 2,
+          "text_preview": "---\nsource_name: Stripe Webhooks Implementation Guide\nurl: https://www.hooklistener.com/learn/stripe"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Stripe Webhooks Implementation Guide",
+          "tier": 2,
+          "text_preview": "ior\n\n## Common Challenges\n\n### Timeout Issues\nLong processing causes Stripe to retry. Always return "
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Production Failure: Test vs Live Mode Secret Mismatch",
+          "tier": 3,
+          "text_preview": "ebhook/stripe`\n3. `stripe trigger checkout.session.completed`\n\nMake sure your local environment uses"
+        },
+        {
+          "source_name": "Claude Tool Use: Community Practice",
+          "title": "Local Webhook Testing with ngrok",
+          "tier": 2,
+          "text_preview": "---\nsource_name: Stripe Webhooks - ngrok Testing\nurl: https://ngrok.com/docs/integrations/webhooks/s"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Production Failure: Test vs Live Mode Secret Mismatch",
+          "tier": 3,
+          "text_preview": "---\nsource_name: Stripe Webhooks - Test/Live Mode Mismatch\nurl: https://dev.to/nerdincode/debugging-"
+        },
+        {
+          "source_name": "Claude Tool Use: Failure Analysis",
+          "title": "Framework Pitfall: Express bodyParser Middleware Conflict",
+          "tier": 3,
+          "text_preview": "---\nsource_name: Stripe Webhooks - Express bodyParser Conflict\nurl: https://github.com/stripe/stripe"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Use Cowork safely Claude Help Center",
+          "tier": 1,
+          "text_preview": "uments, credentials, or personal records.\nConsider creating a dedicated working folder for Claude ra"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Use Cowork safely Claude Help Center",
+          "tier": 1,
+          "text_preview": "uter in Cowork.\nImportant: Cowork has access to Claude in Chrome; we strongly advise against using C"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Intro to Claude",
+          "tier": 1,
+          "text_preview": "Key capabilities\n\n\nSolutions LearnWas this page helpful?\nText and code generation\nSummarize text, an"
+        },
+        {
+          "source_name": "Anthropic Claude Documentation",
+          "title": "Data residency",
+          "tier": 1,
+          "text_preview": "ering at Anthropic\nEvents\nPowered by Claude\nService partners\nStartups program\nCompany\nAnthropic\nCare"
+        }
+      ],
+      "chunk_count": 10,
+      "synthesis_model": "gpt-4o",
+      "timestamp": "2026-04-09T23:45:15.164570"
+    }
+  },
+  {
     "id": "a28f308c-88d9-4f55-94b5-69076fb68ccb",
     "timestamp": "2026-04-09T23:20:03.962311",
     "question": "Why is Claude calling the wrong tool or using incorrect parameters?",

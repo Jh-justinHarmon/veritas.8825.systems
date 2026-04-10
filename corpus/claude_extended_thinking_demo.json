@@ -1,0 +1,197 @@
+{
+  "demo_metadata": {
+    "subject": "Claude Extended Thinking",
+    "demo_question": "When should I use Claude's extended thinking mode and how do I optimize the thinking budget?",
+    "site": "Claude API",
+    "created": "2026-04-09",
+    "total_sources": 6,
+    "tier_distribution": {
+      "tier_1": 3,
+      "tier_2": 2,
+      "tier_3": 1
+    },
+    "note": "Tier 3 content is weaker - limited community troubleshooting for this newer feature"
+  },
+  "sources": [
+    {
+      "id": "claude_extended_thinking_tier1_001",
+      "tier": 1,
+      "tier_label": "Official Documentation",
+      "authority": 1.0,
+      "title": "Building with extended thinking - Claude API Docs",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/extended-thinking",
+      "source_type": "official_docs",
+      "role": "Core answer foundation - what extended thinking is and how it works",
+      "key_concepts": [
+        "Extended thinking overview",
+        "Thinking budget",
+        "API usage",
+        "Feature compatibility",
+        "Performance considerations"
+      ],
+      "extracted_content": {
+        "what_is_extended_thinking": "Extended thinking mode allows Claude to spend more time breaking down problems, planning solutions, and exploring different approaches before responding. Creates visible thinking content blocks.",
+        "how_it_works": "Claude generates internal reasoning in thinking blocks before producing the final text response. The thinking budget determines the maximum number of tokens Claude is allowed to use for its internal reasoning process.",
+        "budget_optimization": "Higher token counts enable more comprehensive reasoning but with diminishing returns depending on the task. Increasing the budget can improve response quality at the tradeoff of increased latency.",
+        "minimum_budget": "The minimum budget is 1,024 tokens. Start at the minimum and increase incrementally to find the optimal range for your use case.",
+        "feature_incompatibility": [
+          "Thinking isn't compatible with temperature, top_p, or top_k modifications",
+          "Not compatible with forced tool use",
+          "You cannot pre-fill responses when thinking is enabled",
+          "Changes to the thinking budget invalidate cached prompt prefixes that include messages"
+        ],
+        "performance_considerations": {
+          "response_times": "Be prepared for potentially longer response times due to the additional processing required for the reasoning process.",
+          "streaming": "Streaming is required when max_tokens is greater than 21,333. When streaming, be prepared to handle both thinking and text content blocks as they arrive."
+        }
+      }
+    },
+    {
+      "id": "claude_extended_thinking_tier1_002",
+      "tier": 1,
+      "tier_label": "Official Documentation",
+      "authority": 1.0,
+      "title": "Extended thinking tips - Claude API Docs",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/extended-thinking-tips",
+      "source_type": "official_docs",
+      "role": "Official prompting best practices for extended thinking",
+      "key_concepts": [
+        "Adaptive thinking vs extended thinking",
+        "Prompt engineering",
+        "Budget management",
+        "Use case selection"
+      ],
+      "extracted_content": {
+        "adaptive_vs_extended": "In internal evaluations, adaptive thinking reliably drives better performance than extended thinking. Consider moving to adaptive thinking to get the most intelligent responses.",
+        "when_to_use_adaptive": "Use adaptive thinking for workloads that require agentic behavior such as multi-step tool use, complex coding tasks, and long-horizon reasoning.",
+        "budget_deprecation": "If you need a hard ceiling on thinking costs, extended thinking with a budget_tokens cap is still functional on Opus 4.6 and Sonnet 4.6 but is deprecated. Prefer lowering the effort setting or using max_tokens as a hard limit with adaptive thinking.",
+        "prompt_engineering_tip": "Use <thinking> tags inside your few-shot examples to show Claude how to structure its reasoning process."
+      }
+    },
+    {
+      "id": "claude_extended_thinking_tier1_003",
+      "tier": 1,
+      "tier_label": "Official Documentation",
+      "authority": 1.0,
+      "title": "Claude's extended thinking - Anthropic News",
+      "url": "https://www.anthropic.com/news/visible-extended-thinking",
+      "source_type": "official_blog",
+      "role": "Product announcement and use case explanation",
+      "key_concepts": [
+        "Visible thinking",
+        "Use cases",
+        "Performance benchmarks",
+        "Safety considerations"
+      ],
+      "extracted_content": {
+        "product_vision": "Making Claude's thought process visible. Benefits: trust, alignment, interest. Downsides: less personal tone, faithfulness concerns, safety/security risks.",
+        "think_tool_distinction": "The 'think' tool is a different concept, more suitable for complex tool calls. The think tool allows Claude to add an explicit thinking step during response generation, particularly useful for long chains of tool calls or multi-step conversations where external information processing is needed.",
+        "performance": "Using the equivalent compute of 256 independent samples, a learned scoring model, and a maximum 64k-token thinking budget, Claude 3.7 Sonnet achieved a GPQA score of 84.8% (including a physics subscore of 96.5%).",
+        "real_world_impact": "The model's ability to maintain focus and accomplish open-ended goals will help developers build a wide range of state-of-the-art AI agents."
+      }
+    },
+    {
+      "id": "claude_extended_thinking_tier2_001",
+      "tier": 2,
+      "tier_label": "Implementation Guide",
+      "authority": 0.7,
+      "title": "Extended thinking - Amazon Bedrock",
+      "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-extended-thinking.html",
+      "source_type": "third_party_docs",
+      "role": "AWS implementation guide with best practices",
+      "key_concepts": [
+        "Task selection",
+        "Budget optimization",
+        "Context handling",
+        "Performance considerations"
+      ],
+      "extracted_content": {
+        "task_selection": "Use extended thinking for particularly complex tasks that benefit from step-by-step reasoning like math, coding, and analysis.",
+        "context_handling": "You do not need to remove previous thinking blocks yourself. The Anthropic API automatically ignores thinking blocks from previous turns and they are not included when calculating context usage.",
+        "budget_optimization_guidance": "The minimum budget is 1,024 tokens. We suggest starting at the minimum and increasing the thinking budget incrementally to find the optimal range for Claude to perform well for your use case. Higher token counts might allow you to achieve more comprehensive and nuanced reasoning, but there might also be diminishing returns depending on the task.",
+        "thinking_budget_note": "The thinking budget is a target rather than a strict limit - actual token usage may vary based on the task.",
+        "performance_tradeoffs": {
+          "response_times": "Be prepared for potentially longer response times due to the additional processing required for the reasoning process. Factor in that generating thinking blocks might increase the overall response time.",
+          "streaming_requirements": "Streaming is required when max_tokens is greater than 21,333. When streaming, be prepared to handle both thinking and text content blocks as they arrive."
+        }
+      }
+    },
+    {
+      "id": "claude_extended_thinking_tier2_002",
+      "tier": 2,
+      "tier_label": "Implementation Guide",
+      "authority": 0.7,
+      "title": "Using extended thinking | Claude Help Center",
+      "url": "https://support.claude.com/en/articles/10574485-using-extended-thinking",
+      "source_type": "official_support",
+      "role": "User-facing guide on when to use extended thinking",
+      "key_concepts": [
+        "Use case selection",
+        "When NOT to use",
+        "Tips for effective use"
+      ],
+      "extracted_content": {
+        "when_to_use": [
+          "Complex problem-solving (multi-step math, logic puzzles, strategic planning)",
+          "Detailed planning and analysis (project planning, research synthesis, code architecture)"
+        ],
+        "when_NOT_to_use": [
+          "Simple questions and everyday conversations",
+          "Basic information requests",
+          "General writing tasks"
+        ],
+        "tips": [
+          "Be specific: Clearly state your problem or question to help Claude focus its extended thinking time effectively",
+          "Review the thought process: Expand the thinking section to understand how Claude arrived at its conclusion",
+          "Consider time trade-offs: While extended thinking can provide more thorough responses, it takes longer. Choose this mode when the additional analysis time will truly benefit your task"
+        ]
+      }
+    },
+    {
+      "id": "claude_extended_thinking_tier3_001",
+      "tier": 3,
+      "tier_label": "Common Pitfalls",
+      "authority": 0.4,
+      "title": "When should I use web search, extended thinking, and Research?",
+      "url": "https://support.claude.com/en/articles/11095361-when-should-i-use-web-search-extended-thinking-and-research",
+      "source_type": "official_support",
+      "role": "Feature comparison and selection guidance",
+      "key_concepts": [
+        "Feature selection",
+        "Extended thinking vs other features",
+        "Use case matching"
+      ],
+      "extracted_content": {
+        "extended_thinking_use_case": "Extended thinking shines when tackling complex reasoning tasks that don't require recent info from the web—like solving mathematical problems, debugging code, or analyzing philosophical concepts—allowing Claude to explore multiple angles before reaching a conclusion.",
+        "combining_features": "Combining extended thinking with web search or Research can be powerful for tasks that require both deep reasoning and current information.",
+        "when_to_skip_extended_thinking": "For simple queries, everyday conversations, or basic information requests, extended thinking adds unnecessary latency without improving quality.",
+        "cost_consideration": "Extended thinking consumes additional tokens for the thinking process. Toggle it off when you don't need Claude's enhanced reasoning for a particular task."
+      }
+    }
+  ],
+  "three_layer_answer_structure": {
+    "core_answer": {
+      "tier": 1,
+      "sources": ["claude_extended_thinking_tier1_001", "claude_extended_thinking_tier1_002", "claude_extended_thinking_tier1_003"],
+      "content": "Extended thinking allows Claude to generate internal reasoning in thinking blocks before producing the final response. Minimum budget: 1,024 tokens. Start low and increase incrementally to find optimal range. Higher budgets = more comprehensive reasoning but diminishing returns and increased latency. Feature incompatibilities: Not compatible with temperature/top_p/top_k modifications, forced tool use, or response prefilling. Note: Adaptive thinking now outperforms extended thinking in internal evaluations - consider using adaptive thinking for agentic workloads (multi-step tool use, complex coding, long-horizon reasoning)."
+    },
+    "implementation_insight": {
+      "tier": 2,
+      "sources": ["claude_extended_thinking_tier2_001", "claude_extended_thinking_tier2_002"],
+      "content": "Task selection: Use for complex tasks benefiting from step-by-step reasoning (math, coding, analysis). Don't use for simple questions, basic information requests, or general writing. Budget optimization: Start at 1,024 tokens minimum, increase incrementally. Thinking budget is a target, not strict limit - actual usage varies by task. Context handling: API automatically ignores previous thinking blocks (not counted in context). Performance: Expect longer response times. Streaming required when max_tokens > 21,333. Tips: (1) Be specific in problem statement, (2) Review thinking process to understand reasoning, (3) Consider time trade-offs - only use when analysis time truly benefits the task."
+    },
+    "common_pitfalls": {
+      "tier": 3,
+      "sources": ["claude_extended_thinking_tier3_001"],
+      "content": "PITFALL #1: Using extended thinking for simple tasks. Symptom: Unnecessary latency without quality improvement. Root cause: Extended thinking adds processing time that doesn't benefit basic queries. Fix: Toggle off for simple questions, everyday conversations, basic info requests. PITFALL #2: Not combining with other features when needed. Symptom: Good reasoning but missing current information. Root cause: Extended thinking doesn't access web. Fix: Combine extended thinking with web search or Research for tasks requiring both deep reasoning AND current information. PITFALL #3: Not considering cost. Symptom: Higher token usage than expected. Root cause: Extended thinking consumes additional tokens for the thinking process. Fix: Toggle off when enhanced reasoning isn't needed for the task. NOTE: Limited Tier 3 content available - this is a newer feature with less community troubleshooting documented."
+    }
+  },
+  "demo_validation": {
+    "tier_separation_quality": 3,
+    "tier_separation_notes": "Tier 1 explains mechanics, Tier 2 explains when to use, Tier 3 is weak (limited community content). Most 'pitfalls' are actually documented in Tier 1/2 as feature design (incompatibilities, when not to use).",
+    "implementation_gap": "Weak - docs already explain when to use vs. not use, feature incompatibilities are documented, adaptive thinking recommendation is in official docs",
+    "demo_strength": "Medium - conceptually interesting but lacks concrete failure modes. Most guidance is 'when to use' rather than 'why it fails'",
+    "coverage_completeness": "Moderate - covers what it is and when to use, but limited real-world pitfall content",
+    "recommendation": "This subject is weaker than Tool Use or Vision for a first demo. Consider as a third demo after proving Veritas value with subjects that have stronger Tier 3 content."
+  }
+}

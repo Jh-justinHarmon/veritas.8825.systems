@@ -1,0 +1,264 @@
+{
+  "demo_metadata": {
+    "subject": "Stripe Webhooks Integration",
+    "demo_question": "I set up Stripe webhooks but signature verification keeps failing. What am I doing wrong?",
+    "site": "Stripe",
+    "created": "2026-04-09",
+    "total_sources": 7,
+    "tier_distribution": {
+      "tier_1": 3,
+      "tier_2": 2,
+      "tier_3": 2
+    }
+  },
+  "sources": [
+    {
+      "id": "stripe_webhooks_tier1_001",
+      "tier": 1,
+      "tier_label": "Official Documentation",
+      "authority": 1.0,
+      "title": "Receive Stripe events in your webhook endpoint",
+      "url": "https://docs.stripe.com/webhooks",
+      "source_type": "official_docs",
+      "role": "Core answer foundation - webhook mechanics and requirements",
+      "key_concepts": [
+        "Event-driven architecture",
+        "Webhook endpoint requirements",
+        "Event object structure",
+        "Signature verification",
+        "Best practices"
+      ],
+      "extracted_content": {
+        "what_are_webhooks": "Stripe uses webhooks to push real-time event data to your application's webhook endpoint when events happen in your Stripe account. Stripe uses HTTPS to send webhook events to your app as a JSON payload that includes an Event object.",
+        "endpoint_requirements": [
+          "Handles POST requests with a JSON payload consisting of an event object",
+          "Quickly returns a successful status code (2xx) prior to any complex logic that might cause a timeout",
+          "Must return a 200 response before updating a customer's invoice as paid in your accounting system"
+        ],
+        "signature_verification_overview": "We recommend using our official libraries to verify signatures. You perform the verification by providing the event payload, the Stripe-Signature header, and the endpoint's secret. If verification fails, you get an error.",
+        "critical_warning": "Stripe requires the raw body of the request to perform signature verification. If you're using a framework, make sure it doesn't manipulate the raw body. Any manipulation to the raw body of the request causes the verification to fail.",
+        "best_practices": {
+          "handle_duplicates": "Webhook endpoints might occasionally receive the same event more than once. You can guard against duplicated event receipts by logging the event IDs you've processed, and then not processing already-logged events.",
+          "async_processing": "Configure your handler to process incoming events with an asynchronous queue. Any large spike in webhook deliveries might overwhelm your endpoint hosts.",
+          "verify_from_stripe": "Without verification, an attacker could send fake webhook events to your endpoint to trigger actions like fulfilling orders, granting account access, or modifying records. Always verify that webhook events originate from Stripe before acting on them.",
+          "return_quickly": "Your endpoint must quickly return a successful status code (2xx) prior to any complex logic that could cause a timeout. For example, you must return a 200 response before updating a customer's invoice as paid in your accounting system."
+        },
+        "code_example": "require 'stripe'\nrequire 'sinatra'\n\nendpoint_secret = 'whsec_...'\n\npost '/my/webhook/url' do\n  payload = request.body.read\n  sig_header = request.env['HTTP_STRIPE_SIGNATURE']\n  event = nil\n\n  begin\n    event = Stripe::Webhook.construct_event(\n      payload, sig_header, endpoint_secret\n    )\n  rescue JSON::ParserError => e\n    puts \"Error parsing payload: #{e.message}\"\n    status 400\n    return\n  rescue Stripe::SignatureVerificationError => e\n    puts \"Error verifying webhook signature: #{e.message}\"\n    status 400\n    return\n  end\n\n  # Handle the event\n  case event.type\n  when 'payment_intent.succeeded'\n    payment_intent = event.data.object\n    puts 'PaymentIntent was successful!'\n  else\n    puts \"Unhandled event type: #{event.type}\"\n  end\n\n  status 200\nend"
+      }
+    },
+    {
+      "id": "stripe_webhooks_tier1_002",
+      "tier": 1,
+      "tier_label": "Official Documentation",
+      "authority": 1.0,
+      "title": "Set up and deploy a webhook - Quickstart",
+      "url": "https://docs.stripe.com/webhooks/quickstart",
+      "source_type": "official_docs",
+      "role": "Step-by-step implementation guide",
+      "key_concepts": [
+        "Webhook setup workflow",
+        "Local testing with Stripe CLI",
+        "Endpoint registration",
+        "Production deployment"
+      ],
+      "extracted_content": {
+        "setup_steps": [
+          "Create handler function",
+          "Test with Stripe CLI (stripe listen)",
+          "Register endpoint in Dashboard",
+          "Deploy to production"
+        ],
+        "stripe_cli_usage": "Use 'stripe listen' to find the endpoint secret for local testing. The CLI forwards webhook events to your local development server.",
+        "testing_workflow": "Interactive webhook endpoint builder available at docs.stripe.com/webhooks/quickstart to build a webhook endpoint function in your programming language."
+      }
+    },
+    {
+      "id": "stripe_webhooks_tier1_003",
+      "tier": 1,
+      "tier_label": "Official Documentation",
+      "authority": 1.0,
+      "title": "Resolve webhook signature verification errors",
+      "url": "https://docs.stripe.com/webhooks/signature",
+      "source_type": "official_docs",
+      "role": "Official troubleshooting for signature failures",
+      "key_concepts": [
+        "Signature verification parameters",
+        "Common verification errors",
+        "Endpoint secret management",
+        "Test vs live mode secrets"
+      ],
+      "extracted_content": {
+        "verification_parameters": "When processing webhook events, call the constructEvent() function with three parameters: requestBody (the request body string sent by Stripe), signature (the Stripe-Signature header), endpointSecret (the secret associated with your endpoint).",
+        "common_error": "If you get the following 'Webhook signature verification failed' error, at least one of the three parameters you passed to the constructEvent() function is incorrect.",
+        "most_common_mistake": "The most common error is using the wrong endpoint secret. If you're using a webhook endpoint created in the Dashboard, open the endpoint in the Dashboard and click the Reveal secret link near the top of the page to view the secret. If you're using the Stripe CLI, the secret is printed in the Terminal when you run the stripe listen command.",
+        "secret_prefix_distinction": "In both cases, the secret starts with a whsec_ prefix, but the secret itself is different. Don't verify signatures on events forwarded by the CLI using the secret from a Dashboard-managed endpoint, or the other way around.",
+        "raw_body_requirement": "The request body must be the body string that Stripe sends in UTF-8 encoding without any changes. When you print it as a string, it looks similar to: { \"id\": \"evt_xxx\", \"object\": \"event\", \"data\": { ... } }",
+        "critical_instruction": "Check the endpoint secret. Print the endpointSecret used in your code, and make sure that it matches the one you found above."
+      }
+    },
+    {
+      "id": "stripe_webhooks_tier2_001",
+      "tier": 2,
+      "tier_label": "Implementation Guide",
+      "authority": 0.7,
+      "title": "Stripe Webhooks Implementation Guide: Setup, Events & Security",
+      "url": "https://www.hooklistener.com/learn/stripe-webhooks-implementation",
+      "source_type": "third_party_tutorial",
+      "role": "Comprehensive implementation best practices and security patterns",
+      "key_concepts": [
+        "Signature mechanics (HMAC-SHA256)",
+        "Event types (snapshot vs thin)",
+        "Testing strategies",
+        "Production patterns",
+        "Common challenges"
+      ],
+      "extracted_content": {
+        "signature_mechanics": "Stripe includes a Stripe-Signature header with each webhook. The signature contains a timestamp (t) and HMAC-SHA256 hash (v1) of the payload signed with your endpoint secret.",
+        "critical_security": "Always verify webhook signatures to ensure requests actually come from Stripe. Without verification, malicious actors could send fake webhook events to your endpoint.",
+        "endpoint_requirements": [
+          "Accept POST requests with JSON payloads",
+          "Return HTTP 200 status code quickly (< 10 seconds)",
+          "Handle requests asynchronously for complex processing",
+          "Be accessible via HTTPS (required for production)"
+        ],
+        "dashboard_setup": [
+          "Navigate to Stripe Dashboard → Developers → Webhooks",
+          "Click 'Add endpoint' and enter your webhook URL",
+          "Select events to listen for (or choose 'Select all events' for testing)",
+          "Save the endpoint and copy the webhook signing secret",
+          "Store the signing secret securely in your environment variables"
+        ],
+        "testing_with_cli": "The Stripe CLI is the best tool for webhook development and testing. The CLI provides a webhook signing secret for local testing and shows real-time webhook delivery status.",
+        "testing_strategies": {
+          "local_development": [
+            "Use Stripe CLI for forwarding",
+            "Test with generated test events",
+            "Verify signature validation",
+            "Check idempotency handling"
+          ],
+          "production_testing": [
+            "Use Stripe test mode initially",
+            "Monitor webhook delivery logs",
+            "Test failure scenarios",
+            "Validate retry behavior"
+          ]
+        },
+        "common_challenges": [
+          {
+            "challenge": "Timeout Issues",
+            "description": "Long processing causes Stripe to retry. Always return 200 quickly and process asynchronously."
+          },
+          {
+            "challenge": "Signature Verification",
+            "description": "Failing verification breaks webhook processing. Test thoroughly with different payloads."
+          },
+          {
+            "challenge": "Event Ordering",
+            "description": "Webhooks may arrive out of order. Don't rely on processing order for business logic."
+          },
+          {
+            "challenge": "Retry Storms",
+            "description": "Failing webhooks are retried automatically. Fix processing issues quickly to prevent backlog."
+          }
+        ]
+      }
+    },
+    {
+      "id": "stripe_webhooks_tier2_002",
+      "tier": 2,
+      "tier_label": "Implementation Guide",
+      "authority": 0.7,
+      "title": "Stripe Webhooks - ngrok documentation",
+      "url": "https://ngrok.com/docs/integrations/webhooks/stripe-webhooks",
+      "source_type": "third_party_tutorial",
+      "role": "Local development testing workflow",
+      "key_concepts": [
+        "Local webhook testing",
+        "Tunnel setup",
+        "Development workflow",
+        "Pre-production testing"
+      ],
+      "extracted_content": {
+        "purpose": "Expose localhost to internet for webhook testing. Create a publicly accessible tunnel to your local development server for Stripe webhook delivery.",
+        "workflow": "Once your app is running locally, you're ready to put it online securely using ngrok. Copy your ngrok authtoken from the dashboard. The ngrok agent uses your authtoken to authenticate when you start a tunnel.",
+        "testing_benefit": "Test webhooks before production deployment. With ngrok running you can now test the site using your local dev domain. You will see any configured stripe events configured for the webhook displayed in the console window and can debug them using your IDE."
+      }
+    },
+    {
+      "id": "stripe_webhooks_tier3_001",
+      "tier": 3,
+      "tier_label": "Common Pitfalls",
+      "authority": 0.4,
+      "title": "Debugging Stripe Webhook Signature Verification Errors in Production",
+      "url": "https://dev.to/nerdincode/debugging-stripe-webhook-signature-verification-errors-in-production-1h7c",
+      "source_type": "developer_experience",
+      "role": "Real production failure - test vs live mode secret mismatch",
+      "key_concepts": [
+        "Test/live mode confusion",
+        "Environment configuration",
+        "Production deployment errors",
+        "Secret management"
+      ],
+      "extracted_content": {
+        "problem_statement": "After deploying to production, Stripe kept returning this error: 'Webhook signature verification failed. No signatures found matching the expected signature for payload.' I was sure my raw body handling was correct, and the endpoint URL was accurate. Locally, everything worked using the Stripe CLI. But in production… webhook requests kept failing.",
+        "root_cause": "Turns out the issue was very simple but easy to overlook: I was using the Test Mode webhook signing secret (whsec_...) in production, while Stripe was sending Live Mode events.",
+        "key_insight": "Stripe signs test and live events with different secrets, and if you mismatch them, signature verification will always fail — even if your code is perfect.",
+        "symptom": "Works locally with 'stripe listen', fails in production",
+        "solution": "Environment-Based Configuration. To avoid this, I updated my environment variables and Stripe initialization code to handle different modes based on the environment.",
+        "testing_tip": "Use Stripe CLI for Local Testing: stripe login, stripe listen --forward-to localhost:5000/api/v1/webhook/stripe, stripe trigger checkout.session.completed. Make sure your local environment uses the test mode secrets to match the CLI's default behavior.",
+        "warning": "Small mistakes like using the wrong webhook secret can cost you hours of debugging. If you're getting a 'Webhook signature verification failed' error, double-check your mode (test/live) and environment configuration.",
+        "developer_quote": "The Test Mode vs Live Mode secret mismatch is such a common gotcha - I've seen it catch multiple teams."
+      }
+    },
+    {
+      "id": "stripe_webhooks_tier3_002",
+      "tier": 3,
+      "tier_label": "Common Pitfalls",
+      "authority": 0.4,
+      "title": "Documentation: how to verify events in express app which already has other body parser middleware",
+      "url": "https://github.com/stripe/stripe-node/issues/734",
+      "source_type": "github_issue",
+      "role": "Framework-specific pitfall - Express bodyParser middleware conflict",
+      "key_concepts": [
+        "Express middleware conflict",
+        "Raw body access",
+        "bodyParser configuration",
+        "Framework-specific workarounds"
+      ],
+      "extracted_content": {
+        "problem_statement": "The problem is that bodyParser.raw() will conflict with all other middleware like bodyParser.json(). The solution is to use bodyParser.json() and use the verify function to grab the rawBuffer and save it as a request property.",
+        "root_cause": "bodyParser.raw() and bodyParser.json() conflict with each other and one will not run if the other has already ran, so the first middleware wins.",
+        "symptom": "SignatureVerificationError even with correct secret. If you use in your express app bodyParser.json() for all routes, and then have a dedicated route for stripe's webhook, then the second call to bodyParser.json({verify: ...}) as done in the example has no effect.",
+        "solution_code": "//the below middleware is a workaround so we can get both `rawBody` and our normal `body`. Stripe webhooks need the rawBody\napp.use(bodyParser.json({\n  verify: (req, res, buf, encoding) => {\n    if (buf && buf.length) {\n      req.rawBody = buf.toString(encoding || 'utf8');\n    }\n  },\n  type: 'application/json'\n})); // for parsing application/json",
+        "usage": "Then user can use req.rawBody to construct the event like this: stripe.webhooks.constructEvent(req.rawBody, req.headers['stripe-signature'], config.stripe.webhookSecret);",
+        "documentation_gap": "This is the only way to have the raw body and the json body at the same time in one express application, while your docs do not show any warnings at all about this problem.",
+        "framework_specificity": "Express.js specific issue. Other frameworks (Rails, Django, NestJS) have similar raw body access challenges.",
+        "related_issue": "GitHub Issue #341 describes the same problem: 'Only if I comment out the first call to bodyParser.json does it work. Which mean that I cannot have a call to bodyParser just for my route.'"
+      }
+    }
+  ],
+  "three_layer_answer_structure": {
+    "core_answer": {
+      "tier": 1,
+      "sources": ["stripe_webhooks_tier1_001", "stripe_webhooks_tier1_002", "stripe_webhooks_tier1_003"],
+      "content": "Stripe webhooks require signature verification using three components: (1) Raw request body (UTF-8 encoded, unmodified), (2) Stripe-Signature header, (3) Endpoint secret (whsec_...). Call Stripe.Webhook.constructEvent(payload, signature, secret) to verify. If verification fails, you get SignatureVerificationError. The most common error is using the wrong endpoint secret - Dashboard endpoints and Stripe CLI use different secrets."
+    },
+    "implementation_insight": {
+      "tier": 2,
+      "sources": ["stripe_webhooks_tier2_001", "stripe_webhooks_tier2_002"],
+      "content": "Signature mechanics: Stripe creates HMAC-SHA256 hash of payload + timestamp, signed with your endpoint secret. Your code must: (1) Return 200 status quickly (< 10 seconds), (2) Process events asynchronously, (3) Handle duplicate events (idempotency), (4) Test locally with Stripe CLI or ngrok tunnel. For local testing, use 'stripe listen' which provides a test mode secret and forwards events to localhost. Security: Always verify signatures to prevent malicious fake events."
+    },
+    "common_pitfalls": {
+      "tier": 3,
+      "sources": ["stripe_webhooks_tier3_001", "stripe_webhooks_tier3_002"],
+      "content": "PITFALL #1 (90% of production failures): Test/Live Mode Secret Mismatch. Symptom: Works locally with 'stripe listen', fails in production. Root cause: Using test mode secret (whsec_test_...) when Stripe sends live mode events. Stripe signs test and live events with different secrets - mismatch = 100% failure. Fix: Environment-based configuration, separate secrets for test/live. PITFALL #2 (Express.js specific): bodyParser Middleware Conflict. Symptom: SignatureVerificationError even with correct secret. Root cause: bodyParser.json() already parsed body, Stripe can't access raw body. bodyParser.raw() and bodyParser.json() conflict - first middleware wins. Fix: Use verify callback to capture req.rawBody before parsing: app.use(bodyParser.json({verify: (req, res, buf, encoding) => { if (buf && buf.length) { req.rawBody = buf.toString(encoding || 'utf8'); }}}));"
+    }
+  },
+  "demo_validation": {
+    "tier_separation_quality": 5,
+    "tier_separation_notes": "Tier 1 explains mechanics, Tier 2 explains implementation patterns, Tier 3 exposes real failure modes not obvious from docs",
+    "implementation_gap": "Strong - test/live mode confusion and bodyParser conflicts are not documented in official guides",
+    "demo_strength": "Very High - single catastrophic pitfall (test/live mismatch) creates compelling 'aha' moment, framework-specific gotcha (bodyParser) represents practical developer pain",
+    "coverage_completeness": "Complete - covers what webhooks are, how to implement securely, and why they fail in practice"
+  }
+}

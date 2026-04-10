@@ -40,11 +40,19 @@ def process_markdown_file(md_path: Path, tier: int) -> Dict:
     # Generate document ID
     doc_id = f"tier{tier}_{md_path.stem.lower()}"
     
-    # Determine source name based on tier
-    source_names = {
-        2: "Claude Tool Use: Community Practice",
-        3: "Claude Tool Use: Failure Analysis"
-    }
+    # Determine source name based on tier and file path
+    if 'stripe' in str(md_path):
+        source_names = {
+            1: "Stripe Webhooks Documentation",
+            2: "Stripe Webhooks: Implementation Guide",
+            3: "Stripe Webhooks: Common Pitfalls"
+        }
+    else:
+        source_names = {
+            1: "Claude Tool Use Documentation",
+            2: "Claude Tool Use: Community Practice",
+            3: "Claude Tool Use: Failure Analysis"
+        }
     
     # Create document
     doc = {
@@ -104,28 +112,40 @@ def process_tier_directory(tier_dir: Path, tier_num: int) -> list:
 
 def main():
     """Main processing function."""
-    print("Processing Tier 2 and Tier 3 markdown content...")
+    print("Processing Tier 1, Tier 2, and Tier 3 markdown content...")
     
     # Directories
     corpus_dir = Path(__file__).parent.parent.parent / "corpus"
-    tier2_dir = corpus_dir / "raw" / "tier2"
-    tier3_dir = corpus_dir / "raw" / "tier3"
+    raw_dir = corpus_dir / "raw"
     output_dir = corpus_dir / "embeddings"
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    # Process Tier 2
-    tier2_chunks = process_tier_directory(tier2_dir, 2)
+    # Process all tier directories (including subdirectories like stripe/)
+    tier1_chunks = []
+    tier2_chunks = []
+    tier3_chunks = []
     
-    # Process Tier 3
-    tier3_chunks = process_tier_directory(tier3_dir, 3)
+    # Find all tier1 directories (stripe/tier1, etc.)
+    for tier1_dir in [raw_dir / "stripe" / "tier1"]:
+        if tier1_dir.exists():
+            tier1_chunks.extend(process_tier_directory(tier1_dir, 1))
     
-    # Load existing Tier 1 chunks
-    tier1_file = output_dir / "tier1_embedded_chunks.json"
-    if tier1_file.exists():
-        with open(tier1_file, 'r', encoding='utf-8') as f:
-            tier1_chunks = json.load(f)
-    else:
-        tier1_chunks = []
+    # Find all tier2 directories
+    for tier2_dir in [raw_dir / "tier2", raw_dir / "stripe" / "tier2"]:
+        if tier2_dir.exists():
+            tier2_chunks.extend(process_tier_directory(tier2_dir, 2))
+    
+    # Find all tier3 directories
+    for tier3_dir in [raw_dir / "tier3", raw_dir / "stripe" / "tier3"]:
+        if tier3_dir.exists():
+            tier3_chunks.extend(process_tier_directory(tier3_dir, 3))
+    
+    # Load existing Tier 1 chunks from PDF processing
+    tier1_pdf_file = output_dir / "tier1_embedded_chunks.json"
+    if tier1_pdf_file.exists():
+        with open(tier1_pdf_file, 'r', encoding='utf-8') as f:
+            tier1_pdf_chunks = json.load(f)
+            tier1_chunks.extend(tier1_pdf_chunks)
     
     print(f"\n{'='*60}")
     print("Summary:")
