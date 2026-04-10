@@ -2,63 +2,76 @@
 
 ## Why I Built This
 
-Most RAG systems retrieve documents and generate answers, but they don't tell you how trustworthy the answer is or how much of it is backed by official documentation versus weaker sources.
+Most RAG systems retrieve documents and generate answers, but they collapse documentation, blogs, and real-world experience into a single answer, so you can’t see how that answer was constructed.
 
-I built Veritas to explore source-aware answer generation where the system tracks where information comes from, weights sources by authority, and scores how well an answer is supported by documentation.
-
-The goal is not just to generate answers, but to show how reliable the answer is and why.
+I built Veritas to explore a different approach: answers should show how understanding is constructed across different types of sources, not just what the answer is.
 
 ---
 
 ## What This Is
 
-Veritas is an AI answer engine for developer documentation that:
+Veritas is a governed AI answer engine for developer documentation that:
 
-- Retrieves information from official docs, vendor content, and community sources
-- Weights sources by authority
-- Generates answers with citations
-- Scores answer quality and documentation coverage
-- Logs runs with full trace and replay
+- Retrieves from official docs, vendor content, and community sources  
+- Treats sources differently based on their role and authority  
+- Generates answers with citations  
+- Structures answers by source type  
+- Logs runs so answers can be traced and replayed  
 
-The system is designed so answers are not just generated — they are **scored, traced, and explained**.
+The system does not just generate answers — it shows how the answer is constructed, and what each source contributes to that understanding.
 
 ---
 
 ## Core Idea
 
-Not all sources are equal.
+Not all sources play the same role.
 
-Official documentation is more reliable than blog posts.  
-Blog posts are more reliable than random forum answers.
+- Official docs define what is true  
+- Blogs and examples show how it’s used  
+- Community content shows where it breaks  
 
-Veritas ranks sources by authority and tracks how much of an answer is supported by high-authority sources versus low-authority ones.
+Most systems mix these together.
 
-The system answers the question, but it also answers a second question:
+Veritas keeps them separate and makes their roles explicit.
 
-**"How much should I trust this answer?"**
+The goal is not just to answer the question, but to show:
+
+**how the answer emerges from different types of knowledge**
 
 ---
 
-## How It Works (High Level)
+## How Answers Are Structured
+
+Each answer is broken into three layers:
+
+- **Core Answer** — what is defined in official documentation  
+- **Implementation Insight** — how it is used in practice  
+- **Common Pitfalls** — where developers run into issues  
+
+This mirrors how developers actually learn: first what the system does, then how to use it, then where it breaks.
+
+---
+
+## How It Works
 
 1. Documents are ingested and tagged by source tier:
-   - Tier 1 — Official documentation
-   - Tier 2 — Vendor blogs and examples
-   - Tier 3 — Community content
+   - Tier 1 — Official documentation  
+   - Tier 2 — Vendor blogs and examples  
+   - Tier 3 — Community content  
 
-2. Retrieval uses both similarity and authority:
-   - 70% semantic similarity
-   - 30% source authority
+2. Retrieval combines similarity and authority:
+   - 70% semantic similarity  
+   - 30% source authority  
 
-3. The system generates an answer with inline citations.
+3. The system generates a structured answer with citations.
 
 4. The answer is scored across four dimensions:
-   - Coverage — Did we answer the question?
-   - Authority — Are the sources high quality?
-   - Sufficiency — Is there enough documentation to support the answer?
-   - Risk — Does this answer need human review?
+   - Coverage — did we answer the question  
+   - Authority — how strong the sources are  
+   - Sufficiency — whether documentation is enough  
+   - Risk — whether the answer needs review  
 
-5. Every run is logged to a ledger so the answer can be traced and replayed.
+5. Every run is logged so it can be inspected and replayed.
 
 ---
 
@@ -66,14 +79,27 @@ The system answers the question, but it also answers a second question:
 
 This project demonstrates:
 
-- Retrieval with source authority weighting
-- Answer generation with citations
-- Answer quality scoring
-- Provenance and traceability
-- Replayable runs
-- Governance and execution boundaries
+- Source-aware retrieval instead of similarity-only retrieval  
+- Structured answer generation across source types  
+- Explicit answer scoring  
+- Provenance and traceability  
+- Replayable runs  
 
-The focus is on building a **trustworthy answer system**, not just a chatbot.
+The focus is not the model.  
+The focus is **how answers are constructed and grounded**.
+
+---
+
+## Scope
+
+This is a deliberately scoped V1:
+
+- Single domain (developer documentation)  
+- Small corpus (a few doc sets)  
+- Single-user  
+- No agents, no workflows, no live search  
+
+The goal is to ship a working system quickly, not build a full platform.
 
 ---
 
@@ -90,28 +116,6 @@ veritas/
 
 ---
 
-## Scope
-
-This is a single-domain system focused on developer documentation.
-
-It is designed to demonstrate:
-
-- Source-aware retrieval
-- Answer scoring
-- Provenance and traceability
-- Governed execution
-
-This is not a general-purpose agent or search engine.  
-It is a governed answer engine for technical documentation.
-
----
-
 ## What This Project Is (In One Sentence)
 
-Veritas answers developer questions using documentation, shows its sources, and scores how much of the answer is backed by authoritative documentation.
-
----
-
-## License
-
-MIT License - See LICENSE file for details
+Veritas answers developer questions using documentation, blogs, and real-world experience, and shows how each source contributes to your understanding, not just the final answer.
