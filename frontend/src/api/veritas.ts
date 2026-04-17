@@ -52,30 +52,44 @@ export interface HistoryDetail {
   };
 }
 
-const API_BASE_URL = 'http://localhost:5001';
+// Use relative path in production, localhost in development
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 /**
  * Synthesize concept-driven answer from question.
  * 
  * @param question - User's question (5-500 chars)
- * @returns Promise<VeritasAnswer>
+ * @param mode - Synthesis mode (raw or abstracted)
+ * @returns Promise<any>
  * @throws Error if synthesis fails
  */
-export async function synthesizeAnswer(question: string): Promise<VeritasAnswer> {
-  const response = await fetch(`${API_BASE_URL}/api/synthesize`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ question }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Synthesis failed' }));
-    throw new Error(error.message || 'Failed to synthesize answer');
+export async function synthesizeAnswer(question: string, mode: 'raw' | 'abstracted' = 'raw'): Promise<any> {
+  const endpoint = mode === 'abstracted' ? `${API_BASE_URL}/api/synthesize/abstracted` : `${API_BASE_URL}/api/synthesize`;
+  
+  console.log(`[API] Fetching ${endpoint}`);
+  
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ question }),
+    });
+    
+    console.log(`[API] Response status: ${response.status}`);
+    
+    if (!response.ok) {
+      throw new Error(`Synthesis failed: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log(`[API] Response data:`, data);
+    return data;
+  } catch (error) {
+    console.error(`[API] Fetch error:`, error);
+    throw error;
   }
-
-  return await response.json();
 }
 
 /**
@@ -99,7 +113,7 @@ export async function getExamples(): Promise<ExampleQuestion[]> {
  * @returns Promise<{ status: string, chunks_loaded: number }>
  */
 export async function checkHealth(): Promise<{ status: string; chunks_loaded: number; service: string }> {
-  const response = await fetch(`${API_BASE_URL}/health`);
+  const response = await fetch(`${API_BASE_URL}/api/health`);
   
   if (!response.ok) {
     throw new Error('Health check failed');
@@ -116,7 +130,7 @@ export async function checkHealth(): Promise<{ status: string; chunks_loaded: nu
  * @returns Promise<HistoryEntry[]>
  */
 export async function getHistory(limit: number = 50, offset: number = 0): Promise<HistoryEntry[]> {
-  const response = await fetch(`${API_BASE_URL}/history?limit=${limit}&offset=${offset}`);
+  const response = await fetch(`${API_BASE_URL}/api/history?limit=${limit}&offset=${offset}`);
   
   if (!response.ok) {
     throw new Error('Failed to fetch history');
@@ -132,7 +146,7 @@ export async function getHistory(limit: number = 50, offset: number = 0): Promis
  * @returns Promise<HistoryDetail>
  */
 export async function getHistoryById(sessionId: string): Promise<HistoryDetail> {
-  const response = await fetch(`${API_BASE_URL}/history/${sessionId}`);
+  const response = await fetch(`${API_BASE_URL}/api/history/${sessionId}`);
   
   if (!response.ok) {
     throw new Error(`Failed to fetch history entry ${sessionId}`);
@@ -148,7 +162,7 @@ export async function getHistoryById(sessionId: string): Promise<HistoryDetail> 
  * @returns Promise<void>
  */
 export async function deleteHistory(sessionId: string): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/history/${sessionId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/history/${sessionId}`, {
     method: 'DELETE'
   });
   
