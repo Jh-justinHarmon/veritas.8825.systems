@@ -1,5 +1,10 @@
 # Veritas — Governed AI Answer Engine
 
+**🌐 Live Demo:** [https://veritas.8825.systems](https://veritas.8825.systems)  
+**📦 Repository:** [github.com/Jh-justinHarmon/veritas.8825.systems](https://github.com/Jh-justinHarmon/veritas.8825.systems)
+
+---
+
 ## Why I Built This
 
 Most RAG systems retrieve documents and generate answers, but they collapse documentation, blogs, and real-world experience into a single answer, so you can’t see how that answer was constructed.
@@ -103,14 +108,46 @@ The goal is to ship a working system quickly, not build a full platform.
 
 ---
 
+## Deployment
+
+**Production:** Deployed on Fly.io with Cloudflare DNS
+
+- **Primary URL:** [https://veritas-8825-systems.fly.dev](https://veritas-8825-systems.fly.dev)
+- **Custom Domain:** [https://veritas.8825.systems](https://veritas.8825.systems)
+- **Health Check:** [/api/health](https://veritas-8825-systems.fly.dev/api/health)
+- **Region:** Dallas (dfw)
+- **Auto-scaling:** Enabled (scales to zero when idle)
+- **Cost:** $0-5/month
+
+### Tech Stack
+
+- **Backend:** Flask + Gunicorn (Python 3.9)
+- **Frontend:** React + Vite + TailwindCSS
+- **Deployment:** Fly.io (Docker)
+- **DNS:** Cloudflare
+- **Retrieval:** OpenAI embeddings + semantic search
+- **Synthesis:** OpenAI GPT-4
+
+---
+
 ## Project Structure
 
 ```
 veritas/
-├── backend/           # FastAPI server
-├── frontend/          # React UI
-├── docs/              # Architecture docs
-├── corpus/            # Ingested documents (tier-tagged)
+├── backend/           # Flask API server
+│   ├── agents/        # Synthesis agent
+│   ├── ingestion/     # Document processing & embedding
+│   ├── retrieval/     # Semantic search
+│   └── app.py         # Main API
+├── frontend/          # React + Vite UI
+│   ├── src/
+│   │   ├── pages/     # Home page
+│   │   ├── api/       # API client
+│   │   └── adapters/  # Data transformation
+│   └── tests/         # Playwright E2E tests
+├── corpus/            # Tier-tagged documents & embeddings
+├── fly.toml           # Fly.io deployment config
+├── Dockerfile         # Production container
 └── README.md
 ```
 
