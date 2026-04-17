@@ -508,36 +508,24 @@ export function Home() {
   const [answer, setAnswer] = useState<VeritasAnswer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+
 
   useEffect(() => {
+    console.log('[Veritas] Starting synthesis...');
     synthesizeAnswer(DEMO_QUESTION)
       .then(apiResponse => {
+        console.log('[Veritas] Synthesis successful:', apiResponse);
         const transformed = transformApiResponse(apiResponse);
         setAnswer(transformed);
-        setCurrentSessionId(apiResponse.session_id || null);
         setLoading(false);
       })
       .catch(err => {
+        console.error('[Veritas] Synthesis failed:', err);
         setError(err.message);
         setLoading(false);
       });
   }, []);
 
-  const handleSelectHistory = async (sessionId: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const historyEntry = await getHistoryById(sessionId);
-      const transformed = transformApiResponse(historyEntry.answer);
-      setAnswer(transformed);
-      setCurrentSessionId(sessionId);
-      setLoading(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load history');
-      setLoading(false);
-    }
-  };
 
   const handleReset = useCallback(() => {
     setLoading(true);
@@ -556,10 +544,48 @@ export function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-slate-400 mb-4">Synthesizing answer...</div>
-          <div className="w-8 h-8 border-2 border-slate-700 border-t-slate-400 rounded-full animate-spin mx-auto" />
+      <div className="min-h-screen bg-[#07090F] flex items-center justify-center px-8">
+        <div className="max-w-[520px] text-center">
+          {/* Veritas branding */}
+          <p className="text-[9px] font-mono tracking-[0.32em] text-slate-700 uppercase mb-6">
+            veritas · technical synthesis
+          </p>
+          
+          {/* Question being answered */}
+          <h1 className="text-[20px] font-semibold text-slate-200 leading-snug tracking-tight mb-8">
+            Why is Claude calling the wrong tool or using incorrect parameters?
+          </h1>
+          
+          {/* Spinner */}
+          <div className="w-10 h-10 border-2 border-slate-800 border-t-slate-500 rounded-full animate-spin mx-auto mb-8" />
+          
+          {/* Process explanation */}
+          <div className="space-y-3 text-left">
+            <div className="flex items-start gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-500/60 mt-2 shrink-0" />
+              <p className="text-[13px] text-slate-500 leading-relaxed">
+                <span className="text-slate-400 font-medium">Searching official documentation</span> — Anthropic's tool use specs, parameter definitions, and API references
+              </p>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-500/60 mt-2 shrink-0" />
+              <p className="text-[13px] text-slate-500 leading-relaxed">
+                <span className="text-slate-400 font-medium">Consulting implementation guides</span> — Vendor blogs, code examples, and observed patterns from production use
+              </p>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-rose-500/60 mt-2 shrink-0" />
+              <p className="text-[13px] text-slate-500 leading-relaxed">
+                <span className="text-slate-400 font-medium">Reviewing community failures</span> — Real debugging sessions, edge cases, and systematic failure modes
+              </p>
+            </div>
+          </div>
+          
+          <p className="text-[11px] text-slate-700 mt-8 leading-relaxed">
+            Synthesizing concept-driven answer with tier-aware citations...
+          </p>
         </div>
       </div>
     );
@@ -590,22 +616,5 @@ export function Home() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-slate-950">
-      <div className="max-w-7xl mx-auto px-8 py-12">
-        {/* Demo Question Header */}
-        <div className="border-b border-slate-800 pb-6 mb-8">
-          <div className="text-sm text-slate-500 uppercase tracking-wide mb-2">
-            Veritas V1 Demo
-          </div>
-          <h1 className="text-2xl font-medium text-slate-200">
-            {DEMO_QUESTION}
-          </h1>
-        </div>
-
-        {/* Answer Display */}
-        <ReadingView answer={answer} onReset={handleReset} />
-      </div>
-    </div>
-  );
+  return <ReadingView answer={answer} onReset={handleReset} />;
 }
