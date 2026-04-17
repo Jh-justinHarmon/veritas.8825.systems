@@ -45,6 +45,107 @@ const TYPE_STYLE: Record<
   },
 };
 
+// ─── Loading Screen with Animated Progress ──────────────────────────────────
+
+function LoadingScreen() {
+  const [activeStep, setActiveStep] = useState(0);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % 3);
+    }, 1500);
+    return () => clearInterval(interval);
+  }, []);
+  
+  const steps = [
+    {
+      color: 'blue',
+      dotClass: 'bg-blue-500',
+      title: 'Searching official documentation',
+      desc: "Anthropic's tool use specs, parameter definitions, and API references"
+    },
+    {
+      color: 'amber',
+      dotClass: 'bg-amber-500',
+      title: 'Consulting implementation guides',
+      desc: 'Vendor blogs, code examples, and observed patterns from production use'
+    },
+    {
+      color: 'rose',
+      dotClass: 'bg-rose-500',
+      title: 'Reviewing community failures',
+      desc: 'Real debugging sessions, edge cases, and systematic failure modes'
+    }
+  ];
+  
+  return (
+    <div className="min-h-screen bg-[#07090F] flex items-center justify-center px-8">
+      <div className="max-w-[520px] text-center">
+        {/* Veritas branding */}
+        <p className="text-[9px] font-mono tracking-[0.32em] text-slate-700 uppercase mb-6">
+          veritas · technical synthesis
+        </p>
+        
+        {/* Question being answered */}
+        <h1 className="text-[20px] font-semibold text-slate-200 leading-snug tracking-tight mb-8">
+          Why is Claude calling the wrong tool or using incorrect parameters?
+        </h1>
+        
+        {/* Spinner */}
+        <div className="w-10 h-10 border-2 border-slate-800 border-t-slate-500 rounded-full animate-spin mx-auto mb-8" />
+        
+        {/* Process explanation with animated progress */}
+        <div className="space-y-3 text-left">
+          {steps.map((step, idx) => {
+            const isActive = idx === activeStep;
+            const isComplete = idx < activeStep;
+            
+            return (
+              <div key={idx} className="flex items-start gap-3 transition-all duration-300">
+                {/* Animated dot indicator */}
+                <div className="relative mt-2 shrink-0">
+                  <div className={cn(
+                    "w-1.5 h-1.5 rounded-full transition-all duration-300",
+                    isActive ? `${step.dotClass} scale-150 shadow-lg` : 
+                    isComplete ? `${step.dotClass}/80` : 
+                    `${step.dotClass}/30`
+                  )} />
+                  {isActive && (
+                    <div className={cn(
+                      "absolute inset-0 w-1.5 h-1.5 rounded-full animate-ping",
+                      step.dotClass,
+                      "opacity-75"
+                    )} />
+                  )}
+                </div>
+                
+                {/* Text content */}
+                <p className={cn(
+                  "text-[13px] leading-relaxed transition-all duration-300",
+                  isActive ? "text-slate-300" : "text-slate-500"
+                )}>
+                  <span className={cn(
+                    "font-medium transition-colors duration-300",
+                    isActive ? "text-slate-200" : "text-slate-400"
+                  )}>
+                    {step.title}
+                  </span>
+                  {" — "}
+                  {step.desc}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+        
+        <p className="text-[11px] text-slate-700 mt-8 leading-relaxed">
+          Synthesizing concept-driven answer with tier-aware citations...
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Inline code ─────────────────────────────────────────────────────────────
 
 function IC({ children }: { children: React.ReactNode }) {
@@ -543,52 +644,7 @@ export function Home() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[#07090F] flex items-center justify-center px-8">
-        <div className="max-w-[520px] text-center">
-          {/* Veritas branding */}
-          <p className="text-[9px] font-mono tracking-[0.32em] text-slate-700 uppercase mb-6">
-            veritas · technical synthesis
-          </p>
-          
-          {/* Question being answered */}
-          <h1 className="text-[20px] font-semibold text-slate-200 leading-snug tracking-tight mb-8">
-            Why is Claude calling the wrong tool or using incorrect parameters?
-          </h1>
-          
-          {/* Spinner */}
-          <div className="w-10 h-10 border-2 border-slate-800 border-t-slate-500 rounded-full animate-spin mx-auto mb-8" />
-          
-          {/* Process explanation */}
-          <div className="space-y-3 text-left">
-            <div className="flex items-start gap-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-blue-500/60 mt-2 shrink-0" />
-              <p className="text-[13px] text-slate-500 leading-relaxed">
-                <span className="text-slate-400 font-medium">Searching official documentation</span> — Anthropic's tool use specs, parameter definitions, and API references
-              </p>
-            </div>
-            
-            <div className="flex items-start gap-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-500/60 mt-2 shrink-0" />
-              <p className="text-[13px] text-slate-500 leading-relaxed">
-                <span className="text-slate-400 font-medium">Consulting implementation guides</span> — Vendor blogs, code examples, and observed patterns from production use
-              </p>
-            </div>
-            
-            <div className="flex items-start gap-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-rose-500/60 mt-2 shrink-0" />
-              <p className="text-[13px] text-slate-500 leading-relaxed">
-                <span className="text-slate-400 font-medium">Reviewing community failures</span> — Real debugging sessions, edge cases, and systematic failure modes
-              </p>
-            </div>
-          </div>
-          
-          <p className="text-[11px] text-slate-700 mt-8 leading-relaxed">
-            Synthesizing concept-driven answer with tier-aware citations...
-          </p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (error) {
