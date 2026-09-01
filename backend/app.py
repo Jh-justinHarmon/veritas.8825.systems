@@ -18,13 +18,9 @@ load_dotenv()
 from agents.synthesis_agent import synthesize_answer
 from retrieval.simple_retriever import retrieve_chunks, load_chunks
 from ingestion.embed_chunks import generate_embedding
-from history.history_store import HistoryStore
 from abstraction.chunk_abstractor import abstract_chunks
 
 app = Flask(__name__)
-
-# Initialize history store
-history_store = HistoryStore()
 
 # Manual CORS headers (more reliable than flask-cors)
 @app.after_request
@@ -38,10 +34,13 @@ def after_request(response):
     return response
 
 # Load embedded chunks on startup
-print("Loading embedded chunks...")
 CHUNKS_FILE = Path(__file__).parent.parent / "corpus" / "embeddings" / "all_tiers_embedded_chunks.json"
-ALL_CHUNKS = load_chunks(CHUNKS_FILE)
-print(f"Loaded {len(ALL_CHUNKS)} chunks")
+if CHUNKS_FILE.exists():
+    ALL_CHUNKS = load_chunks(CHUNKS_FILE)
+    print(f"Loaded {len(ALL_CHUNKS)} chunks")
+else:
+    ALL_CHUNKS = []
+    print("Demo corpus not bundled in this hiring release")
 
 # Count chunks by tier
 tier_counts = {}
@@ -95,6 +94,12 @@ def synthesize(mode=None):
         }), 400
     
     question = request.json['question']
+
+    if not ALL_CHUNKS:
+        return jsonify({
+            "error": "DEMO_CORPUS_NOT_INCLUDED",
+            "message": "The hiring release omits corpus data; use the verified live demo."
+        }), 503
     
     # Validate question length
     if len(question) < 5 or len(question) > 500:
@@ -140,34 +145,8 @@ def synthesize(mode=None):
         
         print(f"Synthesis complete: {len(answer.get('ideas', []))} ideas generated")
         
-        # Save to history with trace data
-        trace = {
-            "retrieved_chunks": [
-                {
-                    "source_name": chunk.get("source_name"),
-                    "title": chunk.get("title"),
-                    "tier": chunk.get("source_tier"),
-                    "text_preview": chunk.get("text", "")[:100]
-                }
-                for chunk in retrieved_chunks
-            ],
-            "chunk_count": len(retrieved_chunks),
-            "synthesis_model": answer.get("model", "gpt-4o"),
-            "timestamp": answer.get("timestamp")
-        }
-        
-        session_id = history_store.save_synthesis(
-            question=question,
-            answer={
-                "ideas": answer["ideas"],
-                "sources": answer["sources"]
-            },
-            trace=trace
-        )
-        
-        # Return synthesized answer with session ID
+        # Return the synthesized answer without persisting user questions or traces.
         return jsonify({
-            "session_id": session_id,
             "question": answer["question"],
             "ideas": answer["ideas"],
             "sources": answer["sources"]
@@ -208,44 +187,6 @@ def examples():
     ])
 
 
-@app.route('/api/history', methods=['GET'])
-def get_history():
-    """Get synthesis history (paginated)."""
-    limit = request.args.get('limit', 50, type=int)
-    offset = request.args.get('offset', 0, type=int)
-    
-    history = history_store.get_all_history(limit=limit, offset=offset)
-    return jsonify(history)
-
-
-@app.route('/api/history/<session_id>', methods=['GET'])
-def get_history_by_id(session_id):
-    """Get a specific history entry by ID."""
-    entry = history_store.get_history_by_id(session_id)
-    
-    if entry is None:
-        return jsonify({
-            "error": "NOT_FOUND",
-            "message": f"History entry {session_id} not found"
-        }), 404
-    
-    return jsonify(entry)
-
-
-@app.route('/api/history/<session_id>', methods=['DELETE'])
-def delete_history(session_id):
-    """Delete a history entry."""
-    deleted = history_store.delete_history(session_id)
-    
-    if not deleted:
-        return jsonify({
-            "error": "NOT_FOUND",
-            "message": f"History entry {session_id} not found"
-        }), 404
-    
-    return jsonify({"success": True})
-
-
 if __name__ == '__main__':
     # Development server
     print("\n" + "="*60)
@@ -256,9 +197,6 @@ if __name__ == '__main__':
     print(f"  - GET    /api/health")
     print(f"  - GET    /api/examples")
     print(f"  - POST   /api/synthesize")
-    print(f"  - GET    /api/history")
-    print(f"  - GET    /api/history/<id>")
-    print(f"  - DELETE /api/history/<id>")
     print("="*60 + "\n")
     
     app.run(

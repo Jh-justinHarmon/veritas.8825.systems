@@ -1,65 +1,23 @@
-# Veritas Corpus Status
+# Veritas Hiring Release — Corpus Status
 
-## Current State
+**Release:** `iem-work-sample-v1`
+**Status:** Deliberately not bundled
+**Last reviewed:** 2026-09-01
 
-**Total chunks:** 56  
-**All tier 1 (docs):** 56  
-**Tier 2 (practice):** 0  
-**Tier 3 (failure):** 0  
+## Current truth
 
-**Source:** `corpus/embeddings/tier1_embedded_chunks.json`
+This hiring release does not include raw source documents, generated embeddings, or a local corpus snapshot. Those materials are excluded because third-party redistribution rights and the relationship between the deployed corpus and the source checkout were not sufficiently clean for a hiring-facing repository.
 
-## What This Means
+The separately deployed demo reported 74 loaded chunks at the time of review and successfully answered the canonical query using three observed source tiers. That deployed corpus is not represented as bundled source in this branch.
 
-**Sources sidebar will only show:**
-- SPEC badges (tier 1 = docs)
-- Anthropic Claude Documentation sources
-- Official documentation references
+## Why the corpus is excluded
 
-**No practice or failure sources because:**
-- Corpus was built from official Claude docs only
-- No community practice examples ingested
-- No failure case studies ingested
+- Raw third-party source content may have redistribution restrictions.
+- Generated embeddings may retain source text and metadata.
+- The prior repository state included placeholder/example source records.
+- The prior documentation claimed 56 docs-only chunks while the live service reported 74 chunks and three tiers.
+- A hiring reviewer does not need the full corpus to evaluate the product-quality and governance approach.
 
-## To Add Tier 2/3 Sources
+## Reproduction boundary
 
-### Tier 2 (Practice) - Real-world implementation examples
-**Potential sources:**
-- Developer blog posts about Claude integration
-- GitHub repos with Claude tool use examples
-- Stack Overflow answers about Claude API usage
-- Community guides and tutorials
-
-### Tier 3 (Failure) - Documented failure cases
-**Potential sources:**
-- GitHub issues reporting Claude tool use problems
-- Blog posts about debugging Claude integrations
-- Post-mortems of Claude implementation challenges
-- Community discussions of edge cases
-
-## Ingestion Process
-
-1. **Collect documents** (PDFs, markdown, text)
-2. **Place in:** `corpus/raw/tier2/` or `corpus/raw/tier3/`
-3. **Run ingestion:**
-   ```bash
-   cd backend
-   python3 ingestion/process_pdf_docs.py --tier 2
-   python3 ingestion/process_pdf_docs.py --tier 3
-   ```
-4. **Embed chunks:**
-   ```bash
-   python3 ingestion/embed_chunks.py --tier 2
-   python3 ingestion/embed_chunks.py --tier 3
-   ```
-5. **Update retrieval** to load tier 2/3 chunks
-
-## Current Limitation
-
-**V1 Demo uses docs-only corpus.** This is sufficient to demonstrate:
-- Concept-driven synthesis
-- Inline citations
-- Source attribution
-- Multi-source integration
-
-**For production:** Add tier 2/3 sources to provide practice examples and failure cases alongside official documentation.
+This branch is a curated source-and-scope release, not a turnkey local reproduction. Do not add unreviewed source files or private data to make it locally runnable. Any future demo corpus must use verified public excerpts or synthetic records and must update this file, `SOURCES_MANIFEST.md`, the README, and the runtime behavior together.

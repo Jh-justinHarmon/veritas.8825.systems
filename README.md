@@ -1,158 +1,100 @@
-# Veritas — Governed AI Answer Engine
+# Veritas — IEM Hiring-Safe Work Sample
 
-**🌐 Live Demo:** [https://veritas.8825.systems](https://veritas.8825.systems)  
-**📦 Repository:** [github.com/Jh-justinHarmon/veritas.8825.systems](https://github.com/Jh-justinHarmon/veritas.8825.systems)
+**Live demo:** https://veritas.8825.systems
+**Hiring release branch:** `iem-work-sample-v1`
+**Purpose:** A deliberately scoped AI knowledge-synthesis work sample for the IEM AI Operations Analyst application.
 
----
+## Problem
 
-## Why I Built This
+AI systems can return plausible answers without making their evidence, source authority, or review risk visible. Veritas explores a narrower operational question: how can an AI answer be structured so a reviewer can see how it was constructed, which sources support it, and when the result needs additional review?
 
-Most RAG systems retrieve documents and generate answers, but they collapse documentation, blogs, and real-world experience into a single answer, so you can’t see how that answer was constructed.
+## Justin’s role
 
-I built Veritas to explore a different approach: answers should show how understanding is constructed across different types of sources, not just what the answer is.
+Justin scoped and built the Veritas concept, interaction model, retrieval/evaluation workflow, source-aware answer structure, and quality-measurement approach. The work sample demonstrates product and AI-operations judgment; it does not claim that every deployment or infrastructure component was built independently.
 
----
+## What was built
 
-## What This Is
+- A single-question AI answer workflow.
+- Source-aware retrieval that distinguishes source authority.
+- Structured synthesis into concepts rather than a raw text dump.
+- Inline citations and source inspection.
+- Quality signals for coverage, authority, sufficiency, and risk.
+- Logged/replayable behavior in the deployed implementation.
+- A deliberately narrow V1 designed to prove the quality model before expanding scope.
 
-Veritas is a governed AI answer engine for developer documentation that:
+## Canonical demo query
 
-- Retrieves from official docs, vendor content, and community sources  
-- Treats sources differently based on their role and authority  
-- Generates answers with citations  
-- Structures answers by source type  
-- Logs runs so answers can be traced and replayed  
+Use this query in the live demo:
 
-The system does not just generate answers — it shows how the answer is constructed, and what each source contributes to that understanding.
+> How do I implement Claude tool use with error handling?
 
----
+The verified live service responded successfully on 2026-09-01 with structured ideas, three source tiers, measurable source coverage, and approximately 1.7–1.8 citations per paragraph. The live health endpoint reported 74 loaded chunks.
 
-## Core Idea
+## Workflow
 
-Not all sources play the same role.
-
-- Official docs define what is true  
-- Blogs and examples show how it’s used  
-- Community content shows where it breaks  
-
-Most systems mix these together.
-
-Veritas keeps them separate and makes their roles explicit.
-
-The goal is not just to answer the question, but to show:
-
-**how the answer emerges from different types of knowledge**
-
----
-
-## How Answers Are Structured
-
-Each answer is broken into three layers:
-
-- **Core Answer** — what is defined in official documentation  
-- **Implementation Insight** — how it is used in practice  
-- **Common Pitfalls** — where developers run into issues  
-
-This mirrors how developers actually learn: first what the system does, then how to use it, then where it breaks.
-
----
-
-## How It Works
-
-1. Documents are ingested and tagged by source tier:
-   - Tier 1 — Official documentation  
-   - Tier 2 — Vendor blogs and examples  
-   - Tier 3 — Community content  
-
-2. Retrieval combines similarity and authority:
-   - 70% semantic similarity  
-   - 30% source authority  
-
-3. The system generates a structured answer with citations.
-
-4. The answer is scored across four dimensions:
-   - Coverage — did we answer the question  
-   - Authority — how strong the sources are  
-   - Sufficiency — whether documentation is enough  
-   - Risk — whether the answer needs review  
-
-5. Every run is logged so it can be inspected and replayed.
-
----
-
-## What This Demonstrates
-
-This project demonstrates:
-
-- Source-aware retrieval instead of similarity-only retrieval  
-- Structured answer generation across source types  
-- Explicit answer scoring  
-- Provenance and traceability  
-- Replayable runs  
-
-The focus is not the model.  
-The focus is **how answers are constructed and grounded**.
-
----
-
-## Scope
-
-This is a deliberately scoped V1:
-
-- Single domain (developer documentation)  
-- Small corpus (a few doc sets)  
-- Single-user  
-- No agents, no workflows, no live search  
-
-The goal is to ship a working system quickly, not build a full platform.
-
----
-
-## Deployment
-
-**Production:** Deployed on Fly.io with Cloudflare DNS
-
-- **Primary URL:** [https://veritas-8825-systems.fly.dev](https://veritas-8825-systems.fly.dev)
-- **Custom Domain:** [https://veritas.8825.systems](https://veritas.8825.systems)
-- **Health Check:** [/api/health](https://veritas-8825-systems.fly.dev/api/health)
-- **Region:** Dallas (dfw)
-- **Auto-scaling:** Enabled (scales to zero when idle)
-- **Cost:** $0-5/month
-
-### Tech Stack
-
-- **Backend:** Flask + Gunicorn (Python 3.9)
-- **Frontend:** React + Vite + TailwindCSS
-- **Deployment:** Fly.io (Docker)
-- **DNS:** Cloudflare
-- **Retrieval:** OpenAI embeddings + semantic search
-- **Synthesis:** OpenAI GPT-4
-
----
-
-## Project Structure
-
-```
-veritas/
-├── backend/           # Flask API server
-│   ├── agents/        # Synthesis agent
-│   ├── ingestion/     # Document processing & embedding
-│   ├── retrieval/     # Semantic search
-│   └── app.py         # Main API
-├── frontend/          # React + Vite UI
-│   ├── src/
-│   │   ├── pages/     # Home page
-│   │   ├── api/       # API client
-│   │   └── adapters/  # Data transformation
-│   └── tests/         # Playwright E2E tests
-├── corpus/            # Tier-tagged documents & embeddings
-├── fly.toml           # Fly.io deployment config
-├── Dockerfile         # Production container
-└── README.md
+```text
+Question
+  → retrieval
+  → source-aware context
+  → structured synthesis
+  → quality evaluation
+  → human review when evidence or risk requires it
 ```
 
----
+## Quality signals
 
-## What This Project Is (In One Sentence)
+- **Source authority:** official documentation is distinguished from practice and failure material.
+- **Coverage:** whether the answer addresses the question.
+- **Authority:** strength and relevance of supporting sources.
+- **Sufficiency:** whether the available documentation is adequate.
+- **Risk:** whether the answer should receive additional review.
+- **Citations:** factual claims remain inspectable through source references.
 
-Veritas answers developer questions using documentation, blogs, and real-world experience, and shows how each source contributes to your understanding, not just the final answer.
+## Privacy and governance choices
+
+- No client, employer, or private 8825 source material is included in this hiring branch.
+- User questions and generated traces are not persisted by the hiring-release API.
+- Raw and embedded corpus material is intentionally excluded from this branch because third-party redistribution rights were not established for every source.
+- The source manifest records the intended source categories, exclusions, and review status.
+- The deployed demo and this source branch are treated as separate surfaces; this branch was not deployed as part of the cleanup.
+
+## Scope and limitations
+
+This is a source-and-documentation release for a deliberately scoped AI system. The deployed demo is a single-user V1 with a small corpus and a single interaction.
+
+This work sample is **not**:
+
+- An autonomous agent platform.
+- Enterprise AI operations at scale.
+- MLOps.
+- A model-development project.
+- Guaranteed hallucination prevention.
+- No-human-review-required automation.
+- A claim of enterprise adoption, time savings, or business ROI.
+- A claim that the system includes live search, user uploads, accounts, or multi-turn history.
+
+## Release contents
+
+The hiring branch keeps the core application code, evaluation/scope documentation, license, and deployment configuration needed to understand the project. It excludes history, test output, screenshots, internal planning, migration/setup notes, raw third-party corpus files, generated embeddings, and local development artifacts.
+
+The corpus is not bundled in this release. The live demo remains the executable evidence surface; the repository is the curated source and decision record. See `SOURCES_MANIFEST.md` for the exact boundary.
+
+## Review status
+
+- Public live demo: verified HTTP 200.
+- Live health endpoint: verified healthy with 74 loaded chunks.
+- Canonical query: verified successful.
+- Public repository: branch created locally from `origin/main` and curated for hiring use.
+- Secret scan: no obvious API keys, private keys, passwords, or credential values found in reviewed release content.
+- Production deployment: not changed by this release.
+- Recording: not created.
+- Final case study: not created.
+- IEM submission: not performed.
+
+## Running context
+
+The hiring branch intentionally omits the deployed corpus and is not presented as a turnkey local reproduction. Do not add private or unreviewed source material to make it run locally. Any future local demo corpus must pass source-rights, privacy, and provenance review first.
+
+## License
+
+See `LICENSE`. The project license does not automatically grant redistribution rights for third-party documentation or source content; those sources are therefore excluded from this hiring release unless separately cleared.

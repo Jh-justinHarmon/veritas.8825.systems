@@ -205,3 +205,11 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Hiring-release hygiene
+.DS_Store
+.windsurf/
+history/
+frontend/test-results/
+frontend/tests/screenshots/
+frontend/public/screenshots/
