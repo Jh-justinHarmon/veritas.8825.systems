@@ -6,7 +6,8 @@ Integrates retrieval system with synthesis agent.
 """
 
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
+from werkzeug.exceptions import NotFound
 from dotenv import load_dotenv
 from pathlib import Path
 from typing import List, Dict
@@ -21,7 +22,8 @@ from ingestion.embed_chunks import generate_embedding
 from history.history_store import HistoryStore
 from abstraction.chunk_abstractor import abstract_chunks
 
-app = Flask(__name__)
+STATIC_FOLDER = Path(__file__).parent.parent / "frontend" / "dist"
+app = Flask(__name__, static_folder=None)
 
 # Initialize history store
 history_store = HistoryStore()
@@ -253,6 +255,29 @@ def delete_history(session_id):
         }), 404
     
     return jsonify({"success": True})
+
+
+@app.route('/assets/<path:filename>')
+def serve_asset(filename):
+    """Serve built frontend assets for same-origin production topology."""
+    return send_from_directory(STATIC_FOLDER / 'assets', filename)
+
+
+@app.route('/')
+def serve_frontend():
+    """Serve the built frontend for same-origin production topology."""
+    return send_from_directory(STATIC_FOLDER, 'index.html')
+
+
+@app.route('/<path:path>')
+def serve_frontend_path(path):
+    """Serve frontend assets and fall back to the SPA for non-API routes."""
+    if path.startswith('api/'):
+        return jsonify({"error": "NOT_FOUND", "message": f"API route not found: /{path}"}), 404
+    try:
+        return send_from_directory(STATIC_FOLDER, path)
+    except NotFound:
+        return send_from_directory(STATIC_FOLDER, 'index.html')
 
 
 if __name__ == '__main__':
