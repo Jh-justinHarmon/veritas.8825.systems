@@ -37,6 +37,15 @@ def after_request(response):
         response.headers['Access-Control-Max-Age'] = '3600'
     return response
 
+# Handle narrow CORS preflight requests for the local frontend API surface.
+@app.route('/api/synthesize', methods=['OPTIONS'])
+@app.route('/api/synthesize/<mode>', methods=['OPTIONS'])
+@app.route('/api/history', methods=['OPTIONS'])
+@app.route('/api/history/<session_id>', methods=['OPTIONS'])
+def handle_options(mode=None, session_id=None):
+    return '', 204
+
+
 # Load embedded chunks on startup
 print("Loading embedded chunks...")
 CHUNKS_FILE = Path(__file__).parent.parent / "corpus" / "embeddings" / "all_tiers_embedded_chunks.json"
