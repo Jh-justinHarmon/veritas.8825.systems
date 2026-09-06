@@ -27,8 +27,6 @@ if not api_key:
     print(f"\n⚠️  ERROR: OPENAI_API_KEY not found in {env_path}")
     sys.exit(1)
 
-print(f"Using API key: {api_key[:20]}...{api_key[-4:]}")
-
 # OpenAI client
 client = OpenAI(api_key=api_key)
 

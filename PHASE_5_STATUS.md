@@ -42,30 +42,22 @@ curl http://localhost:5001/api/history
 
 ---
 
-## Frontend: 🚧 Partial
+## Frontend: ✅ Complete for committed history integration
 
 ### Completed:
 - `frontend/src/api/veritas.ts` - History API client functions
 - `frontend/src/components/HistoryPanel.tsx` - History sidebar component
+- `frontend/src/pages/Home.tsx` - HistoryPanel layout and selected-history restoration
 - Type definitions for `HistoryEntry` and `HistoryDetail`
+- Commits `bb8bc2a` and `bdc9972` verified on the clean branch
+- Frontend build and focused Flask history route checks pass
 
-### Remaining Work:
-1. **Fix import conflicts** in `Home.tsx`
-   - Duplicate `cn` import (from utils vs local)
-   - Need to remove local `cn` function
-
-2. **Add HistoryPanel to layout**
-   - Integrate `<HistoryPanel>` into main layout
-   - Wire up `handleSelectHistory` callback
-   - Pass `currentSessionId` prop
-
-3. **Update VeritasAnswer type**
-   - Add optional `session_id` field to match API response
-
-4. **Test end-to-end flow**
-   - Synthesize answer → history saved
-   - Click history entry → previous answer loads
-   - Verify UI updates correctly
+### Remaining Pre-Deployment Verification:
+1. Execute the bounded local runtime smoke path.
+2. Verify synthesis → history persistence → selected-history restoration in a running local stack.
+3. Resolve provider runtime configuration and local frontend API routing (`VITE_API_URL` or same-origin serving).
+4. Complete pre-deployment credential-log hygiene review.
+5. Review deployment readiness only after the smoke path passes.
 
 ---
 
@@ -99,57 +91,24 @@ curl -X DELETE http://localhost:5001/api/history/abc-123
 
 ---
 
-## Next Steps for Full Integration
+## Pre-Deployment Smoke Path
 
-### 1. Fix Home.tsx Imports
-```typescript
-// Remove local cn function (line 23-25)
-// Keep only: import { cn } from "../lib/utils";
+The committed history integration has passed build, typecheck, route checks, and static validation. A live local smoke remains required before deployment review:
+
+```text
+1. Configure provider runtime without exposing credential values.
+2. Start Flask on port 5001.
+3. Verify /api/health and /api/history.
+4. POST a valid /api/synthesize request and capture session_id.
+5. GET /api/history/<session_id>.
+6. Start the frontend with VITE_API_URL targeting Flask, or serve the built frontend same-origin.
+7. Select the history entry and verify query/result/session restoration.
+8. Record smoke evidence and stop local services.
 ```
 
-### 2. Add HistoryPanel to Layout
-```typescript
-return (
-  <div className="flex h-screen">
-    <HistoryPanel 
-      onSelectHistory={handleSelectHistory}
-      currentSessionId={currentSessionId}
-    />
-    <div className="flex-1">
-      {/* existing content */}
-    </div>
-  </div>
-);
-```
+Current smoke status: `NOT_EXECUTED`.
 
-### 3. Update API Response Type
-```typescript
-// In veritas.ts
-export interface VeritasAnswer {
-  session_id?: string;  // Add this
-  question: string;
-  ideas: VeritasIdea[];
-  sources: Record<string, any>;
-}
-```
-
-### 4. Playwright Test for History
-```typescript
-test('should save and load history', async ({ page }) => {
-  await page.goto('http://localhost:5175');
-  
-  // Wait for initial synthesis
-  await page.waitForSelector('text=/tool|parameter/i');
-  
-  // Check history panel appears
-  const historyPanel = await page.locator('text=History').count();
-  expect(historyPanel).toBeGreaterThan(0);
-  
-  // Verify history entry exists
-  const historyEntry = await page.locator('text=/Why is Claude/i').count();
-  expect(historyEntry).toBeGreaterThan(0);
-});
-```
+Launch remains blocked until runtime configuration, routing, credential-log review, and end-to-end smoke verification are complete.
 
 ---
 
@@ -170,7 +129,7 @@ test('should save and load history', async ({ page }) => {
 ## Summary
 
 **Phase 5 Backend:** ✅ Complete and tested  
-**Phase 5 Frontend:** 🚧 Partial (API client + component created, integration pending)  
+**Phase 5 Frontend:** ✅ Committed history integration; runtime smoke pending
 **Phase 5 Trace Viz:** 📋 Designed but not implemented
 
 **Current demo has:**
@@ -179,9 +138,11 @@ test('should save and load history', async ({ page }) => {
 - Source attribution with URLs
 - Backend history storage (automatic)
 - History API endpoints (working)
+- Committed HistoryPanel integration with selected-history restoration
 
-**To complete Phase 5 UI:**
-- Fix import conflicts
-- Integrate HistoryPanel component
-- Add Playwright test
-- Validate per DoD protocol
+**Remaining Phase 5 launch work:**
+- Execute the documented local runtime smoke path
+- Verify provider runtime configuration without exposing credentials
+- Verify local frontend API routing or same-origin serving
+- Complete pre-deployment hygiene review
+- Validate per deployment-readiness protocol
