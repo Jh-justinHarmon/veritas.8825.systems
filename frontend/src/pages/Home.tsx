@@ -10,7 +10,8 @@ import type {
   VeritasIdea,
   VeritasSource,
 } from "../adapters/veritasAdapter";
-import { synthesizeAnswer } from "../api/veritas";
+import { getHistoryById, synthesizeAnswer } from "../api/veritas";
+import { HistoryPanel } from "../components/HistoryPanel";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -577,28 +578,30 @@ function ReadingView({
 const DEMO_QUESTION = "Why is Claude calling the wrong tool or using incorrect parameters?";
 
 function transformApiResponse(apiResponse: any): VeritasAnswer {
+  const answer = apiResponse.answer ?? apiResponse;
+  const ideas = answer.ideas ?? [];
+  const sources = answer.sources ?? {};
+  const tierToType: Record<number, 'docs' | 'practice' | 'failure'> = {
+    1: 'docs',
+    2: 'practice',
+    3: 'failure'
+  };
+
   return {
     question: apiResponse.question,
-    ideas: apiResponse.ideas.map((idea: any) => ({
-      id: idea.title.toLowerCase().replace(/\s+/g, '-'),
-      concept: idea.title,
-      paragraphs: idea.paragraphs,
-      sourceIds: idea.sourceIds
+    ideas: ideas.map((idea: any) => ({
+      id: idea.id ?? idea.title.toLowerCase().replace(/\s+/g, '-'),
+      concept: idea.concept ?? idea.title,
+      paragraphs: idea.paragraphs ?? [],
+      sourceIds: idea.sourceIds ?? []
     })),
-    sources: Object.entries(apiResponse.sources).reduce((acc, [id, sourceData]: [string, any]) => {
-      // Map tier to knowledge type
-      const tierToType: Record<number, 'docs' | 'practice' | 'failure'> = {
-        1: 'docs',
-        2: 'practice',
-        3: 'failure'
-      };
-      
+    sources: Object.entries(sources).reduce((acc, [id, sourceData]: [string, any]) => {
       acc[id] = {
         label: sourceData.title || sourceData.source_name || 'Unknown Source',
         short: sourceData.source_name || sourceData.title || 'Unknown',
-        type: tierToType[sourceData.tier] || 'docs',
-        meta: sourceData.url || '',
-        excerpt: sourceData.document_title || ''
+        type: tierToType[sourceData.tier] || sourceData.type || 'docs',
+        meta: sourceData.url || sourceData.meta || '',
+        excerpt: sourceData.document_title || sourceData.excerpt || ''
       };
       return acc;
     }, {} as Record<string, VeritasSource>)
@@ -607,41 +610,47 @@ function transformApiResponse(apiResponse: any): VeritasAnswer {
 
 export function Home() {
   const [answer, setAnswer] = useState<VeritasAnswer | null>(null);
+  const [currentSessionId, setCurrentSessionId] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-
-  useEffect(() => {
-    console.log('[Veritas] Starting synthesis...');
-    synthesizeAnswer(DEMO_QUESTION)
-      .then(apiResponse => {
-        console.log('[Veritas] Synthesis successful:', apiResponse);
-        const transformed = transformApiResponse(apiResponse);
-        setAnswer(transformed);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('[Veritas] Synthesis failed:', err);
-        setError(err.message);
-        setLoading(false);
-      });
+  const applyApiResponse = useCallback((apiResponse: any) => {
+    const transformed = transformApiResponse(apiResponse);
+    setAnswer(transformed);
+    setCurrentSessionId(apiResponse.session_id ?? apiResponse.id);
   }, []);
 
-
-  const handleReset = useCallback(() => {
+  const loadDemoAnswer = useCallback(() => {
     setLoading(true);
     setError(null);
     synthesizeAnswer(DEMO_QUESTION)
       .then(apiResponse => {
-        const transformed = transformApiResponse(apiResponse);
-        setAnswer(transformed);
+        applyApiResponse(apiResponse);
         setLoading(false);
       })
       .catch(err => {
-        setError(err.message || 'Failed to synthesize answer');
+        setError(err instanceof Error ? err.message : 'Failed to synthesize answer');
         setLoading(false);
       });
-  }, []);
+  }, [applyApiResponse]);
+
+  const handleSelectHistory = useCallback(async (sessionId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const historyEntry = await getHistoryById(sessionId);
+      applyApiResponse(historyEntry);
+      setLoading(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load history entry');
+      setLoading(false);
+    }
+  }, [applyApiResponse]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(loadDemoAnswer, 0);
+    return () => window.clearTimeout(timer);
+  }, [loadDemoAnswer]);
 
   if (loading) {
     return <LoadingScreen />;
@@ -654,7 +663,7 @@ export function Home() {
           <div className="text-rose-400 text-lg mb-2">Synthesis Failed</div>
           <div className="text-slate-500 mb-4">{error}</div>
           <button
-            onClick={handleReset}
+            onClick={loadDemoAnswer}
             className="px-4 py-2 bg-slate-800 text-slate-300 rounded hover:bg-slate-700 transition-colors"
           >
             Retry
@@ -672,5 +681,15 @@ export function Home() {
     );
   }
 
-  return <ReadingView answer={answer} onReset={handleReset} />;
+  return (
+    <div className="flex h-screen bg-[#07090F]">
+      <HistoryPanel
+        onSelectHistory={handleSelectHistory}
+        currentSessionId={currentSessionId}
+      />
+      <div className="min-w-0 flex-1">
+        <ReadingView answer={answer} onReset={loadDemoAnswer} />
+      </div>
+    </div>
+  );
 }
