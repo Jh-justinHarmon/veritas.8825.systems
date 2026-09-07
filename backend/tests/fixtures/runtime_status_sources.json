@@ -1,0 +1,30 @@
+{
+  "sources": [
+    {
+      "source_id": "veritas-production-smoke-v17",
+      "source_type": "production_smoke_receipt",
+      "authority_class": "RECEIPT_FACT",
+      "observed_at": "2026-09-07T16:26:14Z",
+      "source_ref": "evidence/veritas_production_smoke_receipt_v17_pass.md",
+      "source_hash": "sha256:fixture-smoke-v17",
+      "receipt_id": "receipt-v17-smoke",
+      "release": "v17",
+      "image": "deployment-01M1Y8YZ6QNG7AVV44F178QWGF",
+      "result": "PASS",
+      "rollback_reference": "deployment-01KPGWP7RH54EMHFZ649Y4ZG9B"
+    },
+    {
+      "source_id": "veritas-production-monitoring-v17",
+      "source_type": "monitoring_review",
+      "authority_class": "RUNTIME_RECEIPT_FACT",
+      "observed_at": "2026-09-07T16:26:14Z",
+      "source_ref": "evidence/veritas_production_monitoring_review_v1_result.md",
+      "source_hash": "sha256:fixture-monitoring-v17",
+      "receipt_id": "receipt-v17-monitoring",
+      "release": "v17",
+      "image": "deployment-01M1Y8YZ6QNG7AVV44F178QWGF",
+      "result": "MONITORING_REVIEW_PASS",
+      "rollback_reference": "deployment-01KPGWP7RH54EMHFZ649Y4ZG9B"
+    }
+  ]
+}
