@@ -1,0 +1,43 @@
+{
+  "schema_version": "veritas_runtime_status_evidence_bundle/0.1.0",
+  "bundle_id": "veritas-v17-runtime-status",
+  "generated_at": "2026-09-07T16:26:14Z",
+  "sources": [
+    {
+      "source_id": "veritas-production-smoke-v17",
+      "source_type": "production_smoke_receipt",
+      "authority_class": "RECEIPT_FACT",
+      "observed_at": "2026-09-07T16:26:14Z",
+      "source_ref": "AI_SYSTEMS/8825-processes/local-work-lane/evidence_packets/veritas_production_smoke_receipt_v17_pass.md",
+      "source_hash": "sha256:65186277d3c1e47279116ad4a9462cd0e714cb5280d9dc49d33231f658ab18d2",
+      "receipt_id": "veritas-production-smoke-v17",
+      "release": "v17",
+      "image": "registry.fly.io/veritas-8825-systems:deployment-01M1Y8YZ6QNG7AVV44F178QWGF",
+      "result": "PASS",
+      "rollback_reference": "registry.fly.io/veritas-8825-systems:deployment-01KPGWP7RH54EMHFZ649Y4ZG9B"
+    },
+    {
+      "source_id": "veritas-production-monitoring-v17",
+      "source_type": "monitoring_review",
+      "authority_class": "RUNTIME_RECEIPT_FACT",
+      "observed_at": "2026-09-07T16:26:14Z",
+      "source_ref": "AI_SYSTEMS/8825-processes/local-work-lane/evidence_packets/veritas_production_monitoring_review_v1_result.md",
+      "source_hash": "sha256:585bb1f18108d5d31754df5e1bad9dccc98b8019d7a51e49e816d3ac2a19cf94",
+      "receipt_id": "veritas-production-monitoring-v17",
+      "release": "v17",
+      "image": "registry.fly.io/veritas-8825-systems:deployment-01M1Y8YZ6QNG7AVV44F178QWGF",
+      "result": "MONITORING_REVIEW_PASS",
+      "rollback_reference": "registry.fly.io/veritas-8825-systems:deployment-01KPGWP7RH54EMHFZ649Y4ZG9B"
+    },
+    {
+      "source_id": "local-work-lane-spine-v0.29",
+      "source_type": "spine_snapshot",
+      "authority_class": "SPINE_COORDINATION",
+      "observed_at": "2026-09-07T18:52:30Z",
+      "source_ref": "AI_SYSTEMS/8825-spines/spines/active/local-work-lane.json",
+      "source_hash": "sha256:181f9296a6b1768e127b5cc0e797f7d938298eeb41205ae699fba430e865e289",
+      "receipt_id": null,
+      "result": "ACTIVE"
+    }
+  ]
+}

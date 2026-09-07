@@ -8,6 +8,7 @@ Integrates retrieval system with synthesis agent.
 import os
 from flask import Flask, request, jsonify, send_from_directory
 from werkzeug.exceptions import NotFound
+from claims.runtime_status import LocalEvidenceAdapter, mediate_runtime_status
 from dotenv import load_dotenv
 from pathlib import Path
 from typing import List, Dict
@@ -23,7 +24,9 @@ from history.history_store import HistoryStore
 from abstraction.chunk_abstractor import abstract_chunks
 
 STATIC_FOLDER = Path(__file__).parent.parent / "frontend" / "dist"
+CLAIM_MANIFEST_PATH = Path(__file__).parent / "claims" / "runtime_status_manifest.json"
 app = Flask(__name__, static_folder=None)
+app.config["VERITAS_INTERNAL_CLAIMS_ENABLED"] = os.getenv("VERITAS_INTERNAL_CLAIMS", "") == "1"
 
 # Initialize history store
 history_store = HistoryStore()
@@ -46,6 +49,21 @@ def after_request(response):
 @app.route('/api/history/<session_id>', methods=['OPTIONS'])
 def handle_options(mode=None, session_id=None):
     return '', 204
+
+
+@app.route('/api/claims/runtime-status', methods=['GET'])
+def runtime_status_claim():
+    """Serve the bundled runtime claim only when explicitly enabled on loopback."""
+    loopback = request.remote_addr in {'127.0.0.1', '::1'}
+    if not app.config.get("VERITAS_INTERNAL_CLAIMS_ENABLED") or not loopback:
+        return jsonify({"error": "NOT_FOUND"}), 404
+    try:
+        claim = mediate_runtime_status(
+            LocalEvidenceAdapter.from_bundled_manifest(CLAIM_MANIFEST_PATH)
+        )
+    except (OSError, ValueError):
+        return jsonify({"error": "CLAIM_SOURCE_UNAVAILABLE"}), 503
+    return jsonify(claim)
 
 
 # Load embedded chunks on startup

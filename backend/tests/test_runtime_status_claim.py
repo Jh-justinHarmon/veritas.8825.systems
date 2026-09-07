@@ -104,6 +104,19 @@ class RuntimeStatusClaimTests(unittest.TestCase):
                 spine_snapshot_path=FIXTURE_PATH.parent / "local_work_lane_spine_snapshot.json",
             ).read_sources()
 
+    def test_bundled_manifest_is_fixed_path_and_claim_ready(self):
+        manifest_path = FIXTURE_PATH.parents[2] / "claims" / "runtime_status_manifest.json"
+        claim = mediate_runtime_status(
+            LocalEvidenceAdapter.from_bundled_manifest(manifest_path),
+            now=NOW,
+        )
+
+        self.assertEqual(claim["status"], "SUPPORTED")
+        self.assertEqual(claim["coordination_refs"][0]["authority_class"], "SPINE_COORDINATION")
+        self.assertFalse(claim["authority_created_by_veritas"])
+        with self.assertRaises(ValueError):
+            LocalEvidenceAdapter.from_bundled_manifest(FIXTURE_PATH)
+
 
 if __name__ == "__main__":
     unittest.main()

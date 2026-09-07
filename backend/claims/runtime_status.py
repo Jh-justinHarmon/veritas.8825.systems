@@ -81,6 +81,29 @@ class LocalEvidenceAdapter:
         self._smoke_receipt_path = Path(smoke_receipt_path)
         self._monitoring_review_path = Path(monitoring_review_path)
         self._spine_snapshot_path = Path(spine_snapshot_path)
+        self._manifest_sources: Optional[Tuple[RuntimeStatusSource, ...]] = None
+
+    @classmethod
+    def from_bundled_manifest(cls, manifest_path: Optional[Path] = None) -> "LocalEvidenceAdapter":
+        """Load only the fixed package-local evidence manifest; reject arbitrary paths."""
+        expected = (Path(__file__).parent / "runtime_status_manifest.json").resolve()
+        target = (manifest_path or expected).resolve()
+        if target != expected:
+            raise ValueError("runtime claim manifest must be the bundled package manifest")
+        if not target.is_file():
+            raise FileNotFoundError(target)
+        data = json.loads(target.read_text(encoding="utf-8"))
+        if data.get("schema_version") != "veritas_runtime_status_evidence_bundle/0.1.0":
+            raise ValueError("unsupported runtime claim evidence bundle schema")
+        sources = data.get("sources")
+        if not isinstance(sources, list):
+            raise ValueError("runtime claim evidence bundle sources must be a list")
+        adapter = cls.__new__(cls)
+        adapter._smoke_receipt_path = None
+        adapter._monitoring_review_path = None
+        adapter._spine_snapshot_path = None
+        adapter._manifest_sources = tuple(RuntimeStatusSource.from_mapping(source) for source in sources)
+        return adapter
 
     @staticmethod
     def _read(path: Path) -> bytes:
@@ -118,6 +141,8 @@ class LocalEvidenceAdapter:
         )
 
     def read_sources(self) -> Tuple[RuntimeStatusSource, ...]:
+        if self._manifest_sources is not None:
+            return self._manifest_sources
         smoke = self._receipt_source(
             self._smoke_receipt_path,
             "production_smoke_receipt",
