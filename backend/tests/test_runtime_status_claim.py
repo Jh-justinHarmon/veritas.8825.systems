@@ -6,7 +6,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
-from claims.runtime_status import FixtureEvidenceAdapter, mediate_runtime_status
+from claims.runtime_status import (
+    FixtureEvidenceAdapter,
+    LocalEvidenceAdapter,
+    mediate_runtime_status,
+)
 
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "runtime_status_sources.json"
@@ -69,6 +73,36 @@ class RuntimeStatusClaimTests(unittest.TestCase):
         self.assertEqual(claim["authority_class"], "RECEIPT_FACT")
         self.assertEqual(claim["watchtower_observations"], ["watchtower-observation"])
         self.assertFalse(claim["authority_created_by_veritas"])
+
+    def test_local_evidence_adapter_loads_allowed_receipts_and_spine_context(self):
+        adapter = LocalEvidenceAdapter(
+            smoke_receipt_path=FIXTURE_PATH.parent / "v17_production_smoke_receipt.md",
+            monitoring_review_path=FIXTURE_PATH.parent / "v17_monitoring_review.md",
+            spine_snapshot_path=FIXTURE_PATH.parent / "local_work_lane_spine_snapshot.json",
+        )
+        claim = mediate_runtime_status(adapter, now=NOW)
+
+        self.assertEqual(claim["status"], "SUPPORTED")
+        self.assertEqual(claim["release"], "v17")
+        self.assertEqual(
+            claim["image"],
+            "registry.fly.io/veritas-8825-systems:deployment-01M1Y8YZ6QNG7AVV44F178QWGF",
+        )
+        self.assertEqual(
+            claim["rollback_reference"],
+            "registry.fly.io/veritas-8825-systems:deployment-01KPGWP7RH54EMHFZ649Y4ZG9B",
+        )
+        self.assertEqual(claim["coordination_refs"][0]["source_type"], "spine_snapshot")
+        self.assertFalse(claim["network_accessed"])
+        self.assertFalse(claim["secrets_accessed"])
+
+    def test_local_evidence_adapter_rejects_missing_allowed_input(self):
+        with self.assertRaises(FileNotFoundError):
+            LocalEvidenceAdapter(
+                smoke_receipt_path=FIXTURE_PATH.parent / "missing.md",
+                monitoring_review_path=FIXTURE_PATH.parent / "v17_monitoring_review.md",
+                spine_snapshot_path=FIXTURE_PATH.parent / "local_work_lane_spine_snapshot.json",
+            ).read_sources()
 
 
 if __name__ == "__main__":

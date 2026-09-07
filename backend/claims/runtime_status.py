@@ -6,8 +6,10 @@ not read the network, query Fly, read secrets, write receipts, or create authori
 
 import hashlib
 import json
+import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Protocol, Tuple
 
 CLAIM_SCHEMA_VERSION = "veritas_claim/0.1.0"
@@ -72,6 +74,79 @@ class FixtureEvidenceAdapter:
         return self._sources
 
 
+class LocalEvidenceAdapter:
+    """Read the explicitly allowed local receipt and Spine snapshot files only."""
+
+    def __init__(self, smoke_receipt_path: Path, monitoring_review_path: Path, spine_snapshot_path: Path) -> None:
+        self._smoke_receipt_path = Path(smoke_receipt_path)
+        self._monitoring_review_path = Path(monitoring_review_path)
+        self._spine_snapshot_path = Path(spine_snapshot_path)
+
+    @staticmethod
+    def _read(path: Path) -> bytes:
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        return path.read_bytes()
+
+    @staticmethod
+    def _field(text: str, label: str) -> Optional[str]:
+        match = re.search(rf"{re.escape(label)}\s*`?([^`\n]+?)`?(?:\n|$)", text, re.IGNORECASE)
+        return match.group(1).strip() if match else None
+
+    def _receipt_source(self, path: Path, source_type: str, authority_class: str) -> RuntimeStatusSource:
+        raw = self._read(path)
+        text = raw.decode("utf-8", errors="replace")
+        source_hash = f"sha256:{hashlib.sha256(raw).hexdigest()}"
+        date = self._field(text, "**Date:**") or "1970-01-01"
+        observed_at = f"{date}T00:00:00Z" if len(date) == 10 else date
+        result = self._field(text, "**Result:**") or self._field(text, "**Decision:**") or "UNKNOWN"
+        release = self._field(text, "**Release:**") or self._field(text, "**Current release:**")
+        image = self._field(text, "**Image:**") or self._field(text, "**Current image:**")
+        rollback_match = re.search(r"previous known image:\s*\n([^\s]+)", text, re.IGNORECASE)
+        return RuntimeStatusSource(
+            source_id=f"local-{source_type}-{hashlib.sha256(raw).hexdigest()[:16]}",
+            source_type=source_type,
+            authority_class=authority_class,
+            observed_at=observed_at,
+            source_ref=str(path),
+            source_hash=source_hash,
+            receipt_id=f"local-receipt-{hashlib.sha256(raw).hexdigest()[:16]}",
+            result=result,
+            release=release,
+            image=image,
+            rollback_reference=rollback_match.group(1) if rollback_match else None,
+        )
+
+    def read_sources(self) -> Tuple[RuntimeStatusSource, ...]:
+        smoke = self._receipt_source(
+            self._smoke_receipt_path,
+            "production_smoke_receipt",
+            "RECEIPT_FACT",
+        )
+        monitoring = self._receipt_source(
+            self._monitoring_review_path,
+            "monitoring_review",
+            "RUNTIME_RECEIPT_FACT",
+        )
+        spine_raw = self._read(self._spine_snapshot_path)
+        spine = json.loads(spine_raw.decode("utf-8"))
+        spine_hash = f"sha256:{hashlib.sha256(spine_raw).hexdigest()}"
+        spine_source = RuntimeStatusSource(
+            source_id=f"local-spine-{hashlib.sha256(spine_raw).hexdigest()[:16]}",
+            source_type="spine_snapshot",
+            authority_class="SPINE_COORDINATION",
+            observed_at=f"{spine.get('change_date', '1970-01-01')}T00:00:00Z",
+            source_ref=str(self._spine_snapshot_path),
+            source_hash=spine_hash,
+            receipt_id=None,
+            result=str(spine.get("status", "UNKNOWN")),
+            release=None,
+            image=None,
+            rollback_reference=None,
+        )
+        return smoke, monitoring, spine_source
+
+
 def _parse_timestamp(value: str) -> datetime:
     normalized = value.replace("Z", "+00:00")
     parsed = datetime.fromisoformat(normalized)
@@ -113,6 +188,7 @@ def format_runtime_claim(
     staleness_reasons: List[str],
     watchtower_observations: List[str],
     conflict_set: List[str],
+    coordination_sources: Optional[List[RuntimeStatusSource]] = None,
 ) -> Dict[str, object]:
     authority_class = "RECEIPT_FACT" if status == "SUPPORTED" else "UNKNOWN_OR_UNVERIFIED"
     receipt_refs = [source.receipt_id for source in sources if source.receipt_id]
@@ -132,6 +208,9 @@ def format_runtime_claim(
         "image": image,
         "rollback_reference": rollback_reference,
         "source_refs": [_source_ref(source) for source in sources],
+        "coordination_refs": [
+            _source_ref(source) for source in (coordination_sources or [])
+        ],
         "receipt_refs": receipt_refs,
         "freshness": {
             "observed_at": observed_at,
@@ -156,6 +235,9 @@ def mediate_runtime_status(
     """Format one read-only runtime claim from captured local receipt sources."""
     now = now or datetime.now(timezone.utc)
     sources = list(adapter.read_sources())
+    coordination_sources = [
+        source for source in sources if source.source_type == "spine_snapshot"
+    ]
     watchtower_observations = [
         source.source_id
         for source in sources
@@ -182,6 +264,7 @@ def mediate_runtime_status(
             staleness_reasons=[],
             watchtower_observations=watchtower_observations,
             conflict_set=[],
+            coordination_sources=coordination_sources,
         )
 
     selected = [by_type[source_type] for source_type in sorted(REQUIRED_SOURCE_TYPES)]
@@ -230,6 +313,7 @@ def mediate_runtime_status(
         staleness_reasons=staleness_reasons,
         watchtower_observations=watchtower_observations,
         conflict_set=conflict_set,
+        coordination_sources=coordination_sources,
     )
     claim["freshness"]["age_seconds"] = age_seconds
     return claim

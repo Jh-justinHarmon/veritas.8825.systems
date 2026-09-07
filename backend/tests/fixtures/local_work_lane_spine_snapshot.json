@@ -1,0 +1,8 @@
+{
+  "spine_id": "local-work-lane",
+  "version": "0.4.27",
+  "status": "ACTIVE",
+  "next_operational_task": "veritas-runtime-claim-source-adapter-v1",
+  "next_executable_decision": "AUTHORIZE_OR_DEFER_VERITAS_RUNTIME_CLAIM_SOURCE_ADAPTER",
+  "authority_created_by_veritas": false
+}
