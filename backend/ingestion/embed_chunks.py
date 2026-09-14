@@ -9,6 +9,7 @@ Critical invariant: Tier metadata MUST survive embedding.
 
 import json
 import os
+import sys
 from pathlib import Path
 from typing import Dict, List
 from datetime import datetime
