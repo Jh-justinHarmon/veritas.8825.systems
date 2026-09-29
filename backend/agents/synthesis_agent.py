@@ -11,10 +11,13 @@ import os
 import json
 from typing import List, Dict, Optional
 from datetime import datetime
+from pathlib import Path
 from openai import OpenAI
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load .env with override to ensure we use the file, not shell environment
+env_path = Path(__file__).parent.parent / ".env"
+load_dotenv(env_path, override=True)
 
 SYNTHESIS_SYSTEM_PROMPT = """You are a technical synthesis engine.
 
@@ -22,6 +25,23 @@ Your task is to transform retrieved documentation excerpts into a structured, in
 
 You MUST NOT summarize documents sequentially.
 You MUST synthesize across sources into unified concepts.
+
+CRITICAL REQUIREMENT - TIER 1 FIRST:
+
+Sources marked "Type: docs [AUTHORITATIVE - CITE THIS]" are Tier 1 official documentation.
+These are your PRIMARY sources. You MUST prioritize them.
+
+MANDATORY CITATION RULE:
+- Look for sources with "[AUTHORITATIVE - CITE THIS]" marker
+- EVERY idea MUST cite at least 2 of these Tier 1 sources
+- Cite Tier 1 sources BEFORE citing any other sources
+- Most of your citations should be Tier 1
+
+After establishing facts with Tier 1, you may add:
+- Type: practice (Tier 2) for implementation examples
+- Type: failure (Tier 3) for edge cases
+
+Example: [1][2][3][7] where [1][2][3] have the [AUTHORITATIVE] marker
 
 ---
 
@@ -112,8 +132,23 @@ Avoid vague statements.
 
 6. SOURCE USAGE
 - Use sourceIds to reference supporting material
-- Each idea should cite 2–4 sources
+- Each idea MUST cite 2–4 sources
 - Sources should be distributed across ideas
+
+TIER HIERARCHY (CRITICAL):
+Sources are labeled by type:
+- Type: docs (Tier 1) = Official documentation, specifications, authoritative sources [PRIMARY SOURCE]
+- Type: practice (Tier 2) = Real-world implementation patterns, community practices [SUPPLEMENTARY]
+- Type: failure (Tier 3) = Failure modes, edge cases, debugging scenarios [SUPPLEMENTARY]
+
+CITATION REQUIREMENTS:
+- EVERY idea MUST be grounded in Tier 1 (docs) citations as the foundation
+- Tier 1 should represent 50-70% of all citations
+- Each idea needs at least 2 Tier 1 citations
+- Tier 2/3 sources supplement Tier 1 facts with context and examples
+- ALWAYS cite Tier 1 first, then add Tier 2/3
+
+Example citation pattern: [1][2][3][7] where [1][2][3] are Tier 1 docs, [7] is Tier 3 failure
 
 ---
 
@@ -145,9 +180,14 @@ Produce an answer that:
 NOT a summary. A synthesis."""
 
 
+def _is_placeholder_source(url: str) -> bool:
+    return not url or "example.com" in url.lower()
+
+
 def format_retrieval_context(chunks: List[Dict]) -> str:
     """
     Format retrieved chunks into context for synthesis prompt.
+    Sorts by tier (1 first) to make official docs more prominent.
     
     Args:
         chunks: List of retrieved chunks with text, source metadata, and tier
@@ -155,19 +195,27 @@ def format_retrieval_context(chunks: List[Dict]) -> str:
     Returns:
         Formatted context string with numbered excerpts
     """
+    # Sort chunks by tier (tier 1 first) to make official docs prominent
+    sorted_chunks = sorted(chunks, key=lambda c: c.get('source_tier', 3))
+    
     context_parts = []
     
-    for i, chunk in enumerate(chunks, 1):
+    for i, chunk in enumerate(sorted_chunks, 1):
         source_name = chunk.get('source_name', 'Unknown Source')
-        source_url = chunk.get('source_url', '')
+        source_url = chunk.get('source_url') or chunk.get('url', '')
         tier = chunk.get('source_tier', 3)
         text = chunk.get('text', '')
         
-        # Format tier as knowledge type
+        if _is_placeholder_source(source_url):
+            source_name = 'Synthetic demo source'
+            source_url = ''
+        
+        # Format tier as knowledge type with emphasis on tier 1
         tier_label = {1: 'docs', 2: 'practice', 3: 'failure'}.get(tier, 'unknown')
+        tier_emphasis = " [AUTHORITATIVE - CITE THIS]" if tier == 1 else ""
         
         context_parts.append(f"""[{i}] {source_name}
-Type: {tier_label}
+Type: {tier_label}{tier_emphasis}
 URL: {source_url}
 Text: {text}
 """)
@@ -213,25 +261,70 @@ RETRIEVED EXCERPTS:
 
 Synthesize a structured answer following the rules above. Output ONLY the JSON object."""
     
-    # Call LLM
+    # Debug: Print first 500 chars of context to verify tier 1 markers
+    print(f"\n[DEBUG] Context preview (first 500 chars):\n{context[:500]}\n")
+    
+    # Call LLM (with retry for tier 1 enforcement)
+    max_retries = 2
+    answer_json = {}
+    
+    for attempt in range(max_retries):
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": SYNTHESIS_SYSTEM_PROMPT},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.7,  # Higher for synthesis creativity
+                max_tokens=4000,  # Room for detailed synthesis
+                response_format={"type": "json_object"}  # Force JSON output
+            )
+            
+            answer_text = response.choices[0].message.content
+            
+            # Parse JSON
+            answer_json = json.loads(answer_text)
+            
+            # Validate tier 1 citations
+            tier1_cited = set()
+            for idea in answer_json.get("ideas", []):
+                for source_id in idea.get("sourceIds", []):
+                    idx = int(source_id) - 1
+                    if 0 <= idx < len(retrieved_chunks):
+                        if retrieved_chunks[idx].get('source_tier') == 1:
+                            tier1_cited.add(source_id)
+            
+            # Check if we have tier 1 citations
+            if len(tier1_cited) >= 2 or attempt == max_retries - 1:
+                print(f"[TIER1] Cited {len(tier1_cited)} tier 1 sources (attempt {attempt + 1})")
+                break
+            else:
+                print(f"[TIER1] Only {len(tier1_cited)} tier 1 citations, retrying... (attempt {attempt + 1})")
+                user_prompt += "\n\nREMINDER: You MUST cite at least 2 sources marked [AUTHORITATIVE - CITE THIS]."
+                continue
+                
+        except json.JSONDecodeError:
+            if attempt == max_retries - 1:
+                return {
+                    "question": question,
+                    "error": "Failed to parse JSON response",
+                    "ideas": [],
+                    "sources": {}
+                }
+            continue
+        except Exception as e:
+            if attempt == max_retries - 1:
+                return {
+                    "question": question,
+                    "error": f"Synthesis failed: {e}",
+                    "ideas": [],
+                    "sources": {}
+                }
+            continue
+    
+    # Map source IDs back to chunk metadata for rich source information
     try:
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": SYNTHESIS_SYSTEM_PROMPT},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.7,  # Higher for synthesis creativity
-            max_tokens=4000,  # Room for detailed synthesis
-            response_format={"type": "json_object"}  # Force JSON output
-        )
-        
-        answer_text = response.choices[0].message.content
-        
-        # Parse JSON
-        answer_json = json.loads(answer_text)
-        
-        # Map source IDs back to chunk metadata for rich source information
         llm_sources = answer_json.get("sources", {})
         enriched_sources = {}
         
@@ -240,12 +333,14 @@ Synthesize a structured answer following the rules above. Output ONLY the JSON o
             chunk_index = int(source_id) - 1
             if 0 <= chunk_index < len(retrieved_chunks):
                 chunk = retrieved_chunks[chunk_index]
+                source_url = chunk.get('source_url') or chunk.get('url', '')
+                is_placeholder = _is_placeholder_source(source_url)
                 enriched_sources[source_id] = {
-                    "title": source_title,
-                    "url": chunk.get('url', ''),
-                    "source_name": chunk.get('source_name', 'Unknown Source'),
-                    "tier": chunk.get('source_tier', 3),
-                    "document_title": chunk.get('title', '')
+                    "title": "Synthetic demo source" if is_placeholder else source_title,
+                    "url": "" if is_placeholder else source_url,
+                    "source_name": "Synthetic demo source" if is_placeholder else chunk.get('source_name', 'Unknown Source'),
+                    "tier": 3 if is_placeholder else chunk.get('source_tier', 3),
+                    "document_title": "Synthetic demonstration record" if is_placeholder else chunk.get('title', '')
                 }
             else:
                 # Fallback if source ID doesn't map to a chunk
@@ -266,14 +361,6 @@ Synthesize a structured answer following the rules above. Output ONLY the JSON o
             "retrieved_chunk_count": len(retrieved_chunks)
         }
         
-    except json.JSONDecodeError as e:
-        return {
-            "question": question,
-            "error": f"Failed to parse JSON response: {e}",
-            "raw_response": answer_text if 'answer_text' in locals() else None,
-            "ideas": [],
-            "sources": {}
-        }
     except Exception as e:
         return {
             "question": question,
