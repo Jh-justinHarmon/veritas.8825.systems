@@ -3,10 +3,10 @@ import { test, expect } from '@playwright/test';
 test.describe('Veritas End-to-End Integration', () => {
   test('should load page, synthesize answer, and display concepts', async ({ page }) => {
     // Navigate to the app
-    await page.goto('http://localhost:5175');
+    await page.goto('http://localhost:5173');
 
     // Wait for loading to complete (max 30 seconds for synthesis)
-    await page.waitForSelector('text=Veritas V1 Demo', { timeout: 30000 });
+    await page.waitForSelector('text=/veritas|technical synthesis/i', { timeout: 30000 });
 
     // Verify demo question header is present
     const questionHeader = await page.textContent('h1');
@@ -44,7 +44,7 @@ test.describe('Veritas End-to-End Integration', () => {
   test('should handle API errors gracefully', async ({ page }) => {
     // This test verifies error handling if backend is down
     // We'll skip if backend is running
-    await page.goto('http://localhost:5175');
+    await page.goto('http://localhost:5173');
     
     // Just verify page loads without crashing
     await page.waitForLoadState('networkidle');

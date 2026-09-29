@@ -1,0 +1,217 @@
+{
+  "demo_metadata": {
+    "subject": "Claude Tool Use & Function Calling",
+    "demo_question": "My Claude agent keeps calling the wrong tools or inventing parameters. How do I fix tool use errors?",
+    "site": "Claude API",
+    "created": "2026-04-10",
+    "total_sources": 7,
+    "tier_distribution": {
+      "tier_1": 3,
+      "tier_2": 2,
+      "tier_3": 2
+    }
+  },
+  "sources": [
+    {
+      "id": "claude_tool_use_tier1_001",
+      "tier": 1,
+      "tier_label": "Official Documentation",
+      "authority": 1.0,
+      "title": "Tool use overview - Claude API Docs",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview",
+      "source_type": "official_docs",
+      "role": "Core answer foundation - how tool use works",
+      "key_concepts": [
+        "Client-side vs server-side tools",
+        "Tool execution flow",
+        "Tool definitions",
+        "Pricing model"
+      ],
+      "extracted_content": {
+        "how_tools_work": "Claude can use tools in two ways: (1) Client-side tools: You define tools in your API request, Claude requests tool use, you execute the tool and return results. (2) Server-side tools: Anthropic hosts and executes tools for you.",
+        "tool_execution_flow": "1. Define tools in your request, 2. Claude decides which tool(s) to use, 3. Claude generates tool_use content blocks, 4. You execute the tool on your end, 5. You return results in tool_result blocks, 6. Claude uses results to formulate final response",
+        "agent_capabilities": "Tools improve Claude's performance on benchmarks. With tools, Claude achieves higher scores on complex tasks requiring external information or actions.",
+        "pricing": "Tool use pricing depends on input/output tokens. Server-side tools have additional charges for tool execution."
+      }
+    },
+    {
+      "id": "claude_tool_use_tier1_002",
+      "tier": 1,
+      "tier_label": "Official Documentation",
+      "authority": 1.0,
+      "title": "Advanced tool use - Anthropic Engineering Blog",
+      "url": "https://www.anthropic.com/engineering/advanced-tool-use",
+      "source_type": "official_blog",
+      "role": "Advanced features and optimization patterns",
+      "key_concepts": [
+        "Tool Search Tool",
+        "Programmatic Tool Calling",
+        "Token overhead reduction",
+        "On-demand tool discovery"
+      ],
+      "extracted_content": {
+        "tool_search_tool": "Tool Search Tool addresses token overhead by discovering tools on-demand. Instead of loading all tool definitions into every request, Claude searches for relevant tools only when needed.",
+        "token_overhead_problem": "Loading many tool definitions into context consumes significant tokens. For large tool libraries, this can consume thousands of tokens per request before any actual work begins.",
+        "programmatic_tool_calling": "Allows for dynamic tool execution. Tools can be invoked programmatically based on runtime conditions rather than being statically defined upfront.",
+        "best_practices": "Combine Tool Search Tool with Programmatic Tool Calling for efficient agent architectures. This reduces context bloat while maintaining flexibility."
+      }
+    },
+    {
+      "id": "claude_tool_use_tier1_003",
+      "tier": 1,
+      "tier_label": "Official Documentation",
+      "authority": 1.0,
+      "title": "Troubleshooting tool use - Claude API Docs",
+      "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/troubleshooting-tool-use",
+      "source_type": "official_docs",
+      "role": "Official troubleshooting guide for common errors",
+      "key_concepts": [
+        "Wrong tool selection",
+        "Parameter hallucination",
+        "Parallel tool call issues",
+        "Caching problems"
+      ],
+      "extracted_content": {
+        "claude_calls_wrong_tool": "If Claude consistently calls the wrong tool, the issue is usually in tool definitions. Make sure tool names and descriptions clearly distinguish between similar tools. Use specific, descriptive names.",
+        "claude_invents_parameters": "If Claude invents parameters not in your schema, your tool definition may be ambiguous. Ensure parameter descriptions are clear and include examples of valid values. Use enum constraints where possible.",
+        "parallel_tool_calls": "Issues with parallel tool calls often stem from dependencies between tools. If Tool B requires output from Tool A, Claude may try to call them in parallel, causing failures.",
+        "caching_issues": "Tool definitions are cached. If you modify a tool definition, the cache may serve stale definitions. Clear cache or use a new conversation to test updated tools."
+      }
+    },
+    {
+      "id": "claude_tool_use_tier2_001",
+      "tier": 2,
+      "tier_label": "Implementation Guide",
+      "authority": 0.7,
+      "title": "Claude Function Calling and Tool Use Guide - Composio",
+      "url": "https://composio.dev/content/claude-function-calling-tools",
+      "source_type": "third_party_tutorial",
+      "role": "Implementation guide with code examples and best practices",
+      "key_concepts": [
+        "Tool definition structure",
+        "Function calling patterns",
+        "Error handling",
+        "Best practices"
+      ],
+      "extracted_content": {
+        "tool_definition_structure": "Each tool needs: (1) name (unique identifier), (2) description (what the tool does), (3) input_schema (JSON schema defining parameters). The description is critical - Claude uses it to decide when to call the tool.",
+        "best_practices": [
+          "Use clear, specific tool names that describe the action",
+          "Write detailed descriptions explaining when to use the tool",
+          "Define strict input schemas with required fields and types",
+          "Include examples in parameter descriptions",
+          "Test with edge cases to ensure Claude handles errors gracefully"
+        ],
+        "example_calculator": "Shows a simple calculator app with add, subtract, multiply, divide tools. Demonstrates how to structure tool definitions and handle tool_use responses.",
+        "error_handling": "Always validate tool inputs before execution. Claude may generate syntactically valid but semantically incorrect parameters. Implement validation and return clear error messages in tool_result blocks."
+      }
+    },
+    {
+      "id": "claude_tool_use_tier2_002",
+      "tier": 2,
+      "tier_label": "Implementation Guide",
+      "authority": 0.7,
+      "title": "MCP Server Token Overhead - MindStudio Blog",
+      "url": "https://www.mindstudio.ai/blog/claude-code-mcp-server-token-overhead",
+      "source_type": "third_party_blog",
+      "role": "Real-world token overhead analysis and optimization",
+      "key_concepts": [
+        "MCP server overhead",
+        "Token consumption analysis",
+        "Optimization strategies",
+        "Context window impact"
+      ],
+      "extracted_content": {
+        "problem_statement": "Each connected MCP server loads tool definitions into every message, leading to significant token overhead. A typical setup with 3-4 MCP servers can consume 18,000 tokens per turn before any conversation begins.",
+        "overhead_breakdown": "Example: filesystem server (4,200 tokens), fetch server (3,800 tokens), memory server (2,100 tokens), brave-search server (7,900 tokens) = 18,000 tokens total. This consumes ~14% of Claude's 128k context window.",
+        "impact": "Token overhead reduces available context for actual conversation, increases costs, and can cause context window exhaustion on long conversations.",
+        "optimization_strategies": [
+          "Remove unused MCP servers - audit which servers you actually use",
+          "Use project-level configurations instead of global - only load servers needed for specific projects",
+          "Trim tool descriptions - remove verbose documentation, keep descriptions concise",
+          "Consolidate similar tools - merge related functionality into single tools",
+          "Use Tool Search Tool for large tool libraries - load tools on-demand instead of upfront"
+        ],
+        "measurement": "Audit token usage: Check 'Input tokens' in API responses or Claude Desktop's token counter. Baseline with no servers, then add one at a time to measure overhead."
+      }
+    },
+    {
+      "id": "claude_tool_use_tier3_001",
+      "tier": 3,
+      "tier_label": "Common Pitfalls",
+      "authority": 0.4,
+      "title": "Optimising MCP Server Context Usage in Claude Code - Scott Spence",
+      "url": "https://scottspence.com/posts/optimising-mcp-server-context-usage-in-claude-code",
+      "source_type": "developer_experience",
+      "role": "Real developer experience with MCP overhead optimization",
+      "key_concepts": [
+        "Real-world token consumption",
+        "Before/after optimization",
+        "Practical reduction strategies"
+      ],
+      "extracted_content": {
+        "problem_discovery": "I noticed my Claude Code conversations were consuming massive amounts of tokens before I even started. Checked the token counter and saw 14,000+ tokens used with 20 MCP tools loaded.",
+        "before_state": "20 tools loaded, 14,247 tokens consumed before any conversation. This is eating into my context window and costing money on every single message.",
+        "optimization_process": [
+          "Identified which tools were actually being used (only 5 out of 20)",
+          "Removed unused MCP servers from configuration",
+          "Trimmed verbose descriptions in remaining tools",
+          "Consolidated related tools where possible"
+        ],
+        "after_state": "8 tools loaded, 4,892 tokens consumed. Reduced overhead by 66% (from 14,247 to 4,892 tokens).",
+        "key_insight": "Most developers don't realize MCP tools are loaded into EVERY message. It's not a one-time cost - it's per-turn overhead. A 100-turn conversation with 14k overhead = 1.4M tokens just for tool definitions.",
+        "recommendation": "Audit your MCP setup regularly. Remove tools you don't use. Every tool you remove saves tokens on every single message.",
+        "developer_quote": "I had no idea I was paying for tool definitions on every message. Removing unused servers cut my token usage by two-thirds."
+      }
+    },
+    {
+      "id": "claude_tool_use_tier3_002",
+      "tier": 3,
+      "tier_label": "Common Pitfalls",
+      "authority": 0.4,
+      "title": "Claude Code Skills Common Mistakes - MindStudio Blog",
+      "url": "https://www.mindstudio.ai/blog/claude-code-skills-common-mistakes-guide",
+      "source_type": "third_party_blog",
+      "role": "Common mistakes and anti-patterns in tool design",
+      "key_concepts": [
+        "Tool organization anti-patterns",
+        "Context window bloat",
+        "Skill design mistakes"
+      ],
+      "extracted_content": {
+        "mistake_1_too_many_skills": "Installing too many skills/tools without understanding their overhead. Each skill adds to context window consumption. Symptom: Claude runs out of context mid-conversation or becomes slow.",
+        "mistake_2_skip_customization": "Using default tool definitions without customizing for your use case. Generic descriptions lead to wrong tool selection. Claude can't distinguish between similar tools if descriptions are vague.",
+        "mistake_3_cramming_everything": "Putting all functionality into one massive tool instead of focused, single-purpose tools. This makes tool selection harder and increases error rates.",
+        "best_practice_focused_tools": "Create focused, well-defined tools with clear boundaries. Each tool should do one thing well. Use descriptive names and detailed descriptions.",
+        "best_practice_organization": "Organize tools by domain or workflow. Don't mix unrelated functionality. This helps Claude understand when to use which tool.",
+        "context_window_management": "Monitor context usage. If you're hitting limits, audit your tools. Remove unused ones, consolidate related ones, trim descriptions.",
+        "symptom_wrong_tool": "If Claude consistently calls the wrong tool, the issue is usually ambiguous tool descriptions or overlapping functionality. Fix: Make tool purposes distinct and descriptions specific."
+      }
+    }
+  ],
+  "three_layer_answer_structure": {
+    "core_answer": {
+      "tier": 1,
+      "sources": ["claude_tool_use_tier1_001", "claude_tool_use_tier1_002", "claude_tool_use_tier1_003"],
+      "content": "Claude tool use follows a request-response cycle: (1) Define tools with name, description, input_schema, (2) Claude decides which tool(s) to use, (3) Claude generates tool_use blocks, (4) You execute and return tool_result blocks, (5) Claude uses results for final response. Common errors: (1) Claude calls wrong tool = ambiguous tool definitions, use specific names/descriptions, (2) Claude invents parameters = unclear schema, add examples and enum constraints, (3) Parallel tool call issues = dependencies between tools. Advanced: Tool Search Tool reduces token overhead by discovering tools on-demand instead of loading all definitions upfront."
+    },
+    "implementation_insight": {
+      "tier": 2,
+      "sources": ["claude_tool_use_tier2_001", "claude_tool_use_tier2_002"],
+      "content": "Tool definition structure: name (unique ID), description (critical for tool selection), input_schema (JSON schema with types/constraints). Best practices: (1) Clear, specific tool names describing the action, (2) Detailed descriptions explaining WHEN to use the tool, (3) Strict schemas with required fields, types, examples, (4) Validate inputs before execution, return clear errors. Token overhead problem: Each MCP server loads tool definitions into EVERY message. Typical setup: 3-4 servers = 18,000 tokens per turn = 14% of 128k context window. Optimization: (1) Remove unused servers, (2) Use project-level configs, (3) Trim descriptions, (4) Consolidate similar tools, (5) Use Tool Search Tool for large libraries. Measurement: Check 'Input tokens' in API responses, baseline with no servers, add one at a time."
+    },
+    "common_pitfalls": {
+      "tier": 3,
+      "sources": ["claude_tool_use_tier3_001", "claude_tool_use_tier3_002"],
+      "content": "PITFALL #1: MCP Server Token Overhead (66% reduction possible). Symptom: 14,000+ tokens consumed before conversation starts, context window exhaustion, high costs. Root cause: MCP tools loaded into EVERY message, not one-time cost. 100-turn conversation with 14k overhead = 1.4M tokens just for tool definitions. Real example: 20 tools = 14,247 tokens per turn. After optimization (remove unused, trim descriptions): 8 tools = 4,892 tokens per turn. Fix: (1) Audit which tools actually used, (2) Remove unused MCP servers, (3) Trim verbose descriptions, (4) Consolidate related tools. Developer quote: 'I had no idea I was paying for tool definitions on every message.' PITFALL #2: Ambiguous Tool Definitions. Symptom: Claude calls wrong tool consistently, invents parameters. Root cause: (1) Vague descriptions - Claude can't distinguish similar tools, (2) Generic names - no clear purpose, (3) Cramming everything into one tool - makes selection harder. Fix: (1) Make tool purposes distinct, (2) Use specific descriptions explaining WHEN to use, (3) Create focused, single-purpose tools, (4) Add examples to parameter descriptions. PITFALL #3: Installing Too Many Skills. Symptom: Claude runs out of context mid-conversation, becomes slow. Root cause: Each skill adds overhead without understanding cumulative impact. Fix: Monitor context usage, remove unused tools, organize by domain/workflow."
+    }
+  },
+  "demo_validation": {
+    "tier_separation_quality": 5,
+    "tier_separation_notes": "Tier 1 explains mechanics, Tier 2 explains implementation patterns and token overhead problem, Tier 3 exposes systematic failures (MCP overhead, ambiguous definitions, too many skills). Excellent progression from 'how it works' to 'why it fails in practice'.",
+    "implementation_gap": "Strong - MCP token overhead not obvious from official docs (per-turn cost vs one-time), ambiguous tool definition failures require real-world experience to understand",
+    "demo_strength": "Highest - MCP overhead has concrete numbers (14k→4.9k tokens = 66% reduction), wrong tool selection is universal developer problem, clear before/after optimization story",
+    "coverage_completeness": "Complete - covers what tool use is, how to implement well, systematic failure modes (overhead + wrong selection + parameter hallucination), and concrete optimization strategies",
+    "recommendation": "BEST FIRST DEMO - strongest tier separation, universal problem (every API integration faces tool design), concrete optimization metrics, compelling before/after story"
+  }
+}

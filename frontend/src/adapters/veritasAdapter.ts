@@ -18,6 +18,7 @@ export interface VeritasSource {
 }
 
 export interface VeritasAnswer {
+  session_id?: string;
   question: string;
   ideas: VeritasIdea[];
   sources: Record<string, VeritasSource>;

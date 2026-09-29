@@ -4,16 +4,17 @@ import { getHistory, type HistoryEntry } from '../api/veritas';
 interface HistoryPanelProps {
   onSelectHistory: (sessionId: string) => void;
   currentSessionId?: string;
+  refreshKey?: number;
 }
 
-export function HistoryPanel({ onSelectHistory, currentSessionId }: HistoryPanelProps) {
+export function HistoryPanel({ onSelectHistory, currentSessionId, refreshKey = 0 }: HistoryPanelProps) {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadHistory();
-  }, []);
+  }, [refreshKey]);
 
   const loadHistory = async () => {
     try {

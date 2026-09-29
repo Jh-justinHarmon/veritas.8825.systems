@@ -11,6 +11,7 @@ export interface VeritasIdea {
 }
 
 export interface VeritasAnswer {
+  session_id?: string;
   question: string;
   ideas: VeritasIdea[];
   sources: Record<string, string>;
@@ -20,36 +21,6 @@ export interface ExampleQuestion {
   id: string;
   question: string;
   description: string;
-}
-
-export interface HistoryEntry {
-  id: string;
-  timestamp: string;
-  question: string;
-  preview: string;
-  idea_count: number;
-  source_count: number;
-}
-
-export interface HistoryDetail {
-  id: string;
-  timestamp: string;
-  question: string;
-  answer: {
-    ideas: VeritasIdea[];
-    sources: Record<string, any>;
-  };
-  trace: {
-    retrieved_chunks: Array<{
-      source_name: string;
-      title: string;
-      tier: number;
-      text_preview: string;
-    }>;
-    chunk_count: number;
-    synthesis_model: string;
-    timestamp: string;
-  };
 }
 
 // Use relative path in production, localhost in development
@@ -129,44 +100,52 @@ export async function checkHealth(): Promise<{ status: string; chunks_loaded: nu
  * @param offset - Offset for pagination (default: 0)
  * @returns Promise<HistoryEntry[]>
  */
-export async function getHistory(limit: number = 50, offset: number = 0): Promise<HistoryEntry[]> {
-  const response = await fetch(`${API_BASE_URL}/api/history?limit=${limit}&offset=${offset}`);
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch history');
-  }
-  
-  return response.json();
-}
-
 /**
  * Get history entry by ID.
  * 
  * @param sessionId - ID of the history entry
  * @returns Promise<HistoryDetail>
  */
-export async function getHistoryById(sessionId: string): Promise<HistoryDetail> {
-  const response = await fetch(`${API_BASE_URL}/api/history/${sessionId}`);
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch history entry ${sessionId}`);
-  }
-  
-  return response.json();
-}
-
 /**
  * Delete history entry by ID.
  * 
  * @param sessionId - ID of the history entry
  * @returns Promise<void>
  */
-export async function deleteHistory(sessionId: string): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/api/history/${sessionId}`, {
-    method: 'DELETE'
-  });
-  
+
+export interface HistoryEntry {
+  id: string;
+  timestamp: string;
+  question: string;
+  preview: string;
+  idea_count: number;
+  source_count: number;
+}
+
+export interface HistoryDetail {
+  id: string;
+  timestamp: string;
+  question: string;
+  answer: unknown;
+  trace: unknown;
+}
+
+export async function getHistory(limit = 50, offset = 0): Promise<HistoryEntry[]> {
+  const response = await fetch(`${API_BASE_URL}/api/history?limit=${limit}&offset=${offset}`);
+
   if (!response.ok) {
-    throw new Error(`Failed to delete history entry ${sessionId}`);
+    throw new Error('Failed to fetch history');
   }
+
+  return response.json();
+}
+
+export async function getHistoryById(sessionId: string): Promise<HistoryDetail> {
+  const response = await fetch(`${API_BASE_URL}/api/history/${encodeURIComponent(sessionId)}`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch history entry');
+  }
+
+  return response.json();
 }

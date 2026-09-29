@@ -10,7 +10,8 @@ import type {
   VeritasIdea,
   VeritasSource,
 } from "../adapters/veritasAdapter";
-import { synthesizeAnswer } from "../api/veritas";
+import { getHistoryById, synthesizeAnswer } from "../api/veritas";
+import { HistoryPanel } from "../components/HistoryPanel";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -45,34 +46,50 @@ const TYPE_STYLE: Record<
   },
 };
 
-// ─── Loading Screen with Animated Progress ──────────────────────────────────
+// ─── Loading Screen with Timeline Progress ──────────────────────────────────
 
 function LoadingScreen() {
   const [activeStep, setActiveStep] = useState(0);
+  const [isFinalized, setIsFinalized] = useState(false);
   
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % 3);
-    }, 1500);
-    return () => clearInterval(interval);
+    // Linear progression: 0 → 1 → 2 → finalized
+    const timers: number[] = [];
+    
+    // Step 1: Official docs (3.5s)
+    timers.push(window.setTimeout(() => setActiveStep(1), 3500));
+    
+    // Step 2: Implementation guides (3.5s)
+    timers.push(window.setTimeout(() => setActiveStep(2), 7000));
+    
+    // Step 3: Community failures (3.5s)
+    timers.push(window.setTimeout(() => setActiveStep(3), 10500));
+    
+    // Finalized state
+    timers.push(window.setTimeout(() => setIsFinalized(true), 14000));
+    
+    return () => timers.forEach(window.clearTimeout);
   }, []);
   
   const steps = [
     {
       color: 'blue',
       dotClass: 'bg-blue-500',
+      textColor: 'text-blue-400',
       title: 'Searching official documentation',
       desc: "Anthropic's tool use specs, parameter definitions, and API references"
     },
     {
       color: 'amber',
       dotClass: 'bg-amber-500',
+      textColor: 'text-amber-400',
       title: 'Consulting implementation guides',
       desc: 'Vendor blogs, code examples, and observed patterns from production use'
     },
     {
       color: 'rose',
       dotClass: 'bg-rose-500',
+      textColor: 'text-rose-400',
       title: 'Reviewing community failures',
       desc: 'Real debugging sessions, edge cases, and systematic failure modes'
     }
@@ -94,52 +111,59 @@ function LoadingScreen() {
         {/* Spinner */}
         <div className="w-10 h-10 border-2 border-slate-800 border-t-slate-500 rounded-full animate-spin mx-auto mb-8" />
         
-        {/* Process explanation with animated progress */}
+        {/* Timeline progress */}
         <div className="space-y-3 text-left">
           {steps.map((step, idx) => {
-            const isActive = idx === activeStep;
-            const isComplete = idx < activeStep;
+            const isActive = idx === activeStep && !isFinalized;
+            const isComplete = idx < activeStep || isFinalized;
             
             return (
-              <div key={idx} className="flex items-start gap-3 transition-all duration-300">
-                {/* Animated dot indicator */}
+              <div key={idx} className="flex items-start gap-3 transition-all duration-500">
+                {/* Dot indicator */}
                 <div className="relative mt-2 shrink-0">
                   <div className={cn(
-                    "w-1.5 h-1.5 rounded-full transition-all duration-300",
-                    isActive ? `${step.dotClass} scale-150 shadow-lg` : 
-                    isComplete ? `${step.dotClass}/80` : 
-                    `${step.dotClass}/30`
+                    "w-1.5 h-1.5 rounded-full transition-all duration-500",
+                    isComplete ? `${step.dotClass}` : 
+                    isActive ? `${step.dotClass} scale-125` : 
+                    `${step.dotClass}/20`
                   )} />
                   {isActive && (
                     <div className={cn(
-                      "absolute inset-0 w-1.5 h-1.5 rounded-full animate-ping",
+                      "absolute inset-0 w-1.5 h-1.5 rounded-full animate-pulse",
                       step.dotClass,
-                      "opacity-75"
+                      "opacity-60"
                     )} />
                   )}
                 </div>
                 
-                {/* Text content */}
-                <p className={cn(
-                  "text-[13px] leading-relaxed transition-all duration-300",
-                  isActive ? "text-slate-300" : "text-slate-500"
+                {/* Text content with gradient shimmer */}
+                <div className={cn(
+                  "text-[13px] leading-relaxed transition-all duration-500",
+                  isComplete ? step.textColor : 
+                  isActive ? "text-slate-300" : 
+                  "text-slate-600"
                 )}>
                   <span className={cn(
-                    "font-medium transition-colors duration-300",
-                    isActive ? "text-slate-200" : "text-slate-400"
+                    "font-medium relative inline-block",
+                    isActive && "animate-shimmer bg-gradient-to-r from-slate-500 via-slate-100 to-slate-500 bg-[length:200%_auto] bg-clip-text text-transparent"
                   )}>
                     {step.title}
                   </span>
-                  {" — "}
-                  {step.desc}
-                </p>
+                  <span className={cn(
+                    "transition-opacity duration-500",
+                    isComplete ? "opacity-70" : isActive ? "opacity-100" : "opacity-40"
+                  )}>
+                    {" — "}
+                    {step.desc}
+                  </span>
+                </div>
               </div>
             );
           })}
         </div>
         
         <p className="text-[11px] text-slate-700 mt-8 leading-relaxed">
-          Synthesizing concept-driven answer with tier-aware citations...
+          {isFinalized ? "Finalizing synthesis..." : "Synthesizing concept-driven answer with tier-aware citations..."}
         </p>
       </div>
     </div>
@@ -577,28 +601,31 @@ function ReadingView({
 const DEMO_QUESTION = "Why is Claude calling the wrong tool or using incorrect parameters?";
 
 function transformApiResponse(apiResponse: any): VeritasAnswer {
+  const answer = apiResponse.answer ?? apiResponse;
+  const ideas = answer.ideas ?? [];
+  const sources = answer.sources ?? {};
+  const tierToType: Record<number, 'docs' | 'practice' | 'failure'> = {
+    1: 'docs',
+    2: 'practice',
+    3: 'failure'
+  };
+
   return {
+    session_id: apiResponse.session_id ?? apiResponse.id,
     question: apiResponse.question,
-    ideas: apiResponse.ideas.map((idea: any) => ({
-      id: idea.title.toLowerCase().replace(/\s+/g, '-'),
-      concept: idea.title,
-      paragraphs: idea.paragraphs,
-      sourceIds: idea.sourceIds
+    ideas: ideas.map((idea: any) => ({
+      id: idea.id ?? idea.title.toLowerCase().replace(/\s+/g, '-'),
+      concept: idea.concept ?? idea.title,
+      paragraphs: idea.paragraphs ?? [],
+      sourceIds: idea.sourceIds ?? []
     })),
-    sources: Object.entries(apiResponse.sources).reduce((acc, [id, sourceData]: [string, any]) => {
-      // Map tier to knowledge type
-      const tierToType: Record<number, 'docs' | 'practice' | 'failure'> = {
-        1: 'docs',
-        2: 'practice',
-        3: 'failure'
-      };
-      
+    sources: Object.entries(sources).reduce((acc, [id, sourceData]: [string, any]) => {
       acc[id] = {
         label: sourceData.title || sourceData.source_name || 'Unknown Source',
         short: sourceData.source_name || sourceData.title || 'Unknown',
-        type: tierToType[sourceData.tier] || 'docs',
-        meta: sourceData.url || '',
-        excerpt: sourceData.document_title || ''
+        type: tierToType[sourceData.tier] || sourceData.type || 'docs',
+        meta: sourceData.url || sourceData.meta || '',
+        excerpt: sourceData.document_title || sourceData.excerpt || ''
       };
       return acc;
     }, {} as Record<string, VeritasSource>)
@@ -607,41 +634,49 @@ function transformApiResponse(apiResponse: any): VeritasAnswer {
 
 export function Home() {
   const [answer, setAnswer] = useState<VeritasAnswer | null>(null);
+  const [currentSessionId, setCurrentSessionId] = useState<string | undefined>();
+  const [historyRefreshKey, setHistoryRefreshKey] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-
-  useEffect(() => {
-    console.log('[Veritas] Starting synthesis...');
-    synthesizeAnswer(DEMO_QUESTION)
-      .then(apiResponse => {
-        console.log('[Veritas] Synthesis successful:', apiResponse);
-        const transformed = transformApiResponse(apiResponse);
-        setAnswer(transformed);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('[Veritas] Synthesis failed:', err);
-        setError(err.message);
-        setLoading(false);
-      });
+  const applyApiResponse = useCallback((apiResponse: Parameters<typeof transformApiResponse>[0]) => {
+    const transformed = transformApiResponse(apiResponse);
+    setAnswer(transformed);
+    setCurrentSessionId(transformed.session_id);
   }, []);
 
-
-  const handleReset = useCallback(() => {
+  const loadDemoAnswer = useCallback(() => {
     setLoading(true);
     setError(null);
     synthesizeAnswer(DEMO_QUESTION)
       .then(apiResponse => {
-        const transformed = transformApiResponse(apiResponse);
-        setAnswer(transformed);
+        applyApiResponse(apiResponse);
+        setHistoryRefreshKey(key => key + 1);
         setLoading(false);
       })
       .catch(err => {
-        setError(err.message || 'Failed to synthesize answer');
+        setError(err instanceof Error ? err.message : 'Failed to synthesize answer');
         setLoading(false);
       });
-  }, []);
+  }, [applyApiResponse]);
+
+  const handleSelectHistory = useCallback(async (sessionId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const historyEntry = await getHistoryById(sessionId);
+      applyApiResponse(historyEntry);
+      setLoading(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load history entry');
+      setLoading(false);
+    }
+  }, [applyApiResponse]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(loadDemoAnswer, 0);
+    return () => window.clearTimeout(timer);
+  }, [loadDemoAnswer]);
 
   if (loading) {
     return <LoadingScreen />;
@@ -654,7 +689,7 @@ export function Home() {
           <div className="text-rose-400 text-lg mb-2">Synthesis Failed</div>
           <div className="text-slate-500 mb-4">{error}</div>
           <button
-            onClick={handleReset}
+            onClick={loadDemoAnswer}
             className="px-4 py-2 bg-slate-800 text-slate-300 rounded hover:bg-slate-700 transition-colors"
           >
             Retry
@@ -672,5 +707,16 @@ export function Home() {
     );
   }
 
-  return <ReadingView answer={answer} onReset={handleReset} />;
+  return (
+    <div className="flex h-screen bg-[#07090F]">
+      <HistoryPanel
+        onSelectHistory={handleSelectHistory}
+        currentSessionId={currentSessionId}
+        refreshKey={historyRefreshKey}
+      />
+      <div className="min-w-0 flex-1">
+        <ReadingView answer={answer} onReset={loadDemoAnswer} />
+      </div>
+    </div>
+  );
 }

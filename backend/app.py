@@ -11,31 +11,50 @@ from dotenv import load_dotenv
 from pathlib import Path
 from typing import List, Dict
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from .env file (override shell environment)
+env_path = Path(__file__).parent / ".env"
+load_dotenv(env_path, override=True)
 
 # Import Veritas components
 from agents.synthesis_agent import synthesize_answer
 from retrieval.simple_retriever import retrieve_chunks, load_chunks
 from ingestion.embed_chunks import generate_embedding
-from history.history_store import HistoryStore
 from abstraction.chunk_abstractor import abstract_chunks
+from evaluation.quality_metrics import measure_synthesis_quality
+from history.history_store import HistoryStore
 
-app = Flask(__name__)
+# Determine static folder path (frontend/dist for production)
+STATIC_FOLDER = Path(__file__).parent.parent / "frontend" / "dist"
 
-# Initialize history store
+app = Flask(__name__, static_folder=str(STATIC_FOLDER), static_url_path='')
 history_store = HistoryStore()
 
 # Manual CORS headers (more reliable than flask-cors)
 @app.after_request
 def after_request(response):
     origin = request.headers.get('Origin')
-    if origin in ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175']:
+    allowed_origins = [
+        'http://localhost:5173',
+        'http://localhost:5174', 
+        'http://localhost:5175',
+        'http://localhost:5176',
+        'https://veritas.8825.systems',
+        'https://veritas-8825-systems.fly.dev'
+    ]
+    if origin in allowed_origins:
         response.headers['Access-Control-Allow-Origin'] = origin
-        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, DELETE'
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
         response.headers['Access-Control-Max-Age'] = '3600'
     return response
+
+# Handle CORS preflight requests
+@app.route('/api/synthesize', methods=['OPTIONS'])
+@app.route('/api/synthesize/<mode>', methods=['OPTIONS'])
+@app.route('/api/health', methods=['OPTIONS'])
+@app.route('/api/examples', methods=['OPTIONS'])
+def handle_options(mode=None):
+    return '', 204
 
 # Load embedded chunks on startup
 print("Loading embedded chunks...")
@@ -59,6 +78,26 @@ def health():
         "chunks_loaded": len(ALL_CHUNKS),
         "service": "veritas-api"
     })
+
+
+@app.route('/api/history', methods=['GET'])
+def history():
+    """Return paginated synthesis history previews."""
+    limit = request.args.get('limit', 50, type=int)
+    offset = request.args.get('offset', 0, type=int)
+    return jsonify(history_store.get_all_history(limit=limit, offset=offset))
+
+
+@app.route('/api/history/<session_id>', methods=['GET'])
+def history_entry(session_id):
+    """Return a full synthesis history entry by session ID."""
+    entry = history_store.get_history_by_id(session_id)
+    if entry is None:
+        return jsonify({
+            "error": "NOT_FOUND",
+            "message": f"History entry {session_id} not found"
+        }), 404
+    return jsonify(entry)
 
 
 @app.route('/api/synthesize', methods=['POST', 'OPTIONS'])
@@ -140,37 +179,15 @@ def synthesize(mode=None):
         
         print(f"Synthesis complete: {len(answer.get('ideas', []))} ideas generated")
         
-        # Save to history with trace data
-        trace = {
-            "retrieved_chunks": [
-                {
-                    "source_name": chunk.get("source_name"),
-                    "title": chunk.get("title"),
-                    "tier": chunk.get("source_tier"),
-                    "text_preview": chunk.get("text", "")[:100]
-                }
-                for chunk in retrieved_chunks
-            ],
-            "chunk_count": len(retrieved_chunks),
-            "synthesis_model": answer.get("model", "gpt-4o"),
-            "timestamp": answer.get("timestamp")
-        }
+        # Measure quality metrics without persisting user questions or traces.
+        quality_metrics = measure_synthesis_quality(answer)
         
-        session_id = history_store.save_synthesis(
-            question=question,
-            answer={
-                "ideas": answer["ideas"],
-                "sources": answer["sources"]
-            },
-            trace=trace
-        )
-        
-        # Return synthesized answer with session ID
         return jsonify({
-            "session_id": session_id,
             "question": answer["question"],
             "ideas": answer["ideas"],
-            "sources": answer["sources"]
+            "sources": answer["sources"],
+            "mode": mode or "raw",
+            "quality_metrics": quality_metrics
         })
         
     except FileNotFoundError as e:
@@ -208,42 +225,18 @@ def examples():
     ])
 
 
-@app.route('/api/history', methods=['GET'])
-def get_history():
-    """Get synthesis history (paginated)."""
-    limit = request.args.get('limit', 50, type=int)
-    offset = request.args.get('offset', 0, type=int)
-    
-    history = history_store.get_all_history(limit=limit, offset=offset)
-    return jsonify(history)
+@app.route('/')
+def serve_frontend():
+    """Serve frontend index.html for production"""
+    return app.send_static_file('index.html')
 
-
-@app.route('/api/history/<session_id>', methods=['GET'])
-def get_history_by_id(session_id):
-    """Get a specific history entry by ID."""
-    entry = history_store.get_history_by_id(session_id)
-    
-    if entry is None:
-        return jsonify({
-            "error": "NOT_FOUND",
-            "message": f"History entry {session_id} not found"
-        }), 404
-    
-    return jsonify(entry)
-
-
-@app.route('/api/history/<session_id>', methods=['DELETE'])
-def delete_history(session_id):
-    """Delete a history entry."""
-    deleted = history_store.delete_history(session_id)
-    
-    if not deleted:
-        return jsonify({
-            "error": "NOT_FOUND",
-            "message": f"History entry {session_id} not found"
-        }), 404
-    
-    return jsonify({"success": True})
+@app.route('/<path:path>')
+def serve_static(path):
+    """Serve other static files or fall back to index.html for SPA routing"""
+    try:
+        return app.send_static_file(path)
+    except:
+        return app.send_static_file('index.html')
 
 
 if __name__ == '__main__':
@@ -253,12 +246,10 @@ if __name__ == '__main__':
     print("="*60)
     print(f"Chunks loaded: {len(ALL_CHUNKS)}")
     print(f"Endpoints:")
+    print(f"  - GET    /")
     print(f"  - GET    /api/health")
     print(f"  - GET    /api/examples")
     print(f"  - POST   /api/synthesize")
-    print(f"  - GET    /api/history")
-    print(f"  - GET    /api/history/<id>")
-    print(f"  - DELETE /api/history/<id>")
     print("="*60 + "\n")
     
     app.run(
