@@ -30,8 +30,41 @@ CLAIM_MANIFEST_PATH = Path(__file__).parent / "claims" / "runtime_status_manifes
 app = Flask(__name__, static_folder=None)
 app.config["VERITAS_INTERNAL_CLAIMS_ENABLED"] = os.getenv("VERITAS_INTERNAL_CLAIMS", "") == "1"
 
-# Initialize history store
-history_store = HistoryStore()
+# Initialize history store. Durable backend: SQLite on the Fly volume
+# (/data) — survives restart, machine replacement, redeploy. Falls back
+# to the legacy JSON file only when no durable path is configured AND
+# /data is absent (local dev). A failed durable init fails closed:
+# history_store stays None and the edge refuses with a sanitized error.
+from history.sqlite_store import SqliteHistoryStore, HistoryStoreError
+
+_HISTORY_BACKEND = os.getenv("VERITAS_HISTORY_BACKEND", "auto")
+_RETENTION_DAYS = int(os.getenv("VERITAS_HISTORY_RETENTION_DAYS", "0"))
+_LEGACY_HISTORY = Path(__file__).parent.parent / "history" / "synthesis_history.json"
+history_store = None
+HISTORY_BACKEND_ACTIVE = None
+if _HISTORY_BACKEND in ("auto", "sqlite") and (
+        os.getenv("VERITAS_HISTORY_DB") or Path("/data").exists()
+        or _HISTORY_BACKEND == "sqlite"):
+    try:
+        history_store = SqliteHistoryStore(
+            retention_days=_RETENTION_DAYS, legacy_json=_LEGACY_HISTORY)
+        HISTORY_BACKEND_ACTIVE = "sqlite"
+    except HistoryStoreError as e:
+        print(f"History store init failed closed: {e}")
+        if _HISTORY_BACKEND == "auto":
+            history_store = None  # fail closed even in auto
+if history_store is None and _HISTORY_BACKEND == "auto" \
+        and not Path("/data").exists():
+    history_store = HistoryStore(_LEGACY_HISTORY)
+    HISTORY_BACKEND_ACTIVE = "json-legacy"
+print(f"History backend: {HISTORY_BACKEND_ACTIVE or 'UNAVAILABLE'}")
+
+
+def _history_unavailable():
+    return jsonify({
+        "error": "HISTORY_UNAVAILABLE",
+        "message": "Result storage is unavailable"
+    }), 503
 
 # Manual CORS headers (more reliable than flask-cors)
 @app.after_request
@@ -127,6 +160,7 @@ def health():
         "status": "healthy" if CORPUS_CLEAN else "degraded",
         "chunks_loaded": len(ALL_CHUNKS),
         "service": "veritas-api",
+        "history_backend": HISTORY_BACKEND_ACTIVE or "unavailable",
         "corpus": {
             "version": CORPUS_MANIFEST.get("corpus_version"),
             "manifest_sha256": CORPUS_MANIFEST.get("manifest_sha256"),
@@ -236,14 +270,19 @@ def synthesize(mode=None):
             "corpus": _corpus_binding()
         }
         
-        session_id = history_store.save_synthesis(
-            question=question,
-            answer={
-                "ideas": answer["ideas"],
-                "sources": answer["sources"]
-            },
-            trace=trace
-        )
+        if history_store is None:
+            return _history_unavailable()
+        try:
+            session_id = history_store.save_synthesis(
+                question=question,
+                answer={
+                    "ideas": answer["ideas"],
+                    "sources": answer["sources"]
+                },
+                trace=trace
+            )
+        except HistoryStoreError:
+            return _history_unavailable()
         
         # Return synthesized answer with session ID and corpus binding —
         # receipts downstream bind to the exact corpus build that
@@ -297,14 +336,24 @@ def get_history():
     limit = request.args.get('limit', 50, type=int)
     offset = request.args.get('offset', 0, type=int)
     
-    history = history_store.get_all_history(limit=limit, offset=offset)
+    if history_store is None:
+        return _history_unavailable()
+    try:
+        history = history_store.get_all_history(limit=limit, offset=offset)
+    except HistoryStoreError:
+        return _history_unavailable()
     return jsonify(history)
 
 
 @app.route('/api/history/<session_id>', methods=['GET'])
 def get_history_by_id(session_id):
     """Get a specific history entry by ID."""
-    entry = history_store.get_history_by_id(session_id)
+    if history_store is None:
+        return _history_unavailable()
+    try:
+        entry = history_store.get_history_by_id(session_id)
+    except HistoryStoreError:
+        return _history_unavailable()
     
     if entry is None:
         return jsonify({
@@ -318,7 +367,12 @@ def get_history_by_id(session_id):
 @app.route('/api/history/<session_id>', methods=['DELETE'])
 def delete_history(session_id):
     """Delete a history entry."""
-    deleted = history_store.delete_history(session_id)
+    if history_store is None:
+        return _history_unavailable()
+    try:
+        deleted = history_store.delete_history(session_id)
+    except HistoryStoreError:
+        return _history_unavailable()
     
     if not deleted:
         return jsonify({

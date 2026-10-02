@@ -23,5 +23,14 @@ primary_region = 'dfw'
   size = 'shared-cpu-1x'
   memory = '512mb'
 
+# Durable result storage: history.db lives on this volume. Provisioning
+# (`fly volumes create veritas_data --region dfw --size 1`) happens at
+# deploy time under the gated deploy node — not in code. Single-volume
+# model pins the app to one machine; concurrent multi-region scale-out
+# is out of scope for this store.
+[mounts]
+  source = 'veritas_data'
+  destination = '/data'
+
 [processes]
   app = "/app/.venv/bin/gunicorn wsgi:app --bind 0.0.0.0:8080 --workers 1 --timeout 120"
