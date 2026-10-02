@@ -5,7 +5,9 @@ Provides /api/synthesize endpoint for concept-driven answer synthesis.
 Integrates retrieval system with synthesis agent.
 """
 
+import json
 import os
+import sys
 from flask import Flask, request, jsonify, send_from_directory
 from werkzeug.exceptions import NotFound
 from claims.runtime_status import LocalEvidenceAdapter, mediate_runtime_status
@@ -66,11 +68,41 @@ def runtime_status_claim():
     return jsonify(claim)
 
 
-# Load embedded chunks on startup
+# Load embedded chunks on startup, validated against the approved source
+# manifest. A corpus containing placeholder/unapproved material fails
+# closed: synthesis is refused, health reports the corpus defect.
 print("Loading embedded chunks...")
-CHUNKS_FILE = Path(__file__).parent.parent / "corpus" / "embeddings" / "all_tiers_embedded_chunks.json"
+CORPUS_DIR = Path(__file__).parent.parent / "corpus"
+CHUNKS_FILE = CORPUS_DIR / "embeddings" / "all_tiers_embedded_chunks.json"
+CORPUS_MANIFEST_FILE = CORPUS_DIR / "embeddings" / "all_tiers_manifest.json"
+SOURCE_MANIFEST_FILE = CORPUS_DIR / "source_manifest.json"
+
+sys.path.insert(0, str(Path(__file__).parent / "ingestion"))
+from source_policy import (
+    chunk_is_production_safe,
+    corpus_inventory_hash,
+    load_source_manifest,
+)  # noqa: E402
+
 ALL_CHUNKS = load_chunks(CHUNKS_FILE)
-print(f"Loaded {len(ALL_CHUNKS)} chunks")
+CORPUS_MANIFEST = {}
+CORPUS_CLEAN = False
+CORPUS_DEFECT = None
+try:
+    CORPUS_MANIFEST = json.loads(CORPUS_MANIFEST_FILE.read_text(encoding="utf-8"))
+    _source_manifest = load_source_manifest(SOURCE_MANIFEST_FILE)
+    _unsafe = [c["chunk_id"] for c in ALL_CHUNKS
+               if not chunk_is_production_safe(c, _source_manifest)]
+    if _unsafe:
+        CORPUS_DEFECT = f"{len(_unsafe)} chunks outside approved manifest"
+    elif CORPUS_MANIFEST.get("manifest_sha256") != \
+            corpus_inventory_hash(ALL_CHUNKS):
+        CORPUS_DEFECT = "manifest hash mismatch with loaded chunks"
+    else:
+        CORPUS_CLEAN = True
+except Exception as e:  # fail closed, detail sanitized at the edge
+    CORPUS_DEFECT = f"corpus manifest validation failed: {type(e).__name__}"
+print(f"Loaded {len(ALL_CHUNKS)} chunks; corpus_clean={CORPUS_CLEAN} defect={CORPUS_DEFECT}")
 
 # Count chunks by tier
 tier_counts = {}
@@ -80,13 +112,26 @@ for chunk in ALL_CHUNKS:
 print(f"Tier breakdown: {tier_counts}")
 
 
+def _corpus_binding() -> dict:
+    return {
+        "corpus_version": CORPUS_MANIFEST.get("corpus_version"),
+        "manifest_sha256": CORPUS_MANIFEST.get("manifest_sha256"),
+        "chunks_loaded": len(ALL_CHUNKS),
+    }
+
+
 @app.route('/api/health', methods=['GET'])
 def health():
     """Health check endpoint."""
     return jsonify({
-        "status": "healthy",
+        "status": "healthy" if CORPUS_CLEAN else "degraded",
         "chunks_loaded": len(ALL_CHUNKS),
-        "service": "veritas-api"
+        "service": "veritas-api",
+        "corpus": {
+            "version": CORPUS_MANIFEST.get("corpus_version"),
+            "manifest_sha256": CORPUS_MANIFEST.get("manifest_sha256"),
+            "clean": CORPUS_CLEAN,
+        }
     })
 
 
@@ -126,6 +171,11 @@ def synthesize(mode=None):
     question = request.json['question']
     
     # Validate question length
+    if not CORPUS_CLEAN:
+        return jsonify({
+            "error": "CORPUS_UNCLEAN",
+            "message": "Corpus failed manifest validation; synthesis refused"
+        }), 503
     if len(question) < 5 or len(question) > 500:
         return jsonify({
             "error": "INVALID_REQUEST",
@@ -182,7 +232,8 @@ def synthesize(mode=None):
             ],
             "chunk_count": len(retrieved_chunks),
             "synthesis_model": answer.get("model", "gpt-4o"),
-            "timestamp": answer.get("timestamp")
+            "timestamp": answer.get("timestamp"),
+            "corpus": _corpus_binding()
         }
         
         session_id = history_store.save_synthesis(
@@ -194,12 +245,15 @@ def synthesize(mode=None):
             trace=trace
         )
         
-        # Return synthesized answer with session ID
+        # Return synthesized answer with session ID and corpus binding —
+        # receipts downstream bind to the exact corpus build that
+        # produced this answer.
         return jsonify({
             "session_id": session_id,
             "question": answer["question"],
             "ideas": answer["ideas"],
-            "sources": answer["sources"]
+            "sources": answer["sources"],
+            "corpus": _corpus_binding()
         })
         
     except FileNotFoundError as e:

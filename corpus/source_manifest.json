@@ -1,0 +1,441 @@
+{
+  "manifest_version": "1.0.0",
+  "manifest_id": "veritas-source-manifest",
+  "policy": {
+    "admission": "manifest-approved canonical sources only; placeholder/malformed/unapproved/duplicate sources are refused before embedding",
+    "placeholder_hosts": [
+      "example.com",
+      "example.org",
+      "example.net",
+      "example.edu",
+      "example.invalid"
+    ],
+    "quarantine_path": "corpus_quarantine/"
+  },
+  "documents": [
+    {
+      "document_id": "claude_docs_api",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/api",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "d9a49715853fd605da9a2020cdf675ea1aa42d1532de1812209286fe76c76121",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_api.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_authentication",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/authentication",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "d9a49715853fd605da9a2020cdf675ea1aa42d1532de1812209286fe76c76121",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_authentication.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_cowork_claude_code_power_for_knowledge_work_claude_by_anthropic",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/cowork_claude_code_power_for_knowledge_work_claude_by_anthropic",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "5c484ebc5ef8efb8882fb9c3262e3a27ec0e55afef11d37314ed522beeb10f65",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_cowork_claude_code_power_for_knowledge_work_claude_by_anthropic.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_data_residency___claude_api_docs",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/data_residency___claude_api_docs",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "e84ba369f5227a9c1b08e9a00bb9edb0e8c8a5efe686b20def5ebfcd4d4630ca",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_data_residency___claude_api_docs.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_errors",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/errors",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "d9a49715853fd605da9a2020cdf675ea1aa42d1532de1812209286fe76c76121",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_errors.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_features_overview___claude_api_docs",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/features_overview___claude_api_docs",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "89f009a3b8cb60e976c9e5676d34a7db81cea6e63be0bd2c1fecd8aa20fd00fb",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_features_overview___claude_api_docs.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_get_started_with_claude___claude_api_docs",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/get_started_with_claude___claude_api_docs",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "be75b11cf013ad59048c8fd33b896f49eb8a769108d1e82c28463926854cc722",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_get_started_with_claude___claude_api_docs.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_get_started_with_cowork_claude_help_center",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/get_started_with_cowork_claude_help_center",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "0aaa3de2c81abd06d41d579290beee3f1e19dc80d318ce9554c5511b03e1ed9e",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_get_started_with_cowork_claude_help_center.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_intro",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/intro",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "d9a49715853fd605da9a2020cdf675ea1aa42d1532de1812209286fe76c76121",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_intro.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_intro_to_claude___claude_api_docs",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/intro_to_claude___claude_api_docs",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "07a29576a8615648d546be89a46e42c331b3b49e571c5a1922a812d4762b97d8",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_intro_to_claude___claude_api_docs.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_let_claude_use_your_computer_in_cowork_claude_help_center",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/let_claude_use_your_computer_in_cowork_claude_help_center",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "a83239f3aaeb7a16f8b5352dfd58a40303fe28afeeed179a971ec53f4353371d",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_let_claude_use_your_computer_in_cowork_claude_help_center.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_messages",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/messages",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "d9a49715853fd605da9a2020cdf675ea1aa42d1532de1812209286fe76c76121",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_messages.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_models",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/models",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "d9a49715853fd605da9a2020cdf675ea1aa42d1532de1812209286fe76c76121",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_models.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_models_overview___claude_api_docs",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/models_overview___claude_api_docs",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "e1ac78d69634c9de426b81a47f0601512ad6f8f8dfafadf99566278f1d6f13ad",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_models_overview___claude_api_docs.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_prompt-engineering",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/prompt-engineering",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "d9a49715853fd605da9a2020cdf675ea1aa42d1532de1812209286fe76c76121",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_prompt-engineering.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_rate-limits",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/rate-limits",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "d9a49715853fd605da9a2020cdf675ea1aa42d1532de1812209286fe76c76121",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_rate-limits.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_streaming",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/streaming",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "d9a49715853fd605da9a2020cdf675ea1aa42d1532de1812209286fe76c76121",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_streaming.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_tool-use",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/tool-use",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "d9a49715853fd605da9a2020cdf675ea1aa42d1532de1812209286fe76c76121",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_tool-use.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_use_cowork_safely_claude_help_center",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/use_cowork_safely_claude_help_center",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "d99699339cf0b662c50a720daf7cf6aca7ee503d851490c955703b88fb6a6454",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_use_cowork_safely_claude_help_center.json"
+      }
+    },
+    {
+      "document_id": "claude_docs_use_plugins_in_cowork_claude_help_center",
+      "status": "approved",
+      "canonical_url": "https://docs.anthropic.com/en/docs/use_plugins_in_cowork_claude_help_center",
+      "publisher": "Anthropic",
+      "tier": 1,
+      "title": "Anthropic Claude Documentation",
+      "content_sha256": "57b8697084af02bb1ce81d8f6d9a552a6a6541310009bbabc22dc0fb868868b0",
+      "provenance": {
+        "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
+        "pipeline": "tier1-docs",
+        "source_path": "corpus/tier1_anthropic_docs/claude_docs_use_plugins_in_cowork_claude_help_center.json"
+      }
+    },
+    {
+      "document_id": "tier1_stripe_webhooks_overview",
+      "status": "quarantined",
+      "canonical_url": null,
+      "observed_url": "https://example.com/docs/tier1_stripe_webhooks_overview",
+      "publisher": null,
+      "tier": 1,
+      "title": null,
+      "content_sha256": "b8f36203383becbbc7109b1b5f3c028429a6bd1aa3ffd98521348ea0cc1feaac",
+      "quarantine_reason": "placeholder example.com canonical URL; source is unverified synthetic/sandbox material",
+      "quarantined_path": "corpus_quarantine/raw/stripe/tier1/stripe_webhooks_overview.md",
+      "provenance": {
+        "ingested_via": "process_markdown_docs.py (pre-hardening)",
+        "pipeline": "raw-markdown"
+      }
+    },
+    {
+      "document_id": "tier1_stripe_webhooks_quickstart",
+      "status": "quarantined",
+      "canonical_url": null,
+      "observed_url": "https://example.com/docs/tier1_stripe_webhooks_quickstart",
+      "publisher": null,
+      "tier": 1,
+      "title": null,
+      "content_sha256": "b948c992aa87dd5c9396cbc90eb65d9d0eb46c176b74f296465edd0e6c12024f",
+      "quarantine_reason": "placeholder example.com canonical URL; source is unverified synthetic/sandbox material",
+      "quarantined_path": "corpus_quarantine/raw/stripe/tier1/stripe_webhooks_quickstart.md",
+      "provenance": {
+        "ingested_via": "process_markdown_docs.py (pre-hardening)",
+        "pipeline": "raw-markdown"
+      }
+    },
+    {
+      "document_id": "tier1_stripe_webhooks_signature_verification",
+      "status": "quarantined",
+      "canonical_url": null,
+      "observed_url": "https://example.com/docs/tier1_stripe_webhooks_signature_verification",
+      "publisher": null,
+      "tier": 1,
+      "title": null,
+      "content_sha256": "9d29030b0000ec35d471373e4c2f86b182594c49f1bc1c55f575623cc1b10949",
+      "quarantine_reason": "placeholder example.com canonical URL; source is unverified synthetic/sandbox material",
+      "quarantined_path": "corpus_quarantine/raw/stripe/tier1/stripe_webhooks_signature_verification.md",
+      "provenance": {
+        "ingested_via": "process_markdown_docs.py (pre-hardening)",
+        "pipeline": "raw-markdown"
+      }
+    },
+    {
+      "document_id": "tier2_claude_tool_use_practice",
+      "status": "quarantined",
+      "canonical_url": null,
+      "observed_url": "https://example.com/docs/tier2_claude_tool_use_practice",
+      "publisher": null,
+      "tier": 2,
+      "title": null,
+      "content_sha256": "c847f9f3788a6f49cd0f15d6b0c2f45fd4fa74b76b67eeb7eb4cc4d9c6a18ebb",
+      "quarantine_reason": "placeholder example.com canonical URL; source is unverified synthetic/sandbox material",
+      "quarantined_path": "corpus_quarantine/raw/tier2/claude_tool_use_practice.md",
+      "provenance": {
+        "ingested_via": "process_markdown_docs.py (pre-hardening)",
+        "pipeline": "raw-markdown"
+      }
+    },
+    {
+      "document_id": "tier2_stripe_webhooks_implementation_guide",
+      "status": "quarantined",
+      "canonical_url": null,
+      "observed_url": "https://example.com/docs/tier2_stripe_webhooks_implementation_guide",
+      "publisher": null,
+      "tier": 2,
+      "title": null,
+      "content_sha256": "be61e99a20ea8bcf6dc6cf617e5b50433cb3e5400dda7d84550bd510b403565c",
+      "quarantine_reason": "placeholder example.com canonical URL; source is unverified synthetic/sandbox material",
+      "quarantined_path": "corpus_quarantine/raw/stripe/tier2/stripe_webhooks_implementation_guide.md",
+      "provenance": {
+        "ingested_via": "process_markdown_docs.py (pre-hardening)",
+        "pipeline": "raw-markdown"
+      }
+    },
+    {
+      "document_id": "tier2_stripe_webhooks_ngrok_testing",
+      "status": "quarantined",
+      "canonical_url": null,
+      "observed_url": "https://example.com/docs/tier2_stripe_webhooks_ngrok_testing",
+      "publisher": null,
+      "tier": 2,
+      "title": null,
+      "content_sha256": "5fcc9b95dffd0b9d0bf05daeb84b6feb15b87523170af0e622d0a24b45cfe152",
+      "quarantine_reason": "placeholder example.com canonical URL; source is unverified synthetic/sandbox material",
+      "quarantined_path": "corpus_quarantine/raw/stripe/tier2/stripe_webhooks_ngrok_testing.md",
+      "provenance": {
+        "ingested_via": "process_markdown_docs.py (pre-hardening)",
+        "pipeline": "raw-markdown"
+      }
+    },
+    {
+      "document_id": "tier3_claude_tool_use_failures",
+      "status": "quarantined",
+      "canonical_url": null,
+      "observed_url": "https://example.com/docs/tier3_claude_tool_use_failures",
+      "publisher": null,
+      "tier": 3,
+      "title": null,
+      "content_sha256": "a59c33d472dcc2c81f478e7d1925715d99b5bf855e1ebd8ec791a720fd3a67e2",
+      "quarantine_reason": "placeholder example.com canonical URL; source is unverified synthetic/sandbox material",
+      "quarantined_path": "corpus_quarantine/raw/tier3/claude_tool_use_failures.md",
+      "provenance": {
+        "ingested_via": "process_markdown_docs.py (pre-hardening)",
+        "pipeline": "raw-markdown"
+      }
+    },
+    {
+      "document_id": "tier3_stripe_webhooks_bodyparser_conflict",
+      "status": "quarantined",
+      "canonical_url": null,
+      "observed_url": "https://example.com/docs/tier3_stripe_webhooks_bodyparser_conflict",
+      "publisher": null,
+      "tier": 3,
+      "title": null,
+      "content_sha256": "119fa64a3f7cd3592ea93c986b609e4a1aa6d76c7b11b2ed98209864ebe097d3",
+      "quarantine_reason": "placeholder example.com canonical URL; source is unverified synthetic/sandbox material",
+      "quarantined_path": "corpus_quarantine/raw/stripe/tier3/stripe_webhooks_bodyparser_conflict.md",
+      "provenance": {
+        "ingested_via": "process_markdown_docs.py (pre-hardening)",
+        "pipeline": "raw-markdown"
+      }
+    },
+    {
+      "document_id": "tier3_stripe_webhooks_test_live_mismatch",
+      "status": "quarantined",
+      "canonical_url": null,
+      "observed_url": "https://example.com/docs/tier3_stripe_webhooks_test_live_mismatch",
+      "publisher": null,
+      "tier": 3,
+      "title": null,
+      "content_sha256": "17ccaec0ea66bf4dd946c9361a9bbe5a4b32d8a04a59129de103e707b7f84471",
+      "quarantine_reason": "placeholder example.com canonical URL; source is unverified synthetic/sandbox material",
+      "quarantined_path": "corpus_quarantine/raw/stripe/tier3/stripe_webhooks_test_live_mismatch.md",
+      "provenance": {
+        "ingested_via": "process_markdown_docs.py (pre-hardening)",
+        "pipeline": "raw-markdown"
+      }
+    }
+  ]
+}

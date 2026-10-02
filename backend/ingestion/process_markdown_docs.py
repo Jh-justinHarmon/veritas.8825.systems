@@ -15,9 +15,15 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from chunk_docs import chunk_document
 from embed_chunks import generate_embedding, EMBEDDING_MODEL
+from source_policy import (
+    SourceAdmissionError,
+    admit_source_document,
+    approved_entries,
+    load_source_manifest,
+)
 
 
-def process_markdown_file(md_path: Path, tier: int) -> Dict:
+def process_markdown_file(md_path: Path, tier: int, manifest: dict) -> Dict:
     """Process a markdown file into Veritas format."""
     print(f"Processing: {md_path.name} (Tier {tier})")
     
@@ -54,12 +60,17 @@ def process_markdown_file(md_path: Path, tier: int) -> Dict:
             3: "Claude Tool Use: Failure Analysis"
         }
     
+    # Canonical URL must come from the approved source manifest — a
+    # placeholder or unmanifested source is refused, never stamped.
+    entry = approved_entries(manifest).get(doc_id)
+    canonical_url = entry["canonical_url"] if entry else None
+
     # Create document
     doc = {
         "id": doc_id,
         "source_tier": tier,
         "source_name": source_names.get(tier, f"Tier {tier} Source"),
-        "url": f"https://example.com/docs/{doc_id}",  # Placeholder
+        "url": canonical_url,
         "title": title,
         "date": datetime.now().isoformat(),
         "content": content,
@@ -70,7 +81,8 @@ def process_markdown_file(md_path: Path, tier: int) -> Dict:
     return doc
 
 
-def process_tier_directory(tier_dir: Path, tier_num: int) -> list:
+def process_tier_directory(tier_dir: Path, tier_num: int,
+                           manifest: dict, _seen_ids: set = None) -> list:
     """Process all markdown files in a tier directory."""
     md_files = list(tier_dir.glob("*.md"))
     
@@ -82,11 +94,20 @@ def process_tier_directory(tier_dir: Path, tier_num: int) -> list:
     print(f"Found {len(md_files)} markdown files")
     
     all_chunks = []
+    seen = _seen_ids if _seen_ids is not None else set()
     
     for md_file in sorted(md_files):
         # Process markdown to document
-        doc = process_markdown_file(md_file, tier_num)
+        doc = process_markdown_file(md_file, tier_num, manifest)
         if not doc:
+            continue
+        
+        # Admission gate: unapproved/placeholder/duplicate sources are
+        # refused before any embedding work.
+        try:
+            admit_source_document(doc, manifest, _seen_ids=seen)
+        except SourceAdmissionError as e:
+            print(f"  ✗ QUARANTINED {md_file.name}: {e}")
             continue
         
         print(f"  Content length: {len(doc['content'])} chars")
@@ -120,6 +141,9 @@ def main():
     output_dir = corpus_dir / "embeddings"
     output_dir.mkdir(parents=True, exist_ok=True)
     
+    manifest = load_source_manifest()
+    seen_ids = set()
+    
     # Process all tier directories (including subdirectories like stripe/)
     tier1_chunks = []
     tier2_chunks = []
@@ -128,17 +152,20 @@ def main():
     # Find all tier1 directories (stripe/tier1, etc.)
     for tier1_dir in [raw_dir / "stripe" / "tier1"]:
         if tier1_dir.exists():
-            tier1_chunks.extend(process_tier_directory(tier1_dir, 1))
+            tier1_chunks.extend(process_tier_directory(
+                tier1_dir, 1, manifest, seen_ids))
     
     # Find all tier2 directories
     for tier2_dir in [raw_dir / "tier2", raw_dir / "stripe" / "tier2"]:
         if tier2_dir.exists():
-            tier2_chunks.extend(process_tier_directory(tier2_dir, 2))
+            tier2_chunks.extend(process_tier_directory(
+                tier2_dir, 2, manifest, seen_ids))
     
     # Find all tier3 directories
     for tier3_dir in [raw_dir / "tier3", raw_dir / "stripe" / "tier3"]:
         if tier3_dir.exists():
-            tier3_chunks.extend(process_tier_directory(tier3_dir, 3))
+            tier3_chunks.extend(process_tier_directory(
+                tier3_dir, 3, manifest, seen_ids))
     
     # Load existing Tier 1 chunks from PDF processing
     tier1_pdf_file = output_dir / "tier1_embedded_chunks.json"
