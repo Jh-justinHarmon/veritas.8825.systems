@@ -8,6 +8,7 @@ Integrates retrieval system with synthesis agent.
 import json
 import os
 import sys
+import uuid
 from flask import Flask, request, jsonify, send_from_directory
 from werkzeug.exceptions import NotFound
 from claims.runtime_status import LocalEvidenceAdapter, mediate_runtime_status
@@ -22,6 +23,9 @@ load_dotenv()
 from agents.synthesis_agent import synthesize_answer
 from retrieval.relevance import retrieve_relevant
 from retrieval.simple_retriever import load_chunks
+from ops.telemetry import (BudgetExceeded, CallTelemetry, CircuitBreaker,
+                           CircuitOpen, ConcurrencyGate, RateLimited,
+                           SafeReadCache, ServiceMetrics, TokenBucket)
 from ingestion.embed_chunks import generate_embedding
 from history.history_store import HistoryStore
 from abstraction.chunk_abstractor import abstract_chunks
@@ -154,6 +158,17 @@ def _corpus_binding() -> dict:
     }
 
 
+# Process-level operational controls (cost_latency node): rate bucket,
+# concurrency bound, provider circuit breaker, measured counters, and a
+# TTL cache for read-only surfaces. All fail closed.
+RATE_LIMITER = TokenBucket()
+CONCURRENCY_GATE = ConcurrencyGate()
+PROVIDER_BREAKER = CircuitBreaker()
+METRICS = ServiceMetrics()
+EXAMPLES_CACHE = SafeReadCache(ttl_s=60.0)  # invalidates on TTL or
+# process restart only — /api/examples is static config
+
+
 @app.route('/api/health', methods=['GET'])
 def health():
     """Health check endpoint."""
@@ -166,7 +181,9 @@ def health():
             "version": CORPUS_MANIFEST.get("corpus_version"),
             "manifest_sha256": CORPUS_MANIFEST.get("manifest_sha256"),
             "clean": CORPUS_CLEAN,
-        }
+        },
+        "metrics": METRICS.snapshot(),
+        "circuit_breaker": PROVIDER_BREAKER.state,
     })
 
 
@@ -217,10 +234,33 @@ def synthesize(mode=None):
             "message": "Question must be between 5 and 500 characters"
         }), 400
     
+    # Entry controls — fail closed before any provider spend.
+    METRICS.inc("synthesize_requests")
+    correlation_id = request.headers.get("X-Correlation-ID") or \
+        f"vx-{uuid.uuid4()}"
+    try:
+        RATE_LIMITER.acquire()
+    except RateLimited:
+        METRICS.inc("synthesize_rate_limited")
+        return jsonify({"error": "RATE_LIMITED",
+                        "message": "Request rate exceeds the configured "
+                                   "bucket; retry later.",
+                        "correlation_id": correlation_id}), 429
+    try:
+        CONCURRENCY_GATE.acquire()
+    except RateLimited:
+        METRICS.inc("synthesize_concurrency_rejected")
+        return jsonify({"error": "CONCURRENCY_BOUND",
+                        "message": "Service at concurrency bound; retry "
+                                   "later.",
+                        "correlation_id": correlation_id}), 429
+    telemetry = CallTelemetry(correlation_id=correlation_id)
+
     try:
         # Step 1: Generate query embedding
         print(f"Generating embedding for: {question}")
-        query_embedding = generate_embedding(question)
+        query_embedding = generate_embedding(
+            question, telemetry=telemetry, breaker=PROVIDER_BREAKER)
         
         # Step 2: Relevance-gated hybrid retrieval (floor -> dedup ->
         # per-doc cap -> bounded authority rerank). Abstains truthfully
@@ -233,12 +273,14 @@ def synthesize(mode=None):
             top_k=10,
         )
         if retrieval["abstained"]:
+            METRICS.inc("synthesize_abstentions")
             return jsonify({
                 "error": "INSUFFICIENT_RELEVANT_EVIDENCE",
                 "message": "No corpus chunk cleared the relevance floor; "
                            "refusing to synthesize without evidence.",
                 "confidence": retrieval["confidence"],
                 "stats": retrieval["stats"],
+                "correlation_id": correlation_id,
                 "corpus": _corpus_binding(),
             }), 422
         retrieved_chunks = retrieval["chunks"]
@@ -256,7 +298,9 @@ def synthesize(mode=None):
         answer = synthesize_answer(
             question=question,
             retrieved_chunks=retrieved_chunks,
-            model="gpt-4o"
+            model="gpt-4o",
+            telemetry=telemetry,
+            breaker=PROVIDER_BREAKER,
         )
         
         # Check for synthesis errors
@@ -289,6 +333,8 @@ def synthesize(mode=None):
             },
             "citation_receipt": answer.get("citation_receipt"),
             "synthesis_attempts": answer.get("synthesis_attempts"),
+            "provider_receipt": telemetry.receipt(),
+            "correlation_id": correlation_id,
             "synthesis_model": answer.get("model", "gpt-4o"),
             "timestamp": answer.get("timestamp"),
             "corpus": _corpus_binding()
@@ -306,6 +352,7 @@ def synthesize(mode=None):
                 trace=trace
             )
         except HistoryStoreError:
+            METRICS.inc("history_write_failures")
             return _history_unavailable()
         
         # Return synthesized answer with session ID and corpus binding —
@@ -318,26 +365,52 @@ def synthesize(mode=None):
             "sources": answer["sources"],
             "citation_receipt": answer.get("citation_receipt"),
             "evidence_limitation": answer.get("evidence_limitation"),
+            "provider_receipt": telemetry.receipt(),
+            "correlation_id": correlation_id,
             "corpus": _corpus_binding()
         })
         
+    except BudgetExceeded as e:
+        METRICS.inc("budget_rejections")
+        return jsonify({
+            "error": "BUDGET_EXCEEDED",
+            "message": f"Provider call exceeded configured ceiling: {e}",
+            "correlation_id": correlation_id,
+        }), 429
+    except CircuitOpen:
+        METRICS.inc("circuit_rejections")
+        return jsonify({
+            "error": "CIRCUIT_OPEN",
+            "message": "Provider circuit breaker open; refusing call.",
+            "correlation_id": correlation_id,
+        }), 503
     except FileNotFoundError as e:
         return jsonify({
             "error": "CORPUS_NOT_FOUND",
             "message": f"Embedded chunks file not found: {e}"
         }), 500
-    except Exception as e:
-        print(f"Error during synthesis: {e}")
+    except Exception:
+        # Provider/upstream failures are sanitized — error class only,
+        # never raw exception text in the response or logs.
+        print("Error during synthesis: unclassified failure "
+              f"(correlation_id={correlation_id})")
         return jsonify({
             "error": "SYNTHESIS_FAILED",
-            "message": f"Failed to synthesize answer: {str(e)}"
+            "message": "Failed to synthesize answer.",
+            "correlation_id": correlation_id,
         }), 500
+    finally:
+        CONCURRENCY_GATE.release()
 
 
 @app.route('/api/examples', methods=['GET'])
 def examples():
-    """Return example questions for testing."""
-    return jsonify([
+    """Return example questions for testing — static config, the only
+    cached surface; SafeReadCache invalidates on TTL/restart."""
+    cached = EXAMPLES_CACHE.get("examples")
+    if cached is not None:
+        return jsonify(cached)
+    payload = [
         {
             "id": "tool-use-errors",
             "question": "Why is Claude calling the wrong tool or using incorrect parameters?",
@@ -353,7 +426,9 @@ def examples():
             "question": "What can Claude Vision analyze in images?",
             "description": "Image understanding, OCR, visual reasoning"
         }
-    ])
+    ]
+    EXAMPLES_CACHE.put("examples", payload)
+    return jsonify(payload)
 
 
 @app.route('/api/history', methods=['GET'])
@@ -367,6 +442,7 @@ def get_history():
     try:
         history = history_store.get_all_history(limit=limit, offset=offset)
     except HistoryStoreError:
+        METRICS.inc("result_read_failures")
         return _history_unavailable()
     return jsonify(history)
 
@@ -379,6 +455,7 @@ def get_history_by_id(session_id):
     try:
         entry = history_store.get_history_by_id(session_id)
     except HistoryStoreError:
+        METRICS.inc("result_read_failures")
         return _history_unavailable()
     
     if entry is None:

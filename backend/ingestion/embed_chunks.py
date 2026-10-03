@@ -34,16 +34,51 @@ client = OpenAI(api_key=api_key)
 EMBEDDING_MODEL = "text-embedding-3-small"  # Cost-effective for V1
 
 
-def generate_embedding(text: str) -> List[float]:
-    """Generate embedding for a text using OpenAI API."""
+def generate_embedding(text: str, telemetry=None, breaker=None) -> List[float]:
+    """Generate embedding for a text using OpenAI API.
+
+    When telemetry/breaker are supplied (request path), the call is
+    timed, token usage + estimated cost recorded under the request's
+    correlation id, and provider failures trip the circuit breaker.
+    Provider error text is classified, never logged raw."""
+    import time as _t
+    try:
+        from ops.telemetry import classify_provider_error
+    except ImportError:  # ingestion scripts run with sys.path=ingestion
+        def classify_provider_error(e):
+            n = type(e).__name__.lower()
+            return ("timeout" if "timeout" in n else
+                    "auth" if "auth" in n else
+                    "rate_limit" if "rate" in n else
+                    "connection" if "connection" in n else "other")
+    if breaker is not None:
+        breaker.before_call()
+    started = _t.monotonic()
     try:
         response = client.embeddings.create(
             model=EMBEDDING_MODEL,
             input=text
         )
+        latency_ms = (_t.monotonic() - started) * 1000
+        usage = getattr(response, "usage", None)
+        if telemetry is not None:
+            telemetry.record(
+                kind="embedding", model=EMBEDDING_MODEL,
+                latency_ms=latency_ms,
+                prompt_tokens=getattr(usage, "prompt_tokens", None))
+        if breaker is not None:
+            breaker.after_call(ok=True)
         return response.data[0].embedding
     except Exception as e:
-        print(f"Error generating embedding: {e}")
+        latency_ms = (_t.monotonic() - started) * 1000
+        if breaker is not None:
+            breaker.after_call(ok=False)
+        if telemetry is not None:
+            telemetry.record(kind="embedding", model=EMBEDDING_MODEL,
+                             latency_ms=latency_ms, ok=False,
+                             error_class=classify_provider_error(e))
+        print(f"Error generating embedding: "
+              f"{classify_provider_error(e)}")
         return None
 
 

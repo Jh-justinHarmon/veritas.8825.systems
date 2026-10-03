@@ -9,6 +9,7 @@ Based on Replit synthesis approach with refined prompt engineering.
 
 import os
 import json
+import time as _time
 from typing import List, Dict, Optional
 from datetime import datetime
 from openai import OpenAI
@@ -187,7 +188,9 @@ def synthesize_answer(
     question: str,
     retrieved_chunks: List[Dict],
     model: str = "gpt-4o",
-    api_key: Optional[str] = None
+    api_key: Optional[str] = None,
+    telemetry=None,
+    breaker=None,
 ) -> Dict:
     """
     Synthesize concept-driven answer from retrieved chunks.
@@ -237,6 +240,9 @@ Synthesize a structured answer following the rules above. Output ONLY the JSON o
                     "claims. Drop or rewrite these claims so each is "
                     f"directly backed by a cited excerpt:\n{listed}")
             user_prompt = base_prompt + unsupported_hint
+        if breaker is not None:
+            breaker.before_call()
+        started = _time.monotonic()
         try:
             response = client.chat.completions.create(
                 model=model,
@@ -248,15 +254,36 @@ Synthesize a structured answer following the rules above. Output ONLY the JSON o
                 max_tokens=4000,
                 response_format={"type": "json_object"}
             )
+            latency_ms = (_time.monotonic() - started) * 1000
+            usage = getattr(response, "usage", None)
+            if telemetry is not None:
+                telemetry.record(
+                    kind="chat", model=model, latency_ms=latency_ms,
+                    prompt_tokens=getattr(usage, "prompt_tokens", None),
+                    completion_tokens=getattr(
+                        usage, "completion_tokens", None))
+            if breaker is not None:
+                breaker.after_call(ok=True)
             answer_text = response.choices[0].message.content
             answer_json = json.loads(answer_text)
         except json.JSONDecodeError:
+            if breaker is not None:
+                breaker.after_call(ok=True)  # provider up; output malformed
             last_error = {"unsupported": None}
             continue
         except Exception as e:
+            from ops.telemetry import classify_provider_error
+            latency_ms = (_time.monotonic() - started) * 1000
+            if breaker is not None:
+                breaker.after_call(ok=False)
+            if telemetry is not None:
+                telemetry.record(
+                    kind="chat", model=model, latency_ms=latency_ms,
+                    ok=False, error_class=classify_provider_error(e))
             return {
                 "question": question,
-                "error": f"Synthesis failed: {e}",
+                "error": "Synthesis failed: provider "
+                         + classify_provider_error(e),
                 "ideas": [],
                 "sources": {}
             }
