@@ -20,8 +20,41 @@ _CITE_RE = re.compile(r"\[(\d+)\]")
 _SENT_RE = re.compile(r"(?<=[.!?])\s+|(?<=\n)\s*")
 
 _SUPPORT_OVERLAP_MIN = 0.30  # fraction of a claim's content terms that
-# must appear in at least one cited chunk for the claim to count as
-# supported. Proposed threshold, not an empirical claim.
+# must appear in at least one cited source for the claim to count as
+# supported. Proposed threshold, not an empirical claim — callers may
+# supply a different floor via ground_answer(min_claim_support=...).
+
+# Bounded contradiction awareness: explicit negation markers only. A
+# claim whose shared content terms fall inside a negation window in the
+# claim but outside it in the cited source (or vice versa) is flagged
+# contradiction_suspected and never counted as supported. This catches
+# "X does not support Y" cited to "X supports Y" — it cannot detect
+# semantic contradiction without explicit negation markers, and the
+# receipt states that guarantee boundary rather than overclaiming.
+_NEG_TOKENS = frozenset(
+    "not no never cannot cant can't won't wont isn't aren't wasn't "
+    "weren't doesn't don't didn't shouldn't couldn't mustn't without "
+    "nor neither".split())
+_NEG_WINDOW = 3  # tokens following a negation marker
+
+
+def _negated_terms(text: str) -> set:
+    """Content terms occurring within _NEG_WINDOW tokens after a
+    negation marker — the deterministic polarity signal."""
+    toks = _TOKEN_RE.findall((text or "").lower())
+    out = set()
+    for i, tok in enumerate(toks):
+        bare = tok.rstrip("'")
+        if tok in _NEG_TOKENS or bare in _NEG_TOKENS \
+                or tok.endswith("n't"):
+            for w in toks[i + 1: i + 1 + _NEG_WINDOW]:
+                for part in re.split(r"[_\-]", w):
+                    if len(part) <= 2 or part in _STOP:
+                        continue
+                    out.add(part)
+                    if part.endswith("s") and len(part) > 3:
+                        out.add(part[:-1])
+    return out
 
 _STOP = frozenset("""
 a an the and or of to in for on with is are was were be been by at from
@@ -69,23 +102,38 @@ def segment_claims(paragraph: str) -> List[Tuple[str, List[int]]]:
     return claims
 
 
-def _claim_supported(claim_text: str, cited_chunks: List[Dict]) -> bool:
-    """A claim is supported when at least one cited chunk covers enough
-    of the claim's content terms."""
+def _claim_support(claim_text: str, cited_chunks: List[Dict],
+                   min_support: float) -> Tuple[bool, bool]:
+    """Returns (supported, contradiction_suspected).
+
+    A claim is supported when at least one cited source covers enough
+    of the claim's content terms AND no shared term carries conflicting
+    negation polarity between claim and source. Overlap-sufficient but
+    polarity-conflicting evidence is reported as contradiction_suspected
+    — never as support."""
     if not cited_chunks:
-        return False
+        return False, False
     claim_terms = _terms(_CITE_RE.sub("", claim_text))
     if not claim_terms:
-        return True  # vacuous — nothing material to support
+        return True, False  # vacuous — nothing material to support
+    claim_neg = _negated_terms(_CITE_RE.sub("", claim_text))
+    any_contradicted = False
     for chunk in cited_chunks:
-        chunk_terms = _terms((chunk.get("text") or "")
-                             + " " + (chunk.get("title") or ""))
+        chunk_text = (chunk.get("text") or "") \
+            + " " + (chunk.get("title") or "")
+        chunk_terms = _terms(chunk_text)
         if not chunk_terms:
             continue
-        overlap = len(claim_terms & chunk_terms) / len(claim_terms)
-        if overlap >= _SUPPORT_OVERLAP_MIN:
-            return True
-    return False
+        shared = claim_terms & chunk_terms
+        if len(shared) / len(claim_terms) < min_support:
+            continue
+        chunk_neg = _negated_terms(chunk_text)
+        if (shared & (claim_neg - chunk_neg)) \
+                or (shared & (chunk_neg - claim_neg)):
+            any_contradicted = True
+            continue
+        return True, False
+    return False, any_contradicted
 
 
 def ground_answer(answer_json: dict, retrieved_chunks: List[Dict],
@@ -116,6 +164,7 @@ def ground_answer(answer_json: dict, retrieved_chunks: List[Dict],
     supported_claims = 0
     cited_ids = set()
     unsupported = []
+    contradiction_suspected = 0
 
     cleaned_ideas = []
     for idea in ideas:
@@ -135,12 +184,17 @@ def ground_answer(answer_json: dict, retrieved_chunks: List[Dict],
                         "disposition": "uncited"})
                 else:
                     cited_claims += 1
-                    if _claim_supported(sent, cited_chunks):
+                    sup, contra = _claim_support(
+                        sent, cited_chunks, min_claim_support)
+                    if sup:
                         supported_claims += 1
                     else:
+                        if contra:
+                            contradiction_suspected += 1
                         unsupported.append({
                             "claim": _CITE_RE.sub("", sent).strip()[:160],
-                            "disposition":
+                            "disposition": "contradiction_suspected"
+                                if contra else
                                 "unsupported_by_cited_chunks"})
             # Strip unresolvable [n] markers; keep valid ones verbatim.
             def _strip_bad(m):
@@ -199,10 +253,16 @@ def ground_answer(answer_json: dict, retrieved_chunks: List[Dict],
         "tier1_cited_count": tier1_cited,
         "dropped_unresolvable_sources": dropped_sources,
         "unsupported_claims": unsupported,
+        "contradiction_suspected_claims": contradiction_suspected,
         "unsupported_disposition":
             "reported" if unsupported else "none",
         "evidence_limitation": evidence_limitation,
-        "grounding": "lexical_entailment_lite_v1",
+        "min_claim_support": min_claim_support,
+        "grounding": "lexical_entailment_lite_v2",
+        "guarantee_scope": "Support = term-overlap floor plus explicit "
+            "negation-window polarity check. Detects negation-marked "
+            "contradiction only; semantic contradiction without "
+            "explicit negation markers is outside this bound.",
     }
 
     cleaned = dict(answer_json)
@@ -226,4 +286,6 @@ def needs_retry(answer_json: Optional[dict], receipt: Optional[dict],
     if claims == 0:
         return True  # no claims at all is malformed output
     unsupported = len(receipt.get("unsupported_claims") or [])
-    return (unsupported / claims) > max_unsupported_ratio
+    # Boundary is inclusive: at exactly max_unsupported_ratio the output
+    # is below the support floor and must retry/abstain/fail closed.
+    return (unsupported / claims) >= max_unsupported_ratio

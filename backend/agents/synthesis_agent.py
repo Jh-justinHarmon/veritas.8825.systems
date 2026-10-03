@@ -184,6 +184,62 @@ Text: {text}
     return "\n---\n".join(context_parts)
 
 
+_MAX_DOC_TEXT_CHARS = 6000
+
+
+def collapse_to_documents(chunks: List[Dict],
+                          max_doc_text_chars: int = _MAX_DOC_TEXT_CHARS
+                          ) -> List[Dict]:
+    """Collapse retrieved chunks into document-level citation units.
+
+    The eval contract requires emitted sources to be unique by canonical
+    document id. Chunk-level numbering lets two chunks of one document
+    produce two "sources" — a contract violation. Collapsing before
+    synthesis makes citation ids document-grained, so uniqueness holds
+    by construction and every cited source still resolves to real
+    retrieved chunks via ``chunk_ids``.
+
+    Order and metadata come from the highest-ranked chunk of each
+    document; sibling chunk text is merged (bounded).
+    """
+    docs: Dict[str, Dict] = {}
+    order: List[str] = []
+    for chunk in chunks:
+        meta = chunk.get("retrieval_meta") or {}
+        doc_id = str(meta.get("document_id")
+                     or chunk.get("document_id")
+                     or chunk.get("source_name")
+                     or chunk.get("chunk_id") or "")
+        if doc_id not in docs:
+            order.append(doc_id)
+            docs[doc_id] = dict(chunk)
+            docs[doc_id]["texts"] = [chunk.get("text") or ""]
+            docs[doc_id]["chunk_ids"] = [
+                chunk.get("chunk_id") or chunk.get("id")]
+            continue
+        d = docs[doc_id]
+        d["texts"].append(chunk.get("text") or "")
+        d["chunk_ids"].append(chunk.get("chunk_id") or chunk.get("id"))
+        # Keep the best tier across merged chunks (lower int = higher
+        # authority) and the better retrieval_meta score.
+        tiers = [t for t in (d.get("source_tier"),
+                             chunk.get("source_tier")) if t is not None]
+        if tiers:
+            d["source_tier"] = min(int(t) for t in tiers)
+        m2 = chunk.get("retrieval_meta") or {}
+        if (m2.get("relevance") or 0) > (
+                (d.get("retrieval_meta") or {}).get("relevance") or 0):
+            d["retrieval_meta"] = m2
+    out = []
+    for doc_id in order:
+        d = docs[doc_id]
+        merged = "\n\n".join(t for t in d.pop("texts") if t)
+        d["text"] = merged[:max_doc_text_chars]
+        d["citation_unit"] = "document"
+        out.append(d)
+    return out
+
+
 def synthesize_answer(
     question: str,
     retrieved_chunks: List[Dict],
@@ -191,6 +247,7 @@ def synthesize_answer(
     api_key: Optional[str] = None,
     telemetry=None,
     breaker=None,
+    min_claim_support: Optional[float] = None,
 ) -> Dict:
     """
     Synthesize concept-driven answer from retrieved chunks.
@@ -212,8 +269,13 @@ def synthesize_answer(
     
     client = OpenAI(api_key=api_key)
 
+    # Collapse chunk-level retrieval to document-level citation units:
+    # emitted sources are then unique by canonical document id per the
+    # eval contract, and every citation still resolves to real chunks.
+    doc_sources = collapse_to_documents(retrieved_chunks)
+
     # Format retrieval context
-    context = format_retrieval_context(retrieved_chunks)
+    context = format_retrieval_context(doc_sources)
 
     base_prompt = f"""QUESTION:
 {question}
@@ -290,11 +352,26 @@ Synthesize a structured answer following the rules above. Output ONLY the JSON o
 
         # Claim-level grounding: strip unresolvable citations, drop
         # uncited sources, enrich only real chunks, score coverage.
-        cleaned, receipt = ground_answer(answer_json, retrieved_chunks)
-        if attempt < max_attempts - 1 and needs_retry(answer_json, receipt):
+        ground_kwargs = {} if min_claim_support is None else {
+            "min_claim_support": min_claim_support}
+        cleaned, receipt = ground_answer(
+            answer_json, doc_sources, **ground_kwargs)
+        if needs_retry(answer_json, receipt):
             last_error = {"unsupported":
-                          receipt.get("unsupported_claims") or []}
-            continue
+                          receipt.get("unsupported_claims") or [],
+                          "receipt": receipt}
+            if attempt < max_attempts - 1:
+                continue
+            # Fail closed: exhausted retries with support below the
+            # floor — do not emit the weak answer.
+            return {
+                "question": question,
+                "error": "UNSUPPORTED_CLAIM_RATIO_EXCEEDED",
+                "ideas": [],
+                "sources": {},
+                "citation_receipt": receipt,
+                "synthesis_attempts": attempt + 1,
+            }
         return {
             "question": question,
             "ideas": cleaned.get("ideas", []),

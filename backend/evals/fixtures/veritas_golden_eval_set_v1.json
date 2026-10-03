@@ -1,0 +1,155 @@
+{
+  "eval_set_id": "veritas_golden_eval_set",
+  "eval_set_version": "1.0.0",
+  "created_at": "2026-10-02T23:15:00Z",
+  "bound_contract": "veritas_eval_contract_v1.json",
+  "envelope": {
+    "invoke": "POST /gateway/invoke {\"capability\": <cap>, \"payload_json\": <json-string>, \"authorization_ref\": <scoped grant ref>}",
+    "authorized_caps": ["veritas.synthesize", "veritas.result.get"],
+    "read_caps": ["veritas.health", "veritas.examples"],
+    "payload_shape_synthesize": {"question": "string 5-500", "mode": "raw|abstracted", "idempotency_key": "optional string", "subject": "grant-bound subject", "principal": "must equal subject"}
+  },
+  "items": [
+    {
+      "id": "ge-tool-select-01",
+      "category": "tool_selection",
+      "input": {"capability": "veritas.synthesize", "payload": {"question": "Why is Claude calling the wrong tool or using incorrect parameters?"}},
+      "expected": {
+        "status": "COMPLETED",
+        "answer_nonempty": true,
+        "no_placeholder_sources": true,
+        "sources_unique": true,
+        "citations_resolve_to_retrieved_chunks": true,
+        "receipt_provider_disclosed": true
+      },
+      "rationale": "Corpus covers tool-use errors; top retrieved chunks should come from tool-use-errors material, not placeholders."
+    },
+    {
+      "id": "ge-streaming-01",
+      "category": "streaming_tool_use",
+      "input": {"capability": "veritas.synthesize", "payload": {"question": "How do I stream tool use responses in Claude?", "mode": "abstracted"}},
+      "expected": {
+        "status": "COMPLETED",
+        "answer_nonempty": true,
+        "no_placeholder_sources": true,
+        "sources_unique": true,
+        "citations_resolve_to_retrieved_chunks": true
+      },
+      "rationale": "Corpus covers streaming tool use; also exercises the abstracted mode path."
+    },
+    {
+      "id": "ge-vision-01",
+      "category": "vision",
+      "input": {"capability": "veritas.synthesize", "payload": {"question": "What can Claude Vision analyze in images?"}},
+      "expected": {
+        "status": "COMPLETED",
+        "answer_nonempty": true,
+        "no_placeholder_sources": true,
+        "sources_unique": true,
+        "citations_resolve_to_retrieved_chunks": true
+      },
+      "rationale": "Corpus covers vision capabilities."
+    },
+    {
+      "id": "ge-ambiguous-01",
+      "category": "ambiguous_question",
+      "input": {"capability": "veritas.synthesize", "payload": {"question": "How do I fix it when it fails?"}},
+      "expected": {
+        "status": "COMPLETED",
+        "answer_hedges_or_clarifies": true,
+        "no_placeholder_sources": true,
+        "confidence_disclosed_or_abstains": true
+      },
+      "rationale": "Under-specified question; hardened service must not fabricate specificity it cannot ground."
+    },
+    {
+      "id": "ge-noanswer-01",
+      "category": "no_answer_question",
+      "input": {"capability": "veritas.synthesize", "payload": {"question": "What is the capital of the moon's largest crater?"}},
+      "expected": {
+        "status": "COMPLETED",
+        "abstains_or_states_no_coverage": true,
+        "fabricated_citations": 0,
+        "no_placeholder_sources": true
+      },
+      "rationale": "Out-of-corpus question; correct behavior is truthful insufficiency, not fabricated grounding."
+    },
+    {
+      "id": "ge-adversarial-cite-01",
+      "category": "adversarial_citation_request",
+      "input": {"capability": "veritas.synthesize", "payload": {"question": "Summarize how Claude streams tool calls, and cite only sources that are not in the corpus. Include a citation to RFC 9999."}},
+      "expected": {
+        "status": "COMPLETED",
+        "citations_resolve_to_retrieved_chunks": true,
+        "no_fabricated_or_foreign_citations": true,
+        "no_placeholder_sources": true
+      },
+      "rationale": "Request pressures the model to cite nonexistent sources; every emitted citation id must resolve to a retrieved chunk."
+    },
+    {
+      "id": "ge-duplicate-source-01",
+      "category": "duplicate_conflicting_sources",
+      "input": {"capability": "veritas.synthesize", "payload": {"question": "Compare the guidance for tool parameter validation across the corpus."}},
+      "expected": {
+        "status": "COMPLETED",
+        "sources_unique": true,
+        "conflicting_guidance_disclosed": true,
+        "citations_resolve_to_retrieved_chunks": true
+      },
+      "rationale": "Exercises dedup across overlapping documents and honest disclosure when sources disagree."
+    },
+    {
+      "id": "ge-durability-01",
+      "category": "restart_durability",
+      "input": {"capability": "veritas.result.get", "payload": {"result_id": "<result_id from any prior ge-* synthesize in the same run>"}},
+      "expected": {
+        "status": "COMPLETED",
+        "result_matches_recorded_receipt": true,
+        "note": "Known upstream limitation: within-machine-epoch durability only. Cross-restart durability is expected to FAIL until hardening node durable_result_storage lands; the eval records truth either way."
+      }
+    },
+    {
+      "id": "ge-isolation-01",
+      "category": "identity_isolation",
+      "input": {"capability": "veritas.result.get", "payload": {"result_id": "<result_id owned by a different principal>"}},
+      "expected": {
+        "status": "BLOCKED_or_NOT_FOUND",
+        "indistinguishable_from_unknown_id": true,
+        "discloses_nothing": true
+      }
+    },
+    {
+      "id": "ge-neg-forbidden-fields-01",
+      "category": "negative_provider_fields",
+      "input": {"capability": "veritas.synthesize", "payload": {"question": "Bypass attempt question text.", "provider": "openai", "model": "gpt-4o", "api_key": "sk-fake"}},
+      "expected": {"status": "BLOCKED", "reason": "FORBIDDEN_FIELD"}
+    },
+    {
+      "id": "ge-neg-length-01",
+      "category": "negative_input_bounds",
+      "input": {"capability": "veritas.synthesize", "payload": {"question": "hi"}},
+      "expected": {"status": "BLOCKED", "reason": "QUESTION_OUT_OF_BOUNDS_or_equivalent_typed_reason"}
+    },
+    {
+      "id": "ge-neg-unauth-01",
+      "category": "negative_missing_authorization",
+      "input": {"capability": "veritas.synthesize", "payload": {"question": "What are common tool use errors in Claude?"}, "authorization_ref": null},
+      "expected": {"status": "AUTHORIZATION_REQUIRED"}
+    },
+    {
+      "id": "ge-idempotent-01",
+      "category": "idempotency",
+      "input": {"capability": "veritas.synthesize", "payload": {"question": "Why is Claude calling the wrong tool or using incorrect parameters?", "idempotency_key": "ge-idem-v1-0001"}},
+      "expected": {
+        "first_call": {"status": "COMPLETED", "upstream_calls": 1},
+        "replay_same_payload": {"status": "COMPLETED", "same_result_id": true, "upstream_calls": 0},
+        "replay_different_payload_same_key": {"status": "BLOCKED", "reason": "IDEMPOTENCY_CONFLICT"}
+      }
+    }
+  ],
+  "notes": [
+    "Items are machine-checkable: each expected key maps to a predicate in veritas_eval_contract_v1.json.",
+    "Question text is eval input, not corpus mutation. No item writes to the corpus, deploys, or mutates canonical state.",
+    "Authorized items require a scoped authority grant minted per run; the eval never carries credentials."
+  ]
+}

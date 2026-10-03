@@ -1,0 +1,85 @@
+{
+  "fixture_id": "veritas_regression_fixture_v1",
+  "fixture_version": "1.0.0",
+  "created_at": "2026-10-02T23:15:00Z",
+  "created_by": "devin-cli (packet wpk_fa189292ad894c1e node freeze_evidence_and_eval_contract)",
+  "sanitization": "No answer body text, no provider request/response payloads, no credentials, no user-identifying data. Only durable identifiers, structural schema, release bindings, and observed behavioral facts are recorded.",
+  "release_bindings": {
+    "gateway_app": "8825-spine-server",
+    "gateway_url": "https://8825-spine-server.fly.dev",
+    "capability_registry_revision": "gateway-registry-20261001-v63",
+    "spine_id": "veritas-project",
+    "spine_version": "1.2.0",
+    "spine_hash_sha256": "b33b324ee7dc1b2d6fe4f810526f001f7fd9096389a7829ff28b6d6b78bd3b8e",
+    "adapter_version": "1",
+    "service_release": "fly-v18",
+    "service_url": "https://veritas-8825-systems.fly.dev",
+    "upstream_content_commit": "db47d80c8ec2367a1940fd8cf4060bb4c68b5fad2",
+    "observed_deployed_release": "deployment-01M3WA0KZEFK4AEKWV5H3F552F",
+    "observed_deployed_commit": "337ed5412495c1f5dbb76c0767686a292b18130a"
+  },
+  "bound_reference_result": {
+    "result_id": "c4f36254-df5c-473a-be7e-401374f7cd24",
+    "receipt_id": "vown_f1ab3e9eff4fe4f8c0c19c1e",
+    "receipt_artifact_type": "veritas_result_ownership",
+    "receipt_payload_hash_sha256": "db262a5d869d61eb23945836ad3b0032628c57c6ff1ee3e0b49f618cdafda134",
+    "receipt_created_at": "2026-10-02T22:54:54.001341+00:00",
+    "upstream_readback_status": "NOT_FOUND",
+    "upstream_readback_at": "2026-10-02T23:14Z",
+    "upstream_readback_note": "Upstream GET /api/history/<result_id> returned HTTP 404. Consistent with known limitation: upstream history is a per-machine ephemeral JSON file and the app runs auto_stop/auto_start with no attached volume. The gateway-side ownership receipt remains durable in the spine artifact store.",
+    "prior_reference_result": {
+      "result_id": "fe6d479b-999f-43d1-8142-4491920b5463",
+      "receipt_id": "vown_b01beb4f77bfffa782a1ba26",
+      "note": "Independent fresh-review result recorded under packet wpk_c59679cd8b7a54e3 on 2026-10-01; upstream body also expected unavailable after machine sleep."
+    }
+  },
+  "observed_health_baseline": {
+    "observed_at": "2026-10-02T23:14Z",
+    "gateway_call": "veritas.health",
+    "gateway_status": "COMPLETED",
+    "upstream_health": {"status": "healthy", "service": "veritas-api", "chunks_loaded": 74},
+    "bindings_echoed_by_adapter": true
+  },
+  "source_inventory": {
+    "upstream_corpus_chunks_loaded": 74,
+    "upstream_examples": [
+      {"id": "tool-use-errors", "description": "Tool selection, schema design, parameter specification"},
+      {"id": "streaming-tool-use", "description": "Event protocol, JSON accumulation, execution gating"},
+      {"id": "vision-capabilities", "description": "Image understanding, OCR, visual reasoning"}
+    ],
+    "note": "Chunk bodies are not reproduced in this fixture; they live in the upstream corpus bound at commit db47d80 and are re-snapshotted per eval run."
+  },
+  "synthesis_response_structure": {
+    "question_field": "question (string, 5-500 chars, required)",
+    "mode_field": "mode (raw|abstracted, optional, default raw)",
+    "result_identifier_grammar": "UUID-shaped result_id assigned by upstream session/result grammar",
+    "receipt_fields_observed": [
+      "result_id",
+      "receipt_id (vown_*)",
+      "provider disclosure (openai, model gpt-4o for chat; openai embedding)",
+      "upstream_content binding",
+      "adapter_version",
+      "service_release",
+      "synthesis invocation count",
+      "owner principal"
+    ],
+    "answer_shape": "answer text with claim-level structure; retrieved chunk list; source inventory per result; session/result identifiers preserved verbatim from upstream grammar"
+  },
+  "observed_behavioral_facts": {
+    "verified_2026_10_01_independent_review": [
+      "veritas.health, veritas.examples, veritas.synthesize, veritas.result.get all present under registry gateway-registry-20261001-v63",
+      "veritas.synthesize and veritas.result.get require an authority grant scoped 'veritas'; missing authorization is rejected",
+      "caller-supplied provider/model/api_key/credential fields rejected as FORBIDDEN_FIELD",
+      "question outside 5-500 chars rejected",
+      "malformed payload JSON rejected as MALFORMED_PAYLOAD_JSON",
+      "idempotency_key replay returns stored result_id with zero upstream calls; key reuse with different request returns IDEMPOTENCY_CONFLICT",
+      "unknown or foreign result_id under veritas.result.get returns indistinguishable NOT_FOUND (no enumeration, no cross-principal disclosure)",
+      "upstream errors are sanitized; adapter performs no retries",
+      "payload_hash-bound idempotent replay observed on synthesize"
+    ],
+    "known_limitations": [
+      "upstream history is per-machine ephemeral (no Fly volume on veritas-8825-systems); result bodies do not survive machine sleep/restart; gateway ownership receipts do survive",
+      "DONE_BASELINE_VERITAS_MCP_CALLABLE classifies baseline callability only; it is not a claim of hardened production quality or cross-restart durability"
+    ]
+  }
+}

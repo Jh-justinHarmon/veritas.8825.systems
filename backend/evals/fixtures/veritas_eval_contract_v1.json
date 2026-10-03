@@ -1,0 +1,79 @@
+{
+  "contract_id": "veritas_eval_contract",
+  "contract_version": "1.0.0",
+  "created_at": "2026-10-02T23:15:00Z",
+  "bound_fixture": "veritas_regression_fixture_v1.json",
+  "bound_eval_set": "veritas_golden_eval_set_v1.json",
+  "classification": {
+    "DONE_BASELINE_VERITAS_MCP_CALLABLE": "baseline callability only — the four capabilities (health, examples, synthesize, result.get) are discoverable, invocable, and authorization-gated. It is NOT a claim of hardened production quality, retrieval quality, citation grounding, or cross-restart durability.",
+    "target_terminal_label": "DONE_INDEPENDENT_E2E_AND_SPINE_CALLABLE"
+  },
+  "evidence_provenance_rule": "Every metric entry distinguishes OBSERVED (measured on the live surface and recorded here) from PROPOSED (threshold not yet executed against the hardened build).",
+  "metrics": [
+    {
+      "id": "placeholder_source_exclusion",
+      "definition": "No retrieved source or emitted citation may match placeholder patterns.",
+      "executable_check": "for each result: all(source.id not matching PLACEHOLDER_RE for source in result.sources) where PLACEHOLDER_RE = '(?i)(todo|lorem|placeholder|example\\.com|xxx|tbd|dummy|sample[_ -]?text|changeme)' AND all(nonempty source.body)",
+      "threshold": {"proposed": "0 placeholder matches per result; 100% exclusion", "observed_baseline": "not yet measured — bound fixture result body unavailable post-restart"},
+      "failure_semantics": "any placeholder source => metric FAIL for the eval item"
+    },
+    {
+      "id": "document_uniqueness",
+      "definition": "Sources within one result are unique by canonical document id; near-duplicate chunks are deduplicated.",
+      "executable_check": "len({source.doc_id for source in result.sources}) == len(result.sources)",
+      "threshold": {"proposed": "uniqueness ratio == 1.0 per result", "observed_baseline": "not yet measured"},
+      "failure_semantics": "ratio < 1.0 => FAIL"
+    },
+    {
+      "id": "retrieval_relevance",
+      "definition": "Retrieved chunks are topically relevant to the question for in-corpus items.",
+      "executable_check": "for in-corpus items (tool_selection, streaming_tool_use, vision): token-overlap(question_terms, source.body) > 0 for >= 60% of sources, AND >= 1 source whose doc_id belongs to the item's expected corpus section",
+      "threshold": {"proposed": ">=60% of sources pass token-overlap; >=1 expected-section source", "observed_baseline": "not yet measured"},
+      "failure_semantics": "below threshold => FAIL; out-of-corpus items exempt"
+    },
+    {
+      "id": "citation_entailment_coverage",
+      "definition": "Every emitted citation id resolves to a retrieved chunk, and grounded claims carry citations.",
+      "executable_check": "all(citation.chunk_id in {c.id for c in result.chunks} for citation in result.citations) AND citation_coverage = claims_with_citation / total_claims",
+      "threshold": {"proposed": "100% of citation ids resolve; citation_coverage >= 0.95 on in-corpus items", "observed_baseline": "not yet measured"},
+      "failure_semantics": "any unresolvable citation id => FAIL (hard); coverage < 0.95 => FAIL (soft)"
+    },
+    {
+      "id": "abstention",
+      "definition": "No-answer items produce truthful insufficiency, never fabricated grounding.",
+      "executable_check": "for ge-noanswer-01: answer contains abstention marker OR explicit no-coverage statement AND count(citations) == 0",
+      "threshold": {"proposed": "0 fabricated citations; abstention present", "observed_baseline": "not yet measured"},
+      "failure_semantics": "fabricated citation or confident ungrounded answer => FAIL"
+    },
+    {
+      "id": "restart_durability",
+      "definition": "veritas.result.get returns the recorded result after the upstream service is reachable, per machine epoch.",
+      "executable_check": "result.get(result_id) == recorded receipt body within same upstream machine epoch; a 404 after machine sleep is recorded as KNOWN_LIMITATION not test-framework error",
+      "threshold": {"proposed_post_hardening": "durable across restarts (requires durable_result_storage node)", "observed_baseline": "OBSERVED FAIL-EXPECTED: upstream history is per-machine ephemeral; bound result c4f36254 returned 404 on 2026-10-02 while ownership receipt remained durable"},
+      "failure_semantics": "within-epoch readback failure => FAIL; cross-restart 404 is recorded truthfully until hardening lands"
+    },
+    {
+      "id": "identity_isolation",
+      "definition": "Foreign or unknown result_id yields indistinguishable NOT_FOUND; no enumeration.",
+      "executable_check": "result.get(foreign_id) status and reason byte-identical to result.get(never_existed_id)",
+      "threshold": {"proposed": "indistinguishable responses", "observed_baseline": "OBSERVED PASS on 2026-10-01 independent review"},
+      "failure_semantics": "any disclosure difference => FAIL"
+    },
+    {
+      "id": "provider_cost",
+      "definition": "Synthesis spend is bounded and disclosed; idempotent replay costs zero upstream calls.",
+      "executable_check": "receipt.provider == 'openai' AND receipt discloses chat model AND synthesis_invocations counter increments by exactly 1 per non-replayed call AND 0 on replay",
+      "threshold": {"proposed": "1 upstream call per unique synthesis; 0 per replay; question <=500 chars bounds input tokens", "observed_baseline": "OBSERVED PASS for replay-zero-call and provider disclosure on 2026-10-01"},
+      "failure_semantics": "undisclosed provider or replay consuming an upstream call => FAIL"
+    },
+    {
+      "id": "latency",
+      "definition": "Bounded call latency for each capability.",
+      "executable_check": "measure wall time per invoke; record p50/p95 across eval run",
+      "threshold": {"proposed": "health/examples p95 <= 2s; synthesize p95 <= 60s; result.get p95 <= 5s", "observed_baseline": "not yet measured"},
+      "failure_semantics": "p95 above threshold => recorded FAIL-with-measurement (never a bare timeout)"
+    }
+  ],
+  "independent_review_rule": "producer evidence is not acceptance: these metrics are evaluated by a fresh reviewer surface against the deployed build, after publish_and_deploy_hardening, not by the implementing agent.",
+  "prohibited_in_this_node": ["code changes", "corpus mutation", "deployment", "canonical mutation", "provider calls"]
+}

@@ -121,6 +121,32 @@ class TestClaimSupport(unittest.TestCase):
             "Tool schemas define required input parameters [1].")
         self.assertEqual(len(claims), 1)
 
+    def test_min_claim_support_argument_is_honored(self):
+        # Same claim/source pair crosses the default 0.30 floor but not
+        # a caller-supplied stricter floor.
+        a = _answer([_idea(
+            "Tool schemas define input parameters and validation "
+            "behavior [1].")])
+        _, default_r = ground_answer(a, CHUNKS)
+        _, strict_r = ground_answer(a, CHUNKS, min_claim_support=0.60)
+        self.assertEqual(default_r["claims_supported"], 1)
+        self.assertEqual(strict_r["claims_supported"], 0)
+        self.assertEqual(strict_r["unsupported_claims"][0]["disposition"],
+                         "unsupported_by_cited_chunks")
+        self.assertEqual(strict_r["min_claim_support"], 0.60)
+
+    def test_direct_contradiction_is_not_support(self):
+        # Explicit negation polarity must not count as support: "do not
+        # carry" cited to a source that says they do carry.
+        a = _answer([_idea(
+            "Tool definitions do not carry input_schema parameters [1].")])
+        _, r = ground_answer(a, CHUNKS)
+        self.assertEqual(r["claims_supported"], 0)
+        self.assertEqual(r["contradiction_suspected_claims"], 1)
+        self.assertEqual(r["unsupported_claims"][0]["disposition"],
+                         "contradiction_suspected")
+        self.assertIn("negation", r["guarantee_scope"])
+
 
 class TestReceiptShape(unittest.TestCase):
     def test_receipt_fields_bounded(self):
@@ -154,6 +180,13 @@ class TestRetryPredicate(unittest.TestCase):
     def test_high_unsupported_retries(self):
         receipt = {"material_claims": 4,
                    "unsupported_claims": [{}, {}, {}]}
+        self.assertTrue(needs_retry({}, receipt))
+
+    def test_exactly_half_unsupported_retries(self):
+        # Boundary is inclusive: 50% unsupported is below the support
+        # floor, not an acceptable pass.
+        receipt = {"material_claims": 2,
+                   "unsupported_claims": [{}]}
         self.assertTrue(needs_retry({}, receipt))
 
     def test_clean_answer_no_retry(self):
