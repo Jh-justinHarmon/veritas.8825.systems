@@ -21,6 +21,7 @@ from source_policy import (  # noqa: E402
     SourceAdmissionError,
     admit_source_document,
     approved_entries,
+    chunk_has_substantive_content,
     chunk_is_production_safe,
     corpus_inventory_hash,
     is_placeholder_url,
@@ -72,9 +73,25 @@ class ProductionCorpusCleanTests(unittest.TestCase):
         self.assertEqual(unsafe, [])
 
     def test_existing_anthropic_sources_preserved(self):
+        # corpus-2026-10-02-v2: 10 substantive Anthropic docs survive;
+        # the 10 dead scrape stubs are quarantined alongside the 9
+        # placeholder docs from v1.
         doc_ids = {c["document_id"] for c in self.chunks}
         self.assertTrue(all(d.startswith("claude_docs_") for d in doc_ids))
-        self.assertEqual(len(doc_ids), 20)
+        self.assertEqual(len(doc_ids), 10)
+
+    def test_dead_scrape_docs_quarantined(self):
+        dead = {
+            "claude_docs_api", "claude_docs_authentication",
+            "claude_docs_errors", "claude_docs_intro",
+            "claude_docs_messages", "claude_docs_models",
+            "claude_docs_prompt-engineering", "claude_docs_rate-limits",
+            "claude_docs_streaming", "claude_docs_tool-use",
+        }
+        doc_ids = {c["document_id"] for c in self.chunks}
+        self.assertFalse(dead & doc_ids)
+        for chunk in self.chunks:
+            self.assertTrue(chunk_has_substantive_content(chunk))
 
     def test_manifest_hash_binds_loaded_corpus(self):
         self.assertEqual(
@@ -84,7 +101,7 @@ class ProductionCorpusCleanTests(unittest.TestCase):
     def test_rebuild_is_deterministic(self):
         from rebuild_corpus import rebuild
         before = CHUNKS_FILE.read_bytes()
-        out = rebuild("corpus-2026-10-02-v1")
+        out = rebuild("corpus-2026-10-02-v2")
         self.assertEqual(CHUNKS_FILE.read_bytes(), before)
         self.assertEqual(out["manifest_sha256"],
                          self.build_manifest["manifest_sha256"])

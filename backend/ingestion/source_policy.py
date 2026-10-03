@@ -128,12 +128,33 @@ def admit_source_document(doc: dict, manifest: dict,
     return entry
 
 
+# Scrape-failure stubs: pages rendered client-side that captured only a
+# loading shell carry zero evidentiary content.
+_DEAD_SCRAPE_PATTERN = re.compile(r"^(?:\s*Loading\.{0,3}\s*)+$")
+MIN_SUBSTANTIVE_CHARS = 80
+
+
+def chunk_has_substantive_content(chunk: dict) -> bool:
+    """True when the chunk body carries real content — not a dead
+    scrape shell or a sub-threshold fragment."""
+    text = (chunk.get("text") or "").strip()
+    if not text:
+        return False
+    if _DEAD_SCRAPE_PATTERN.match(text):
+        return False
+    stripped = re.sub(r"(?m)^\s*Loading\.{0,3}\s*$", "", text).strip()
+    return len(stripped) >= MIN_SUBSTANTIVE_CHARS
+
+
 def chunk_is_production_safe(chunk: dict, manifest: dict) -> bool:
     """A stored embedded chunk may serve production answers only when its
-    document is approved and non-placeholder."""
+    document is approved, non-placeholder, and the chunk body carries
+    substantive content (dead scrape shells are not evidence)."""
     doc_id = chunk.get("document_id")
     entry = approved_entries(manifest).get(doc_id)
     if entry is None:
+        return False
+    if not chunk_has_substantive_content(chunk):
         return False
     return not is_placeholder_url(chunk.get("url")) \
         and entry.get("canonical_url") == chunk.get("url")

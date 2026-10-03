@@ -1,10 +1,10 @@
 {
   "source": "Veritas corpus - manifest-approved sources only",
-  "corpus_version": "corpus-2026-10-02-v1",
-  "manifest_sha256": "eb89ac236b20afb5a954d55f5377da49a8e0b3908bd5588530f50dc22999cca7",
-  "total_chunks": 56,
+  "corpus_version": "corpus-2026-10-02-v2",
+  "manifest_sha256": "038125025a4f840a93e08da8af232a16c27f9ffaf26e118af5f57819f43302cc",
+  "total_chunks": 46,
   "tier_breakdown": {
-    "tier_1": 56
+    "tier_1": 46
   },
   "embedding_model": "text-embedding-3-small",
   "chunks_file": "all_tiers_embedded_chunks.json",

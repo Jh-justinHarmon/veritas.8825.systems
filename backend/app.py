@@ -20,7 +20,8 @@ load_dotenv()
 
 # Import Veritas components
 from agents.synthesis_agent import synthesize_answer
-from retrieval.simple_retriever import retrieve_chunks, load_chunks
+from retrieval.relevance import retrieve_relevant
+from retrieval.simple_retriever import load_chunks
 from ingestion.embed_chunks import generate_embedding
 from history.history_store import HistoryStore
 from abstraction.chunk_abstractor import abstract_chunks
@@ -221,14 +222,28 @@ def synthesize(mode=None):
         print(f"Generating embedding for: {question}")
         query_embedding = generate_embedding(question)
         
-        # Step 2: Retrieve relevant chunks
+        # Step 2: Relevance-gated hybrid retrieval (floor -> dedup ->
+        # per-doc cap -> bounded authority rerank). Abstains truthfully
+        # rather than synthesizing over irrelevant evidence.
         print(f"Retrieving chunks...")
-        retrieved_chunks = retrieve_chunks(
+        retrieval = retrieve_relevant(
+            query=question,
             query_embedding=query_embedding,
             all_chunks=ALL_CHUNKS,
-            top_k=10  # Retrieve more chunks for better synthesis
+            top_k=10,
         )
-        print(f"Retrieved {len(retrieved_chunks)} chunks")
+        if retrieval["abstained"]:
+            return jsonify({
+                "error": "INSUFFICIENT_RELEVANT_EVIDENCE",
+                "message": "No corpus chunk cleared the relevance floor; "
+                           "refusing to synthesize without evidence.",
+                "confidence": retrieval["confidence"],
+                "stats": retrieval["stats"],
+                "corpus": _corpus_binding(),
+            }), 422
+        retrieved_chunks = retrieval["chunks"]
+        print(f"Retrieved {len(retrieved_chunks)} chunks "
+              f"({retrieval['stats']['unique_documents']} unique docs)")
         
         # Step 2.5: Apply abstraction if mode is 'abstracted'
         if mode == 'abstracted':
@@ -260,11 +275,18 @@ def synthesize(mode=None):
                     "source_name": chunk.get("source_name"),
                     "title": chunk.get("title"),
                     "tier": chunk.get("source_tier"),
+                    "document_id": (chunk.get("retrieval_meta") or {})
+                        .get("document_id"),
+                    "scores": chunk.get("retrieval_meta"),
                     "text_preview": chunk.get("text", "")[:100]
                 }
                 for chunk in retrieved_chunks
             ],
             "chunk_count": len(retrieved_chunks),
+            "retrieval": {
+                "confidence": retrieval["confidence"],
+                "stats": retrieval["stats"],
+            },
             "synthesis_model": answer.get("model", "gpt-4o"),
             "timestamp": answer.get("timestamp"),
             "corpus": _corpus_binding()

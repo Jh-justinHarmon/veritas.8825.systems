@@ -15,7 +15,7 @@
   "documents": [
     {
       "document_id": "claude_docs_api",
-      "status": "approved",
+      "status": "quarantined",
       "canonical_url": "https://docs.anthropic.com/en/docs/api",
       "publisher": "Anthropic",
       "tier": 1,
@@ -25,11 +25,12 @@
         "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
         "pipeline": "tier1-docs",
         "source_path": "corpus/tier1_anthropic_docs/claude_docs_api.json"
-      }
+      },
+      "quarantine_reason": "dead_scrape_stub: captured body is Loading... only (zero substantive content)"
     },
     {
       "document_id": "claude_docs_authentication",
-      "status": "approved",
+      "status": "quarantined",
       "canonical_url": "https://docs.anthropic.com/en/docs/authentication",
       "publisher": "Anthropic",
       "tier": 1,
@@ -39,7 +40,8 @@
         "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
         "pipeline": "tier1-docs",
         "source_path": "corpus/tier1_anthropic_docs/claude_docs_authentication.json"
-      }
+      },
+      "quarantine_reason": "dead_scrape_stub: captured body is Loading... only (zero substantive content)"
     },
     {
       "document_id": "claude_docs_cowork_claude_code_power_for_knowledge_work_claude_by_anthropic",
@@ -71,7 +73,7 @@
     },
     {
       "document_id": "claude_docs_errors",
-      "status": "approved",
+      "status": "quarantined",
       "canonical_url": "https://docs.anthropic.com/en/docs/errors",
       "publisher": "Anthropic",
       "tier": 1,
@@ -81,7 +83,8 @@
         "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
         "pipeline": "tier1-docs",
         "source_path": "corpus/tier1_anthropic_docs/claude_docs_errors.json"
-      }
+      },
+      "quarantine_reason": "dead_scrape_stub: captured body is Loading... only (zero substantive content)"
     },
     {
       "document_id": "claude_docs_features_overview___claude_api_docs",
@@ -127,7 +130,7 @@
     },
     {
       "document_id": "claude_docs_intro",
-      "status": "approved",
+      "status": "quarantined",
       "canonical_url": "https://docs.anthropic.com/en/docs/intro",
       "publisher": "Anthropic",
       "tier": 1,
@@ -137,7 +140,8 @@
         "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
         "pipeline": "tier1-docs",
         "source_path": "corpus/tier1_anthropic_docs/claude_docs_intro.json"
-      }
+      },
+      "quarantine_reason": "dead_scrape_stub: captured body is Loading... only (zero substantive content)"
     },
     {
       "document_id": "claude_docs_intro_to_claude___claude_api_docs",
@@ -169,7 +173,7 @@
     },
     {
       "document_id": "claude_docs_messages",
-      "status": "approved",
+      "status": "quarantined",
       "canonical_url": "https://docs.anthropic.com/en/docs/messages",
       "publisher": "Anthropic",
       "tier": 1,
@@ -179,11 +183,12 @@
         "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
         "pipeline": "tier1-docs",
         "source_path": "corpus/tier1_anthropic_docs/claude_docs_messages.json"
-      }
+      },
+      "quarantine_reason": "dead_scrape_stub: captured body is Loading... only (zero substantive content)"
     },
     {
       "document_id": "claude_docs_models",
-      "status": "approved",
+      "status": "quarantined",
       "canonical_url": "https://docs.anthropic.com/en/docs/models",
       "publisher": "Anthropic",
       "tier": 1,
@@ -193,7 +198,8 @@
         "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
         "pipeline": "tier1-docs",
         "source_path": "corpus/tier1_anthropic_docs/claude_docs_models.json"
-      }
+      },
+      "quarantine_reason": "dead_scrape_stub: captured body is Loading... only (zero substantive content)"
     },
     {
       "document_id": "claude_docs_models_overview___claude_api_docs",
@@ -211,7 +217,7 @@
     },
     {
       "document_id": "claude_docs_prompt-engineering",
-      "status": "approved",
+      "status": "quarantined",
       "canonical_url": "https://docs.anthropic.com/en/docs/prompt-engineering",
       "publisher": "Anthropic",
       "tier": 1,
@@ -221,11 +227,12 @@
         "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
         "pipeline": "tier1-docs",
         "source_path": "corpus/tier1_anthropic_docs/claude_docs_prompt-engineering.json"
-      }
+      },
+      "quarantine_reason": "dead_scrape_stub: captured body is Loading... only (zero substantive content)"
     },
     {
       "document_id": "claude_docs_rate-limits",
-      "status": "approved",
+      "status": "quarantined",
       "canonical_url": "https://docs.anthropic.com/en/docs/rate-limits",
       "publisher": "Anthropic",
       "tier": 1,
@@ -235,11 +242,12 @@
         "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
         "pipeline": "tier1-docs",
         "source_path": "corpus/tier1_anthropic_docs/claude_docs_rate-limits.json"
-      }
+      },
+      "quarantine_reason": "dead_scrape_stub: captured body is Loading... only (zero substantive content)"
     },
     {
       "document_id": "claude_docs_streaming",
-      "status": "approved",
+      "status": "quarantined",
       "canonical_url": "https://docs.anthropic.com/en/docs/streaming",
       "publisher": "Anthropic",
       "tier": 1,
@@ -249,11 +257,12 @@
         "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
         "pipeline": "tier1-docs",
         "source_path": "corpus/tier1_anthropic_docs/claude_docs_streaming.json"
-      }
+      },
+      "quarantine_reason": "dead_scrape_stub: captured body is Loading... only (zero substantive content)"
     },
     {
       "document_id": "claude_docs_tool-use",
-      "status": "approved",
+      "status": "quarantined",
       "canonical_url": "https://docs.anthropic.com/en/docs/tool-use",
       "publisher": "Anthropic",
       "tier": 1,
@@ -263,7 +272,8 @@
         "ingested_via": "tier1_embedded_chunks.json (docs scrape/pdf pipeline)",
         "pipeline": "tier1-docs",
         "source_path": "corpus/tier1_anthropic_docs/claude_docs_tool-use.json"
-      }
+      },
+      "quarantine_reason": "dead_scrape_stub: captured body is Loading... only (zero substantive content)"
     },
     {
       "document_id": "claude_docs_use_cowork_safely_claude_help_center",
