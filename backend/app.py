@@ -287,6 +287,8 @@ def synthesize(mode=None):
                 "confidence": retrieval["confidence"],
                 "stats": retrieval["stats"],
             },
+            "citation_receipt": answer.get("citation_receipt"),
+            "synthesis_attempts": answer.get("synthesis_attempts"),
             "synthesis_model": answer.get("model", "gpt-4o"),
             "timestamp": answer.get("timestamp"),
             "corpus": _corpus_binding()
@@ -314,6 +316,8 @@ def synthesize(mode=None):
             "question": answer["question"],
             "ideas": answer["ideas"],
             "sources": answer["sources"],
+            "citation_receipt": answer.get("citation_receipt"),
+            "evidence_limitation": answer.get("evidence_limitation"),
             "corpus": _corpus_binding()
         })
         

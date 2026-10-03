@@ -14,6 +14,8 @@ from datetime import datetime
 from openai import OpenAI
 from dotenv import load_dotenv
 
+from claims.citation_grounding import ground_answer, needs_retry
+
 load_dotenv()
 
 SYNTHESIS_SYSTEM_PROMPT = """You are a technical synthesis engine.
@@ -72,6 +74,12 @@ CITATION FORMAT:
 - Place citations immediately after the claim they support
 - Multiple citations can be adjacent: [1][2]
 - Every factual claim should have at least one citation
+- Cite ONLY excerpt IDs that actually appear in RETRIEVED EXCERPTS;
+  fabricated or unresolvable IDs are stripped before the answer ships
+- Every key in "sources" MUST be cited at least once in the text —
+  uncited sources are dropped from the response entirely
+- If the excerpts do not support a claim, omit the claim; never
+  stretch a source to fit
 - Example: "Claude requires explicit permissions [1]. The model uses tool schemas to decide which tool to call [2][3]."
 
 ---
@@ -200,87 +208,84 @@ def synthesize_answer(
         raise ValueError("OpenAI API key required (set OPENAI_API_KEY or pass api_key)")
     
     client = OpenAI(api_key=api_key)
-    
+
     # Format retrieval context
     context = format_retrieval_context(retrieved_chunks)
-    
-    # Build user prompt
-    user_prompt = f"""QUESTION:
+
+    base_prompt = f"""QUESTION:
 {question}
 
 RETRIEVED EXCERPTS:
 {context}
 
 Synthesize a structured answer following the rules above. Output ONLY the JSON object."""
-    
-    # Call LLM
-    try:
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": SYNTHESIS_SYSTEM_PROMPT},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.7,  # Higher for synthesis creativity
-            max_tokens=4000,  # Room for detailed synthesis
-            response_format={"type": "json_object"}  # Force JSON output
-        )
-        
-        answer_text = response.choices[0].message.content
-        
-        # Parse JSON
-        answer_json = json.loads(answer_text)
-        
-        # Map source IDs back to chunk metadata for rich source information
-        llm_sources = answer_json.get("sources", {})
-        enriched_sources = {}
-        
-        for source_id, source_title in llm_sources.items():
-            # Source IDs are 1-indexed strings like "1", "2", etc.
-            chunk_index = int(source_id) - 1
-            if 0 <= chunk_index < len(retrieved_chunks):
-                chunk = retrieved_chunks[chunk_index]
-                enriched_sources[source_id] = {
-                    "title": source_title,
-                    "url": chunk.get('url', ''),
-                    "source_name": chunk.get('source_name', 'Unknown Source'),
-                    "tier": chunk.get('source_tier', 3),
-                    "document_title": chunk.get('title', '')
-                }
-            else:
-                # Fallback if source ID doesn't map to a chunk
-                enriched_sources[source_id] = {
-                    "title": source_title,
-                    "url": "",
-                    "source_name": source_title,
-                    "tier": 3,
-                    "document_title": ""
-                }
-        
+
+    # Bounded retry: one retry, only for malformed JSON or a high share
+    # of unsupported claims — never to chase tier share or coverage.
+    max_attempts = 2
+    last_error = None
+    for attempt in range(max_attempts):
+        if attempt == 0:
+            user_prompt = base_prompt
+        else:
+            unsupported_hint = ""
+            if last_error and last_error.get("unsupported"):
+                listed = "\n".join(f"- {c['claim']}" for c in
+                                   last_error["unsupported"][:8])
+                unsupported_hint = (
+                    "\n\nThe prior draft cited insufficiently supported "
+                    "claims. Drop or rewrite these claims so each is "
+                    f"directly backed by a cited excerpt:\n{listed}")
+            user_prompt = base_prompt + unsupported_hint
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": SYNTHESIS_SYSTEM_PROMPT},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.7,
+                max_tokens=4000,
+                response_format={"type": "json_object"}
+            )
+            answer_text = response.choices[0].message.content
+            answer_json = json.loads(answer_text)
+        except json.JSONDecodeError:
+            last_error = {"unsupported": None}
+            continue
+        except Exception as e:
+            return {
+                "question": question,
+                "error": f"Synthesis failed: {e}",
+                "ideas": [],
+                "sources": {}
+            }
+
+        # Claim-level grounding: strip unresolvable citations, drop
+        # uncited sources, enrich only real chunks, score coverage.
+        cleaned, receipt = ground_answer(answer_json, retrieved_chunks)
+        if attempt < max_attempts - 1 and needs_retry(answer_json, receipt):
+            last_error = {"unsupported":
+                          receipt.get("unsupported_claims") or []}
+            continue
         return {
             "question": question,
-            "ideas": answer_json.get("ideas", []),
-            "sources": enriched_sources,
+            "ideas": cleaned.get("ideas", []),
+            "sources": cleaned.get("sources", {}),
+            "evidence_limitation": cleaned.get("evidence_limitation"),
+            "citation_receipt": receipt,
             "model": model,
             "timestamp": datetime.now().isoformat(),
-            "retrieved_chunk_count": len(retrieved_chunks)
+            "retrieved_chunk_count": len(retrieved_chunks),
+            "synthesis_attempts": attempt + 1,
         }
-        
-    except json.JSONDecodeError as e:
-        return {
-            "question": question,
-            "error": f"Failed to parse JSON response: {e}",
-            "raw_response": answer_text if 'answer_text' in locals() else None,
-            "ideas": [],
-            "sources": {}
-        }
-    except Exception as e:
-        return {
-            "question": question,
-            "error": f"Synthesis failed: {e}",
-            "ideas": [],
-            "sources": {}
-        }
+
+    return {
+        "question": question,
+        "error": "Failed to parse JSON response after bounded retry",
+        "ideas": [],
+        "sources": {}
+    }
 
 
 def test_synthesis():
