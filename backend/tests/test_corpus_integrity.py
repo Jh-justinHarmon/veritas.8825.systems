@@ -114,6 +114,87 @@ class ProductionCorpusCleanTests(unittest.TestCase):
         raw_md = list((CORPUS_DIR / "raw").rglob("*.md"))
         self.assertEqual(raw_md, [])
 
+    def test_production_manifest_has_zero_placeholder_urls(self):
+        for entry in self.manifest["documents"]:
+            for field in ("canonical_url", "observed_url"):
+                url = entry.get(field)
+                if url is not None:
+                    self.assertFalse(
+                        is_placeholder_url(url),
+                        f"{entry['document_id']}.{field} is placeholder")
+
+    def test_manifest_documents_exclude_placeholder_doc_ids(self):
+        ids = {e["document_id"] for e in self.manifest["documents"]}
+        self.assertEqual(ids & PLACEHOLDER_DOC_IDS, set())
+
+
+class QuarantineLedgerTests(unittest.TestCase):
+    """The quarantine provenance ledger preserves audit lineage but can
+    never enter ingestion, retrieval, synthesis or emitted sources."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.ledger_path = QUARANTINE_DIR / "quarantine_ledger.json"
+        cls.ledger = json.loads(cls.ledger_path.read_text("utf-8"))
+        cls.manifest = load_source_manifest()
+
+    def test_ledger_preserves_all_nine_placeholder_records(self):
+        docs = self.ledger["documents"]
+        self.assertEqual(len(docs), 9)
+        self.assertEqual({d["document_id"] for d in docs},
+                         PLACEHOLDER_DOC_IDS)
+        for d in docs:
+            self.assertEqual(d["status"], "quarantined")
+            for field in ("document_id", "observed_url",
+                          "quarantine_reason", "quarantined_path",
+                          "provenance", "content_sha256"):
+                self.assertIn(field, d)
+
+    def test_ledger_is_not_a_source_manifest(self):
+        with self.assertRaises(SourceAdmissionError):
+            load_source_manifest(self.ledger_path)
+
+    def test_ledger_documents_unadmittable(self):
+        for d in self.ledger["documents"]:
+            with self.assertRaises(SourceAdmissionError) as ctx:
+                admit_source_document(
+                    {"id": d["document_id"], "source_tier": d["tier"],
+                     "url": d["observed_url"], "content": "x" * 200},
+                    self.manifest)
+            self.assertEqual(str(ctx.exception),
+                             "SOURCE_NOT_IN_APPROVED_MANIFEST")
+
+    def test_ledger_document_chunks_unsafe_for_production(self):
+        for d in self.ledger["documents"]:
+            chunk = {"document_id": d["document_id"],
+                     "text": "substantive content " * 10,
+                     "url": d["observed_url"]}
+            self.assertFalse(chunk_is_production_safe(chunk, self.manifest))
+
+    def test_ledger_urls_are_all_placeholders(self):
+        for d in self.ledger["documents"]:
+            for field in ("canonical_url", "observed_url"):
+                url = d.get(field)
+                if url is not None:
+                    self.assertTrue(is_placeholder_url(url))
+
+    def test_manifest_with_placeholder_url_field_fails_closed(self):
+        bad = {"manifest_version": "1.0.0",
+               "manifest_id": "x",
+               "documents": [{"document_id": "d", "status": "approved",
+                              "canonical_url": "https://example.com/x",
+                              "tier": 1}]}
+        import tempfile
+        with tempfile.NamedTemporaryFile(
+                "w", suffix=".json", delete=False) as f:
+            json.dump(bad, f)
+        try:
+            with self.assertRaises(SourceAdmissionError) as ctx:
+                load_source_manifest(Path(f.name))
+            self.assertIn("MANIFEST_PLACEHOLDER_URL", str(ctx.exception))
+        finally:
+            Path(f.name).unlink()
+
 
 class SourceAdmissionTests(unittest.TestCase):
     """The ingestion gate refuses placeholder/malformed/duplicate/

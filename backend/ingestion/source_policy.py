@@ -76,6 +76,17 @@ def load_source_manifest(manifest_path: Path = None) -> dict:
         manifest = json.load(f)
     if manifest.get("manifest_version") != "1.0.0":
         raise SourceAdmissionError("MANIFEST_VERSION_UNSUPPORTED")
+    # Zero-placeholder contract: no entry in the production manifest may
+    # carry a placeholder URL in any URL field, whatever its status.
+    # Quarantined placeholder observations live in the separate
+    # provenance ledger, never here.
+    for entry in manifest.get("documents", []):
+        for field in ("canonical_url", "observed_url"):
+            url = entry.get(field)
+            if url is not None and is_placeholder_url(url):
+                raise SourceAdmissionError(
+                    "MANIFEST_PLACEHOLDER_URL:"
+                    f"{entry.get('document_id')}:{field}")
     return manifest
 
 
